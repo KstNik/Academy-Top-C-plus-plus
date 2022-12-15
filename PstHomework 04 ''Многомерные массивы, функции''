@@ -1,0 +1,463 @@
+#include <iostream>
+#include <math.h>
+#include <stdlib.h>
+using namespace std;
+
+// Функция вычисляющая степень числа
+int FuncDegree(int base, int exp) {
+	int resDegree = 1;
+	for (int i = 0; i < exp; i++)
+		resDegree *= base;
+	return resDegree;
+}
+
+// Функция вычисляющая сумму чисел заданного диапазона
+int FuncSumInt(int int1, int int2) {
+	int resSumInt;
+	if (int1 > int2) {
+		resSumInt = int2;
+		int2 = int1;
+		int1 = resSumInt;
+	}
+	resSumInt = 0;
+	for (int i = int1 + 1; i < int2; i++)
+		resSumInt += i;
+	return resSumInt;
+}
+
+// Функция вычисляющая совершенные числа в заданном диапазоне
+int FuncPerfNum(int num1, int num2) {
+	int perfNum, resPerfNum;
+	if (num1 > num2) {
+		perfNum = num2;
+		num2 = num1;
+		num1 = perfNum;
+	}
+	resPerfNum = 1;
+	for (int i = num1; i <= num2; i++) {
+		perfNum = 0;
+		for (int j = 1; j < i; j++)
+			if (i % j == 0) perfNum += j;
+		if (perfNum == i) {
+			resPerfNum = i;
+			cout << resPerfNum << " ";
+		}
+	}
+	return resPerfNum;
+}
+
+// Функция выводящая на экран игральную карту
+void FuncPlayingCard(char value, int suit) {
+	if ((((value == 'A') || (value == 'J') || (value == 'Q') || (value == 'K') || ((value >= '1') && (value <= '9')))) && (((suit >= 1) && (suit <= 4)))) {
+		cout << "  _____________" << endl;
+		cout << " |           ";
+		(value != '1') ? cout << " " << value : cout << "10";
+		cout << "|" << endl;
+		switch (suit) {
+		case 1:
+			cout << R"( |      *      |
+ |     ***     |
+ |    *****    |
+ |   *******   |
+ |  *********  |
+ | *********** |
+ | *********** |
+ |  *** * ***  |
+ |     ***     |
+ |     ***     |
+ |    *****    |)";
+			break;
+		case 2:
+			cout << R"( |     ***     |
+ |    *****    |
+ |    *****    |
+ | **  ***  ** |
+ |*************|
+ |*************|
+ | **  ***  ** |
+ |     ***     |
+ |     ***     |
+ |     ***     |
+ |    *****    |)";
+			break;
+		case 3:
+			cout << R"( |             |
+ |             |
+ |  ***   ***  |
+ | ***** ***** |
+ | *********** |
+ |  *********  |
+ |   *******   |
+ |     ***     |
+ |      *      |
+ |             |
+ |             |)";
+			break;
+		case 4:
+			cout << R"( |      *      |
+ |     ***     |
+ |    *****    |
+ |   *******   |
+ |  *********  |
+ | *********** |
+ |  *********  |
+ |   *******   |
+ |    *****    |
+ |     ***     |
+ |      *      |)";
+			break;
+		}
+		cout << endl;
+		cout << " |_____________|" << endl;
+	}
+	else
+		cout << "  Такой карты в младших арканах не существует!" << endl;
+}
+
+// Функция проверяющая на совпадение суммы цифр правой и левой частей шестизначного числа
+bool FuncHapNum(int hapNum) {
+	int const numOfDig = 6;
+	int arHapNum[numOfDig];
+	int sumLeftSide = 0, sumRightSide = 0;
+	bool hap;
+	for (int i = 0; i < numOfDig; i++) {
+		arHapNum[i] = hapNum % 10;
+		i < numOfDig / 2 ? sumLeftSide += arHapNum[i] : sumRightSide += arHapNum[i];
+		hapNum /= 10;}
+	sumLeftSide == sumRightSide ? hap = true : hap = false;
+	return hap;
+}
+// Функция определяющая високосный год
+bool FuncLeapYear(int i) {
+	bool leapYear;
+	(((i % 100 != 0) && (i % 4 == 0)) || ((i % 100 == 0) && ((i / 100) % 4 == 0))) ? leapYear = true : leapYear = false;
+	return leapYear;
+}
+
+// Функция вычисляющая разность в днях между датами
+int FuncPeriod(int daySt, int dayEnd, int monthSt, int monthEnd, int yearSt, int yearEnd) {
+	int arDaysOfYearMonth[] = {365, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+	int periodDays = 0;
+	for (int i = yearSt; i <= yearEnd; i++) {
+		if (FuncLeapYear(i) == true) {
+			arDaysOfYearMonth[0] = 366;
+			arDaysOfYearMonth[2] = 29;}
+		else {
+			arDaysOfYearMonth[0] = 365;
+			arDaysOfYearMonth[2] = 28;}
+		if (i == yearSt) {
+			for (int j = 1; j < monthSt; j++)
+				periodDays -= arDaysOfYearMonth[j];
+			periodDays -= daySt;}
+		if (i < yearEnd) periodDays += arDaysOfYearMonth[0];
+		if (i == yearEnd) {
+			for (int k = 1; k < monthEnd; k++)
+				periodDays += arDaysOfYearMonth[k];
+			periodDays += dayEnd;}
+	}
+	return periodDays;
+}
+
+// Функция определяющая среднее арифметическое элементов массива
+float FuncAverArray(int arrayAver [], int sizeAver) {
+	int sumAverArray = 0;
+	float averArray;
+	for (int i = 0; i < sizeAver; i++)
+		sumAverArray += arrayAver[i];
+		averArray = sumAverArray / static_cast<double>(sizeAver);
+	return averArray;
+}
+
+// Функция определяющая количество положительных, отрицательных и нулевых элементов массива
+void FuncSignArray(int arraySign[], int sizeSign) {
+	int const sizeSumSignArray = 3;
+	int arSumSignArray [] = {0,0,0};
+	for (int i = 0; i < sizeSign; i++) {
+		if (arraySign[i] < 0) arSumSignArray[0] += 1;
+		if (arraySign[i] > 0) arSumSignArray[2] += 1;}
+	arSumSignArray[1] = sizeSign - arSumSignArray[0] - arSumSignArray[2];
+	for (int j = 0; j < sizeSumSignArray; j++) {
+		cout << arSumSignArray[j];
+		(j < sizeSumSignArray - 1) ? cout << ", " : cout << ".";}
+}
+
+int main() {
+	setlocale(LC_ALL, "Rus");
+	cout << "\n\t\tМНОГОМЕРНЫЕ МАССИВЫ\n";
+
+	cout << "\n\tЗадание 1 \"Массив удвоенных значений\"\n\n";
+	int const rowX2 = 3;
+	int const colX2 = 4;
+	double arrayX2 [rowX2] [colX2];
+	double numX2;
+	cout << "  Введите число: ";
+	cin >> numX2;
+	for (int i = 0; i < rowX2; i++)
+	{
+		for (int j = 0; j < colX2; j++)
+		{
+			arrayX2[i][j] = numX2 * pow(2, i*(rowX2+1) + j);
+			cout << arrayX2[i][j] << " ";
+		}
+		cout << endl;
+	}
+	system ("pause");
+
+	cout << "\n\tЗадание 2 \"Массив последовательности чисел\"\n\n";
+	int const rowPlus = 3;
+	int const colPlus = 4;
+	double arrayPlus[rowPlus][colPlus];
+	double numPlus;
+	cout << "  Введите число: ";
+	cin >> numPlus;
+	for (int i = 0; i < rowPlus; i++)
+	{
+		for (int j = 0; j < colPlus; j++)
+		{
+			arrayPlus[i][j] = numPlus + i * (rowPlus + 1) + j;
+			cout << arrayPlus[i][j] << " ";
+		}
+		cout << endl;
+	}
+	system ("pause");
+
+	cout << "\n\tЗадание 3 \"Сдвиг элементов массива\"\n\n";
+	int const rowInit = 3;
+	int const colInit = 4;
+	int arrayInit[rowInit][colInit], arrayShift[rowInit][colInit];
+	int horizShift, vertShift;
+	cout << "  Генерация целочисленного массива:" << endl;
+	for (int i = 0; i < rowInit; i++)
+	{
+		for (int j = 0; j < colInit; j++)
+		{
+			arrayInit[i][j] = rand() % 89 + 10;
+			cout << arrayInit[i][j] << " ";
+		}
+		cout << endl;
+	}
+	cout << "  Введите количество знаков горизонтального сдвига, если число положительное" << endl;
+	cout << "сдвиг осуществляется вправо, отрицательное – влево: ";
+	cin >> horizShift;
+	cout << "  Введите количество знаков вертикального сдвига, если число положительное" << endl;
+	cout << "сдвиг осуществляется вниз, отрицательное – вверх: ";
+	cin >> vertShift;
+	horizShift %= colInit;
+	vertShift %= rowInit;
+	if (horizShift < 0) horizShift += colInit;
+	if (vertShift < 0) vertShift += rowInit;
+	for (int k = 0; k < rowInit; k++)
+	{
+		for (int l = 0; l < colInit; l++)
+		{
+			arrayShift[(k + vertShift) % rowInit][(l + horizShift) % colInit] = arrayInit[k][l];
+		}
+	}
+	for (int m = 0; m < rowInit; m++)
+	{
+		for (int n = 0; n < colInit; n++)
+		{
+			cout << arrayShift[m][n] << " ";
+		}
+		cout << endl;
+	}
+	system ("pause");
+
+	cout << "\n\tЗадание 4 \"Элементы массива\"\n\n";
+	int const rowNum = 3;
+	int const colNum = 4;
+	int arrayNum[rowNum][colNum];
+	int numMax, numMin, sumNum = 0;
+	float numAver;
+	cout << "  Генерация целочисленного массива:" << endl;
+	for (int i = 0; i < rowNum; i++)
+	{
+		for (int j = 0; j < colNum; j++)
+		{
+			arrayNum[i][j] = rand();
+			if (i == 0 && j == 0)
+			{
+				numMin = arrayNum[i][j];
+				numMax = arrayNum[i][j];
+			}
+			else
+			{
+				if (numMin > arrayNum[i][j]) numMin = arrayNum[i][j];
+				if (numMax <  arrayNum[i][j]) numMax = arrayNum[i][j];
+			}
+			sumNum += arrayNum[i][j];
+			cout << arrayNum[i][j] << " ";
+		}
+		cout << endl;
+	}
+	numAver = sumNum / static_cast<double>(rowNum * colNum);
+	cout << "  Характеристики массива:" << endl;
+	cout << "  – сумма всех элементов массива = " << sumNum << ";" << endl;
+	cout << "  – среднее арифметическое всех элементов массива = " << numAver << ";" << endl;
+	cout << "  – минимальный элемент массива = " << numMin << ";" << endl;
+	cout << "  – максимальный элемент массива = " << numMax <<"." << endl;
+	system ("pause");
+
+	cout << "\n\tЗадание 5 \"Сумма строк и столбцов массива\"\n\n";
+	int const rowSum = 3;
+	int const colSum = 4;
+	int arraySum[rowSum][colSum];
+	int arraySumRow[rowSum] = {}, arraySumCol[colSum] = {};
+	int sumSum = 0;
+	for (int i = 0; i < rowSum; i++)
+	{
+		for (int j = 0; j < colSum; j++)
+		{
+			arraySum[i][j] = rand() % 89 + 10;
+			cout << " " << arraySum[i][j] << " ";
+			arraySumRow [i] += arraySum[i][j];
+			arraySumCol[j] += arraySum[i][j];
+			sumSum += arraySum[i][j];
+		}
+		cout << "| " << arraySumRow[i] << endl;
+	}
+	for (int k = 0; k <= colSum; k++)
+	{
+		cout << "____";
+	}
+	cout << endl;
+	for (int l = 0; l < colSum; l++)
+	{
+		cout << arraySumCol[l] << " ";
+	}
+	cout << " " << sumSum << endl;
+	system ("pause");
+
+	cout << "\n\tЗадание 6 \"Преобразование массива\"\n\n";
+	int const rowLongShort = 5;
+	int const colLong = 10;
+	int const colShort = 5;
+	int arrayLong[rowLongShort][colLong];
+	int arrayShort[rowLongShort][colShort];
+	cout << "  Исходный массив:" << endl;
+	for (int i = 0; i < rowLongShort; i++)
+	{
+		for (int j = 0; j < colLong; j++)
+		{
+			arrayLong[i][j] = rand() % 51;
+			cout << " " << arrayLong[i][j] << " ";
+		}
+		cout << endl;
+	}
+	cout << "  Массив, состоящий из парных сумм соседних элементов исходного:" << endl;
+	for (int k = 0; k < rowLongShort; k++)
+	{
+		for (int l = 0; l < colShort; l++)
+		{
+			arrayShort[k][l] = arrayLong [k] [l*2] + arrayLong[k][l * 2 + 1];
+			cout << " " << arrayShort[k][l] << " ";
+		}
+		cout << endl;
+	}
+	system ("pause");
+
+	cout << "\n\t\t\tФУНКЦИИ\n";
+
+	cout << "\n\tЗадание 1 \"Возведение в степень\"\n\n";
+	int base, exp;
+	cout << "  Введите целое число – основание степени: ";
+	cin >> base;
+	cout << "  Введите целое положительное число – показатель степени: ";
+	cin >> exp;
+	cout << "  Число " << base << " в степени " << exp << " = " << FuncDegree(base, exp) << "." << endl;
+	system ("pause");
+
+	cout << "\n\tЗадание 2 \"Сумма диапазона целых чисел\"\n\n";
+	int int1, int2;
+	cout << "  Введите целое число: ";
+	cin >> int1;
+	cout << "  Введите второе целое число отличное от первого: ";
+	cin >> int2;
+	cout << "  Сумма целых чисел расположенных между " << int1 << " и " << int2 << " = " << FuncSumInt(int1, int2) << "." << endl;
+	system ("pause");
+
+	cout << "\n\tЗадание 3 \"Совершенные числа\"\n\n";
+	int num1, num2;
+	cout << "  Введите целое положительное число: ";
+	cin >> num1;
+	cout << "  Введите второе целое положительное число отличное от первого: ";
+	cin >> num2;
+	cout << "  Совершенные числа в указанном диапазоне – ";
+	if (FuncPerfNum(num1, num2) == 1)
+		cout << "не содержатся";
+	cout << endl;
+	system ("pause");
+
+	cout << "\n\tЗадание 4 \"Игральная карта\"\n\n";
+	int const sizeArrayValue = 13;
+	char arValue[sizeArrayValue] = {'A','2','3','4','5','6','7','8','9','1', 'J','Q','K'};
+	char value;
+	int suit;
+	cout << "  Введите первый символ достоинства карты" << endl;
+	cout <<	" (";
+	for (int i = 0; i < sizeArrayValue; i++) {
+		cout << arValue[i];
+		(i < sizeArrayValue - 1) ? cout << ", " : cout << "): ";}
+	cin >> value;
+	cout << "  Введите масть карты (1 – пики, 2 – трефы," << endl;
+	cout << " 3 – червы, 4 – бубны): ";
+	cin >> suit;
+	FuncPlayingCard(value, suit);
+	system ("pause");
+
+	cout << "\n\tЗадание 5 \"Счастливое число\"\n\n";
+	int hapNum;
+	cout << "  Введите целое положительное шестизначное число: ";
+	cin >> hapNum;
+	cout << "  Число " << hapNum << " – ";
+	FuncHapNum(hapNum) ? cout << "\"счастливое\"" : cout << "обыкновенное";
+	cout << "." << endl;
+	system ("pause");
+
+	cout << "\n\tЗадание 6 \"Количество дней между датами\"\n\n";
+	int daySt, dayEnd, monthSt, monthEnd, yearSt, yearEnd;
+	cout << "  Введите даты:" << endl;
+	cout << "  а) начальную:" << endl;
+	cout << "     – число: ";
+	cin >> daySt;
+	cout << "     – месяц: ";
+	cin >> monthSt;
+	cout << "     – год: ";
+	cin >> yearSt;
+	cout << "  б) конечную:" << endl;
+	cout << "     – число: ";
+	cin >> dayEnd;
+	cout << "     – месяц: ";
+	cin >> monthEnd;
+	cout << "     – год: ";
+	cin >> yearEnd;
+	cout << "  Количество дней прошедшее между датами – "<< FuncPeriod(daySt, dayEnd, monthSt, monthEnd, yearSt, yearEnd) << "." << endl;
+	system ("pause");
+
+	cout << "\n\tЗадание 7 \"Среднее арифметическое элементов массива\"\n\n";
+	int const sizeAver = 10;
+	int arrayAver [sizeAver];
+	cout << "  Генерация целочисленного массива состоящего из " << sizeAver << " элементов: " << endl;
+	for (int i = 0; i < sizeAver; i++) {
+		arrayAver[i] = rand();
+		cout << arrayAver[i];
+		(i < sizeAver - 1) ? cout << ", " : cout << "." << endl;}
+	cout << "  Среднее арифметическое всех элементов массива = " << FuncAverArray(arrayAver, sizeAver) << "." << endl;
+	system ("pause");
+
+	cout << "\n\tЗадание 8 \"Количество положительных, отрицательных и нулевых элементов массива\"\n\n";
+	int const sizeSign = 10;
+	int arraySign[sizeSign];
+	int elementSign;
+	cout << "  Генерация целочисленного массива состоящего из " << sizeSign << " элементов: " << endl;
+	for (int i = 0; i < sizeSign; i++) {
+		(rand() % 2 == 0) ? elementSign = 1: elementSign = -1;
+		arraySign[i] = rand() * elementSign;
+		if ((arraySign[i] < 999) && (arraySign[i] > -999)) arraySign[i] = 0;
+		cout << arraySign[i];
+		(i < sizeSign - 1) ? cout << ", " : cout << "." << endl;}
+	cout << "  Количество положительных, отрицательных и нулевых элементов в массиве соответственно – ";
+	FuncSignArray(arraySign, sizeSign);
+	cout << endl;
+	return 0;
+}
