@@ -1,0 +1,129 @@
+#include <iostream>
+using namespace std;
+int main()
+{
+	setlocale(LC_ALL, "Rus");
+	cout << "\n\t\tТЕКСТ, ФОРМУЛЫ";
+
+	cout << "\n\n\tЗадание 1 \"Песня\"\n\n";
+	cout << " Dig your own foxholes or dig your own grave\n";
+	cout << " The storm is about to begin\n";
+	cout << " The siege has begun, there's nowhere to run\n";
+	cout << " Panzerkampfwagen emerge\n";
+	cout << " Tanks and mortars are shaking the ground\n";
+	cout << " Prey of man and machine\n";
+	cout << "\t\tSabaton (Screaming Eagles)\n\n";
+	system("pause");
+
+	cout << "\n\n\tЗадание 2 \"Стихотворение\"\n\n";
+	cout << "\tEvery\n";
+	cout << "\t\thunter\n";
+	cout << "\t\t\twishes\n";
+	cout << "\t\t\t\tto know\n";
+	cout << "\t\t\t\t\twhere\n";
+	cout << "\t\t\t\t\t\tsits\n";
+	cout << "\t\t\t\t\t\t\tpheasant\n\n";
+	system("pause");
+
+	cout << "\n\n\tЗадание 3 \"Объявление\"\n\n";
+	cout << " Ремонт компьютеров, ноутбуков. Заправка картриджей.\n";
+	cout << " Установка программного обеспечения. Выезд на дом.\n";
+	cout << " Тел. 55-11-33, Андрей.\n";
+	cout << " |  55  |  55  |  55  |  55  |  55  |  55  |  55  |\n";
+	cout << " |  11  |  11  |  11  |  11  |  11  |  11  |  11  |\n";
+	cout << " |  33  |  33  |  33  |  33  |  33  |  33  |  33  |\n\n";
+	system("pause");
+
+	cout << "\n\n\tЗадание 4 \"Вычисление значения 3-х параллельно соединённых сопротивлений\"\n\n";
+	float R0, R1, R2, R3;
+	cout << " Введите значение:\n";
+	cout << "\t1-го сопротивления [Ом]: ";
+	cin >> R1;
+	cout << "\t2-го сопротивления [Ом]: ";
+	cin >> R2;
+	cout << "\t3-го сопротивления [Ом]: ";
+	cin >> R3;
+	R0 = 1 / (1 / R1 + 1 / R2 + 1 / R3);
+	cout << " Значение общего сопротивления - " << R0 << " Ом.\n\n";
+	system("pause");
+
+	cout << "\n\n\tЗадание 5 \"Окружность, круг\"\n\n";
+	float L, r, S, pi;
+	cout << " Введите длину окружности [см]: ";
+	cin >> L;
+	pi = 3.14;
+	r = L / 2 / pi;
+	S = pi * r * r;
+	cout << " Радиус окружности - " << r << " см, площадь круга, ограниченного окружностью - " << S << " кв.см.\n\n";
+	system("pause");
+
+	cout << "\n\n\tЗадание 6 \"Пройденный путь при равноускоренном движении\"\n\n";
+	float P, v, t, a;
+	cout << " Введите значение: \n";
+	cout << "\tскорости [м/с]: ";
+	cin >> v;
+	cout << "\tускорения [м/с2]: ";
+	cin >> a;
+	cout << " Время, прошедшее с начала движения [с]: ";
+	cin >> t;
+	P = v * t + a * t * t / 2;
+	cout << " Пройденный путь - " << P << " м.\n\n";
+	system("pause");
+
+	cout << "\n\n\tЗадание 7 \"Скорость движения в аэропорт\"\n\n";
+	float Vair, Tair, Sair;
+	cout << " Введите: \n";
+	cout << "\tрасстояние до аэропорта [км]: ";
+	cin >> Sair;
+	cout << "\tвремя, за которое нужно доехать [час]: ";
+	cin >> Tair;
+	Vair = Sair / Tair,
+		cout << " Скорость движения - " << Vair << " км/час\n\n";
+	system("pause");
+
+	cout << "\n\n\tЗадание 8 \"Стоимость телефонного разговора\"\n\n";
+	float Hst, Hend, Mst, Mend, Sst, Send, Prmin, Pr;
+	cout << " Введите время:\n";
+	cout << "\tначала разговора:\n";
+	cout << "\t\tчас: ";
+	cin >> Hst;
+	cout << "\t\tмин.: ";
+	cin >> Mst;
+	cout << "\t\tсек.: ";
+	cin >> Sst;
+	cout << "\tокончания разговора:\n";
+	cout << "\t\tчас: ";
+	cin >> Hend;
+	cout << "\t\tмин.: ";
+	cin >> Mend;
+	cout << "\t\tсек.: ";
+	cin >> Send;
+	Prmin = 0.3;
+	Pr = ((Hend - Hst) * 60 + Mend - Mst + (Send - Sst) / 60) * Prmin;
+	cout << " Стоимость разговора - " << Pr << " руб.\n\n";
+	system("pause");
+
+	cout << "\n\n\tЗадание 9 \"Цена поездки\"\n\n";
+	float A92, A95, A98, Dist, Cons, PrA92, PrA95, PrA98;
+	cout << " Введите:\n";
+	cout << "\tрасстояние [км]: ";
+	cin >> Dist;
+	cout << "\tрасход бензина [л/100 км]: ";
+	cin >> Cons;
+	cout << "\tстоимость бензина [руб./л]:\n";
+	cout << "\t\tА92 ";
+	cin >> A92;
+	cout << "\t\tА95 ";
+	cin >> A95;
+	cout << "\t\tА98 ";
+	cin >> A98;
+	PrA92 = Dist / 100 * Cons * A92;
+	PrA95 = Dist / 100 * Cons * A95;
+	PrA98 = Dist / 100 * Cons * A98;
+	cout << "  Марка  |   Цена  \n";
+	cout << " бензина | поездки \n";
+	cout << "   А92   | " << PrA92 << " руб.\n";
+	cout << "   А95   | " << PrA95 << " руб.\n";
+	cout << "   А98   | " << PrA98 << " руб.\n";
+	return 0;
+}
