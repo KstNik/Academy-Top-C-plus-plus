@@ -1,0 +1,459 @@
+#include <iostream>
+#include <stdlib.h>
+using namespace std;
+int main()
+{
+	setlocale(LC_ALL, "Rus");
+	cout << "\n\t\tЦИКЛЫ FOR\n";
+
+	cout << "\n\tЗадание 1 \"Заливка квадрата\"\n";
+	const int side = 11;
+	char triangles;
+	do
+	{
+		cout << "\n";
+		cout << "***********" << endl;
+		cout << "**	   **" << endl;
+		cout << "* *  1  * *" << endl;
+		cout << "*  *   *  *" << endl;
+		cout << "*   * *   *" << endl;
+		cout << "* 4  *  2 *" << endl;
+		cout << "*   * *   *" << endl;
+		cout << "*  *   *  *" << endl;
+		cout << "* *  3  * *" << endl;
+		cout << "**	   **" << endl;
+		cout << "***********" << endl;
+		cout << " Выберите вариант заливки и введите соответствующий символ:" << endl;
+		cout << "  a – треугольники 1 и 2;" << endl;
+		cout << "  b – треугольники 3 и 4;" << endl;
+		cout << "  c – треугольник 1;" << endl;
+		cout << "  d – треугольник 3;" << endl;
+		cout << "  e – треугольники 1 и 3;" << endl;
+		cout << "  f – треугольники 2 и 4;" << endl;
+		cout << "  g – треугольник 4;" << endl;
+		cout << "  h – треугольник 2;" << endl;
+		cout << "  i – треугольники 1 и 4;" << endl;
+		cout << "  j – треугольники 2 и 3;" << endl;
+		cout << "  любой другой символ – выход." << endl;
+		cin >> triangles;
+		for (int i = 1; i <= side; i++)
+		{
+			for (int j = 1; j <= side; j++)
+			{
+				switch (triangles)
+				{
+				case 'a': if (j >= i) cout << "*"; else cout << " ";
+					break;
+				case 'b': if (j <= i) cout << "*"; else cout << " ";
+					break;
+				case 'c': if (j >= i && i + j <= side + 1) cout << "*"; else cout << " ";
+					break;
+				case 'd': if (j <= i && i + j >= side + 1) cout << "*"; else cout << " ";
+					break;
+				case 'e': if (j >= i && i + j <= side + 1 || j <= i && i + j >= side + 1) cout << "*"; else cout << " ";
+					break;
+				case 'f': if (j <= i && i + j <= side + 1 || j >= i && i + j >= side + 1) cout << "*"; else cout << " ";
+					break;
+				case 'g': if (j <= i && i + j <= side + 1) cout << "*"; else cout << " ";
+					break;
+				case 'h': if (j >= i && i + j >= side + 1) cout << "*"; else cout << " ";
+					break;
+				case 'i': if (j + i > side + 1) cout << " "; else cout << "*";
+					break;
+				case 'j': if (j + i < side + 1) cout << " "; else cout << "*";
+					break;
+				default:
+					break;
+				}
+			}
+			cout << endl;
+		}
+	} while (triangles >= 'a' && triangles <= 'j');
+	system("pause");
+
+	cout << "\n\tЗадание 2 \"Количество чисел с двумя одинаковыми цифрами\"\n\n";
+	int numOfIdent = 0;
+	for (int i = 1; i <= 9; i++)
+	{
+		for (int j = 0; j <= 9; j++)
+		{
+			for (int k = 0; k <= 9; k++)
+			{
+				if (i == j || j == k || k == i)
+					numOfIdent++;
+			}
+		}
+	}
+	cout << " Количество трёхзначных чисел с двумя одинаковыми цифрами = " << numOfIdent << "." << endl;
+	system("pause");
+
+	cout << "\n\tЗадание 3 \"Количество чисел у которых все цифры разные\"\n\n";
+	int numOfDif = 0;
+	for (int i = 1; i <= 9; i++)
+	{
+		for (int j = 0; j <= 9; j++)
+		{
+			for (int k = 0; k <= 9; k++)
+			{
+				if (i != j && j != k && k != i)
+					numOfDif++;
+			}
+		}
+	}
+	cout << " Количество трёхзначных чисел у которых все цифры разные = " << numOfDif << "." << endl;
+	system("pause");
+
+	cout << "\n\tЗадание 4 \"Удаление цифр 3 и 6 из числа\"\n\n";
+	int num36, sign, exp = 1, numDigRem36 = 0;
+	cout << "Введите целое число:" << endl;
+	cin >> num36;
+	(num36 < 0) ? sign = -1 : sign = 1;
+	num36 *= sign;
+	while (num36 > 0)
+	{
+		if (num36 % 10 != 3 && num36 % 10 != 6)
+		{
+			numDigRem36 += num36 % 10 * exp;
+			exp *= 10;
+		}
+		num36 /= 10;
+	}
+	cout << "Число без 3 и 6: " << numDigRem36 * sign << "." << endl;
+
+	cout << "\n\tЗадание 5 \"Деление без остатка на квадрат и с остатком на куб\"\n\n";
+	int numDivDeg = 0;
+	cout << "Введите положительное целое число:" << endl;
+	cin >> numDivDeg;
+	cout << "Числа, квадрат которых является делителем исходного, а куб нет – ";
+	for (int i = 1; i < numDivDeg; i++)
+	{
+		if ((numDivDeg % (i * i) == 0) && (numDivDeg % (i * i * i) != 0))
+			cout << i << " ";
+	}
+	cout << endl;
+	system("pause");
+
+	cout << "\n\tЗадание 6 \"Куб суммы цифр числа равен его квадрату\"\n\n";
+	int a, numSqu, sumDi = 0;
+	cout << "Введите целое число:" << endl;
+	cin >> numSqu;
+	if (numSqu < 0) numSqu = -numSqu;
+	a = numSqu;
+	while (a > 0)
+	{
+		sumDi += a % 10;
+		a /= 10;
+	}
+	cout << "Число";
+	(numSqu * numSqu == sumDi * sumDi * sumDi) ? cout << " " : cout << " не";
+	cout << "соответствует условиям задачи." << endl;
+	system("pause");
+
+	cout << "\n\tЗадание 7 \"Делители числа\"\n\n";
+	int numDiv;
+	cout << "Введите целое положительное число:" << endl;
+	cin >> numDiv;
+	cout << "Делители числа " << numDiv << " – ";
+	for (int i = 1; i < numDiv; i++)
+	{
+		if (numDiv % i == 0)
+			cout << i << ", ";
+	}
+	cout << numDiv << "." << endl;
+	system("pause");
+
+	cout << "\n\tЗадание 8 \"Общие делители чисел\"\n\n";
+	int numDiv1, numDiv2, b;
+	cout << "Введите целое положительное число:" << endl;
+	cin >> numDiv1;
+	cout << "Введите второе целое положительное число, отличное от первого:" << endl;
+	cin >> numDiv2;
+	(numDiv1 < numDiv1) ? b = numDiv1 : b = numDiv2;
+	cout << "Общие делители чисел " << numDiv1 << " и " << numDiv2 << " – ";
+	for (int i = 1; i <= b; i++)
+	{
+		if (numDiv1 % i == 0 && numDiv2 % i == 0)
+			cout << i << ", ";
+	}
+	cout << endl;
+	system("pause");
+
+	cout << "\n\tЗадание 9 \"Цифры\"\n\n";
+	int numOrig, numDig = 0, zeroDig = 0;
+	float sumDig = 0, averDig = 0;
+	char option;
+	cout << "Введите целое положительное число:" << endl;
+	cin >> numOrig;
+	while (numOrig > 0)
+	{
+		numDig++;
+		sumDig += numOrig % 10;
+		if (numOrig % 10 == 0) zeroDig++;
+		numOrig = numOrig / 10;
+	}
+	averDig = sumDig / numDig;
+	do
+	{
+		cout << " Выберите вариант и введите соответствующий символ:" << endl;
+		cout << "  a – определить количество цифр в числе;" << endl;
+		cout << "  b – посчитать сумму цифр числа;" << endl;
+		cout << "  c – посчитать среднеарифметическое цифр числа;" << endl;
+		cout << "  d – определить количество нулей в числе;" << endl;
+		cout << "  любой другой символ – выход." << endl;
+		cin >> option;
+		switch (option)
+		{
+		case 'a':
+			cout << "Количество цифр в числе – " << numDig << "." << endl;
+			break;
+		case 'b':
+			cout << "Сумма цифр числа – " << sumDig << "." << endl;
+			break;
+		case 'c':
+			cout << "Среднее арифметическое цифр числа – " << averDig << "." << endl;
+			break;
+		case 'd':
+			cout << "Количество нулей в числе – " << zeroDig << "." << endl;
+			break;
+		default:
+			break;
+		}
+	} while (option >= 'a' && option <= 'd');
+	system("pause");
+
+	cout << "\n\tЗадание 10 \"Шахматная доска\"\n\n";
+	int squaHeig, squaWidt;
+	cout << " Введите два однозначных положительных числа:" << endl;
+	cout << "  – ширину шахматной клетки: ";
+	cin >> squaWidt;
+	cout << "  – высоту шахматной клетки: ";
+	cin >> squaHeig;
+	cout << endl;
+	for (int m = 1; m <= 4; m++)
+	{
+		for (int i = 1; i <= squaHeig * 2; i++)
+		{
+			for (int k = 1; k <= 4; k++)
+			{
+				for (int j = 1; j <= squaWidt * 2; j++)
+				{
+					if ((i <= squaHeig && j <= squaWidt) || (i > squaHeig && j > squaWidt))
+						cout << "*"; else cout << " ";
+				}
+			}
+			cout << endl;
+		}
+	}
+	system("pause");
+
+	cout << "\n\t\tМАССИВЫ ОДНОМЕРНЫЕ\n";
+
+	cout << "\n\tЗадание 1 \"Минимальный и максимальный элементы\"\n\n";
+	int arNum[10];
+	cout << " Генерация массива натуральных чисел состоящего из 10 элементов: ";
+	for (int i = 0; i < 10; i++)
+	{
+		arNum[i] = 1 + rand() % 100;
+		cout << arNum[i];
+		(i < 9) ? cout << ", " : cout << "." << endl;
+	}
+	int maxNum = arNum[0], minNum = arNum[0];
+	for (int j = 0; j < 10; j++)
+	{
+		if (maxNum < arNum[j]) maxNum = arNum[j];
+		if (minNum > arNum[j]) minNum = arNum[j];
+	}
+	cout << " Минимальный элемент массива = " << minNum << ", максимальный = " << maxNum << "." << endl;
+	system("pause");
+
+	cout << "\n\tЗадание 2 \"Прибыль фирмы за год\"\n\n";
+	float arProfit[12];
+	int monthStart, monthEnd;
+	cout << " Заполните прибыль фирмы за год по месяцам (январь – 1 месяц, февраль – 2 месяц и т.д.):" << endl;
+	for (int i = 0; i < 12; i++)
+	{
+		cout << "  – " << ++i << " месяц [тыс. руб.]: ";
+		i--;
+		cin >> arProfit[i];
+	}
+	cout << " Введите границы периода, за который необходимо сформировать отчёт:" << endl;
+	cout << "  – начало периода [№ месяца]: ";
+	cin >> monthStart;
+	monthStart--;
+	cout << "  – окончание периода [№ месяца]: ";
+	cin >> monthEnd;
+	monthEnd--;
+	cout << endl;
+	float minProfit = arProfit[monthStart], maxProfit = arProfit[monthStart];
+	int  monthMin = monthStart, monthMax = monthStart;
+	for (int j = monthStart; j <= monthEnd; j++)
+	{
+		if (minProfit > arProfit[j])
+		{
+			minProfit = arProfit[j];
+			monthMin = j;
+		}
+		if (maxProfit < arProfit[j])
+		{
+			maxProfit = arProfit[j];
+			monthMax = j;
+		}
+	}
+	int monthMinKolvo = 0, monthMaxKolvo = 0;
+	for (int k = monthStart; k <= monthEnd; k++)
+	{
+		if (minProfit == arProfit[k]) monthMinKolvo++;
+		if (maxProfit == arProfit[k]) monthMaxKolvo++;
+	}
+	int mMin = 0, nMax = 0;
+	if (monthMinKolvo == monthEnd - monthStart + 1)
+	{
+		cout << " Ежемесячная прибыль полученная за весь период одинаковая и составляет – " << minProfit << " тыс. руб. в месяц.";
+	}
+	else
+	{
+		cout << "Минимальная прибыль получена в";
+		(monthMin != 1) ? cout << " " : cout << "о ";
+		for (int m = monthStart; m <= monthEnd; m++)
+		{
+			if (minProfit == arProfit[m])
+			{
+				mMin++;
+				cout << ++m;
+				m--;
+				(mMin != monthMinKolvo) ? cout << ", " : cout << " ";
+			}
+		}
+		(monthMinKolvo == 1) ? cout << "месяце " : cout << "месяцах ";
+		cout << "и составила – " << minProfit << " тыс. руб., максимальная в";
+		(monthMax != 1) ? cout << " " : cout << "о ";
+		for (int n = monthStart; n <= monthEnd; n++)
+		{
+			if (maxProfit == arProfit[n])
+			{
+				nMax++;
+				cout << ++n;
+				n--;
+				(nMax != monthMaxKolvo) ? cout << ", " : cout << " ";
+			}
+		}
+		cout << "– " << maxProfit << " тыс. руб.";
+	}
+	cout << endl;
+	system("pause");
+
+	cout << "\n\tЗадание 3 \"Массив действительных чисел\"\n\n";
+	const int N = 10;
+	int znak = 1;
+	double arNumReal[N];
+	cout << " Генерация массива действительных чисел: ";
+	for (int i = 0; i < N; i++)
+	{
+		if (rand() % 2 == 1) znak *= -1;
+		arNumReal[i] = (rand() + rand() / (double)RAND_MAX) * znak;
+		cout << arNumReal[i];
+		(i < N - 1) ? cout << ", " : cout << "." << endl;
+	}
+	int Nmax = 0, Nmin = 0, Kmax = -1, Kmin, Kst = -1, Kend = -1;
+	double maxNumReal = arNumReal[0], minNumReal = arNumReal[0];
+	double sumNumRealNeg = 0, prodNumRealMinMax = 1, prodNumRealHon = 1, sumNumRealStEnd = 0;
+	for (int j = 0; j < N; j++)
+	{
+		if (arNumReal[j] < 0 && Kend == -1) Kst = j;
+		if (arNumReal[j] < 0) Kend = j;
+		if (maxNumReal < arNumReal[j])
+		{
+			maxNumReal = arNumReal[j];
+			Nmax = j;
+		}
+		if (minNumReal > arNumReal[j])
+		{
+			minNumReal = arNumReal[j];
+			Nmin = j;
+		}
+	}
+	if (Nmax - Nmin > 1 || Nmax - Nmin < -1)
+	{
+		if (Nmax > Nmin)
+		{
+			Kmax = Nmax;
+			Kmin = Nmin;
+		}
+		else
+		{
+			Kmax = Nmin;
+			Kmin = Nmax;
+		}
+	}
+	for (int k = 0; k < N; k++)
+	{
+		if (arNumReal[k] < 0) sumNumRealNeg += arNumReal[k];
+		if (Kmax != -1 && Kmin < k && Kmax > k) prodNumRealMinMax *= arNumReal[k];
+		if (k % 2 == 1) prodNumRealHon *= arNumReal[k];
+		if (Kend != -1 && Kst != Kend && Kst < k && Kend > k) sumNumRealStEnd += arNumReal[k];
+	}
+	cout << " Сумма отрицательных элементов массива = " << sumNumRealNeg << "." << endl;
+	cout << " Произведение элементов, находящихся между min и max элементами";
+	if (Kmax != -1) cout << " = " << prodNumRealMinMax;
+	else cout << " – указанные элементы являются соседними или все элементы массива равны между собой";
+	cout << "." << endl;
+	cout << " Произведение чётных элементов массива = " << prodNumRealHon << "." << endl;
+	cout << " Сумма элементов, находящихся между первым и последним отрицательными элементами";
+	if (Kend != -1 && Kst != Kend) cout << " = " << sumNumRealStEnd;
+	else cout << " – отрицательные элементы являются соседними, такой элемент один или все элементы массива не меньше нуля";
+	cout << "." << endl;
+	system("pause");
+
+	cout << "\n\tЗадание 4 \"Разбивка одного массива на два\"\n\n";
+	int arNumOrig[10], arNum1[5], arNum2[5], znakOrig = 1;
+	cout << " Генерация целочисленного массива состоящего из 10 элементов: ";
+	for (int i = 0; i < 10; i++)
+	{
+		if (rand() % 2 == 0) znakOrig = -1;
+		arNumOrig[i] = (1 + rand() % 100) * znakOrig;
+		cout << arNumOrig[i];
+		(i < 9) ? cout << ", " : cout << "." << endl;
+	}
+	cout << " Массив состоящий из первых 5-и элементов: ";
+	for (int j = 0; j < 5; j++)
+	{
+		arNum1[j] = arNumOrig[j];
+		cout << arNumOrig[j];
+		(j < 4) ? cout << ", " : cout << "." << endl;
+	}
+	cout << " Массив состоящий из последних 5-и элементов: ";
+	for (int k = 0; k < 5; k++)
+	{
+		arNum2[k] = arNumOrig[k + 5];
+		cout << arNumOrig[k + 5];
+		(k < 4) ? cout << ", " : cout << "." << endl;
+	}
+	system("pause");
+
+	cout << "\n\tЗадание 5 \"Сумма двух массивов\"\n\n";
+	int arNumTerm1[10], arNumTerm2[10], arNumSum[10], znakTerm1 = -1, znakTerm2 = -1;
+	cout << " Генерация 1-го целочисленного массива состоящего из 10 элементов: ";
+	for (int i = 0; i < 10; i++)
+	{
+		if (rand() % 2 == 0) znakTerm1 = 1;
+		arNumTerm1[i] = (1 + rand() % 100) * znakTerm1;
+		cout << arNumTerm1[i];
+		(i < 9) ? cout << ", " : cout << "." << endl;
+	}
+	cout << " Генерация 2-го целочисленного массива состоящего из 10 элементов: ";
+	for (int j = 0; j < 10; j++)
+	{
+		if (rand() % 2 == 0) znakTerm2 = 1;
+		arNumTerm2[j] = (1 + rand() % 100) * znakTerm2;
+		cout << arNumTerm2[j];
+		(j < 9) ? cout << ", " : cout << "." << endl;
+	}
+	cout << " Сумма массивов: ";
+	for (int k = 0; k < 10; k++)
+	{
+		arNumSum[k] = arNumTerm1[k] + arNumTerm2[k];
+		cout << arNumSum[k];
+		(k < 9) ? cout << ", " : cout << "." << endl;
+	}
+	return 0;
+}
