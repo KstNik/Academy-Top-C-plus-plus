@@ -58,7 +58,7 @@ double FuncFillingMatrix(double arrayMatrix[][ordMatrix], int ordMatrix) { // з
 	int i, j;
 	for (i = 0; i < ordMatrix; i++) {
 		for (j = 0; j < ordMatrix; j++)
-			arrayMatrix[i][j] = (double)rand() / (double)RAND_MAX * (1000 - 100) + 100;;
+			arrayMatrix[i][j] = (double)rand() / (double)RAND_MAX * (1000 - 100) + 100;
 	}
 	return 0;
 }
