@@ -1,0 +1,361 @@
+#include <iostream>
+#include <math.h>
+#include <stdlib.h>
+#include <time.h>
+using namespace std;
+
+// Наибольший общий делитель 2-х целых чисел
+int FuncNOD(int a, int b) {
+	if (b == 0)
+		return a;
+		return FuncNOD(b, a % b);
+}
+
+// Звёздная линия
+void FuncStar(int n) { 
+	if (n == 0)
+		return;
+	FuncStar(n - 1);
+	cout << "*";
+}
+
+// Степень числа
+int FuncExp(int a, int n) {
+	if (n == 0)
+		return 1;
+	return a*FuncExp(a, n-1);
+}
+
+// Сумма диапазона
+int FuncSum(int a, int b) {
+	if (a == b)
+		return a;
+	return b + FuncSum(a, b-1);
+}
+
+// Минимальная сумма элементов массива
+int FuncMinSumElem(int arrayHund[], int seqNumber, int& position) {
+	int sum = 0;
+	for (int i = seqNumber; i < seqNumber + 10; i++) sum += arrayHund[i];
+	cout << (seqNumber < 10 ? "   " : "  ") << seqNumber << "  " << (sum < 0 ? "" : " ") << ((sum < 10 && sum > -10) ? "  " : (sum < 100 && sum > -100) ? " " : "") << sum << "|";
+	if ((seqNumber + 1)%10 == 0) cout << endl;
+	if (100 - seqNumber == 10) {
+		position = seqNumber;
+		return sum;
+	}
+	else {
+		int nextsum = FuncMinSumElem(arrayHund, seqNumber + 1, position);
+		if (sum <= nextsum){
+			position = seqNumber;
+			return sum;
+		}
+		else return nextsum;
+	}
+}
+
+int main() {
+	setlocale(LC_ALL, "Rus");
+	srand(time(NULL));
+
+	cout << "\n\t\tРЕКУРСИЯ\n";
+	int a, b, n;
+	bool flag;
+
+	cout << "\n\tЗадание 1 \"Наибольший общий делитель двух целых чисел\"\n\n";
+	cout << "  Введите целое положительное число: ";
+	cin >> a;
+	cout << "  Введите второе целое положительное число, отличное от первого: ";
+	cin >> b;
+	cout << "  Наибольший общий делитель чисел " << a << " и " << b << " = " << FuncNOD(a, b) << "." << endl;
+	system("pause");
+
+	cout << "\n\tЗадание 2 \"Быки\" и \"коровы\"\n\n";
+	// ВНИМАНИЕ! ПРОГРАММА ВЫПОЛНЕНА С ПОМОЩЬЮ ИТЕРАЦИИ (Т.Е. ЦИКЛА) А НЕ РЕКУРСИИ, КАК ТРЕБУЕТ ЗАДАНИЕ!
+	int numUser, cows, bulls, attempts = 0;
+	int arNum[10] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 };
+	int arNumComp [4], arNumUser [4];
+	cout << "  Число загаданное компьютером: ";
+	do {
+		for (int i = 0; i < 10; i++) {
+			swap(arNum[i], arNum[rand() % 9]);
+		}
+		for (int i = 0; i < 4; i++)
+			arNumComp[i] = arNum[i];
+	} while (arNumComp[0] == 0);
+	for (int i = 0; i < 4; i++)
+		cout << arNumComp[i];
+	cout << endl;
+	do {
+		cout << "  Введите целое 4-х значное положительное число, в котором нет совпадающих цифр: ";
+		cin >> numUser;;
+		for (int i = 3; i >= 0; i--) {
+			arNumUser[i] = numUser % 10;
+			numUser /= 10;
+			}
+		attempts ++;
+		cows = 0;
+		bulls = 0;
+		for (int i = 0; i < 4; i++) {
+			if (arNumComp[i] == arNumUser[i]) cows += 1;
+			for (int j = 0; j < 4; j++) 
+				if ((arNumComp[i] == arNumUser[j]) && (i != j)) bulls += 1;
+			}
+		cout << "  Количество:" << endl;
+		cout << "  – \"коров\" (цифра угадана и находится на своём месте) – " << cows << ";" << endl;
+		cout << "  – \"быков\" (цифра угадана, но находится на чужом месте) – " << bulls << "." << endl;
+	} while (cows != 4);
+	cout << "  Число отгадано, количество попыток – " << attempts << "." << endl;
+	system("pause");
+
+	cout << "\n\tЗадание 3 \"Путь шахматного коня\"\n\n";
+// ВНИМАНИЕ! ПРОГРАММА НЕ ОТЫСКИВАЕТ ХОДЫ И ВЫПОЛНЕНА С ПОМОЩЬЮ ИТЕРАЦИИ (Т.Е. ЦИКЛА) А НЕ РЕКУРСИИ, КАК ТРЕБУЕТ ЗАДАНИЕ!
+	cout << "  Шахматная доска:" << endl;
+	const int sizeСheck = 64;
+	int arrayMoves[sizeСheck] = { 11, 32, 44, 56, 75, 87, 68, 47, 28, 16, 35, 14, 22, 41, 33, 45, 37, 18, 26, 38, 17, 25, 46, 34, 13, 21, 42, 63, 51, 72, 84, 76, 88, 67, 55, 43, 24, 12, 31, 52, 71, 83, 64, 85, 77, 58, 66, 54, 62, 81, 73, 61, 82, 74, 53, 65, 86, 78, 57, 36, 48, 27, 15, 23 };
+	cout << R"(     10  20  30  40  50  60  70  80 
+    ****    ****    ****    ****    
+  1 ****    ****    ****    ****    
+    ****    ****    ****    ****    
+        ****    ****    ****    ****
+  2     ****    ****    ****    ****
+        ****    ****    ****    ****
+    ****    ****    ****    ****    
+  3 ****    ****    ****    ****    
+    ****    ****    ****    ****    
+        ****    ****    ****    ****
+  4     ****    ****    ****    ****
+        ****    ****    ****    ****
+    ****    ****    ****    ****    
+  5 ****    ****    ****    ****    
+    ****    ****    ****    ****    
+        ****    ****    ****    ****
+  6     ****    ****    ****    ****
+        ****    ****    ****    ****
+    ****    ****    ****    ****    
+  7 ****    ****    ****    ****    
+    ****    ****    ****    ****    
+        ****    ****    ****    ****
+  8     ****    ****    ****    ****
+        ****    ****    ****    ****)";
+	cout << endl;
+	do {
+		flag = true;
+		cout << "  Введите координату клетки – двухзначное число," << endl;
+		cout << "  где находится конь (например 11): ";
+		cin >> n;
+		for (int i = 0; i < sizeСheck; i++)
+			if (n == arrayMoves[i]) flag = false;
+	} while (flag);
+	while (n != arrayMoves[0]) {
+		a = arrayMoves[0];
+		for (int i = 0; i < sizeСheck; i++)
+			if (i > 0) arrayMoves[i - 1] = arrayMoves[i];
+		arrayMoves[sizeСheck - 1] = a;
+	}
+	cout << "  Ходы шахматного коня:" << endl;
+	cout << "  ";
+	for (int i = 1; i < sizeСheck; i++) {
+		cout << arrayMoves[i] << " ";
+		if (i % 21 == 0) cout << endl;
+		if (i % 21 == 0) cout << "  ";
+		}
+	system("pause");
+
+	cout << "\n\tЗадание 4 \"Нахождение степени числа\"\n\n";
+	cout << "  Введите целое положительное число – основание степени: ";
+	cin >> a;
+	cout << "  Введите второе целое положительное число – показатель степени: ";
+	cin >> n;
+	cout << "  Число " << a << " в степени " << n << " = " << FuncExp(a, n) << "." << endl;
+	system("pause");
+
+	cout << "\n\tЗадание 5 \"Звёздный ряд\"\n\n";
+	cout << "  Введите целое положительное число – количество отображаемых звёзд: ";
+	cin >> n;
+	cout << "  ";
+	FuncStar(n);
+	cout << endl;
+	system("pause");
+
+	cout << "\n\tЗадание 6 \"Сумма чисел диапазона\"\n\n";
+	cout << "  Введите целое положительное число: ";
+	cin >> a;
+	cout << "  Введите второе целое положительное число, отличное от первого: ";
+	cin >> b;
+	if (b < a) swap(a,b);
+	cout << "  Сумма всех целых чисел в диапазоне от " << a << " до " << b << " = " << FuncSum(a, b) << "." << endl;
+	system("pause");
+
+	cout << "\n\tЗадание 7 \"Минимальная сумма элементов массива\"\n\n";
+	int arrayHund[100];
+	int position;
+	cout << "  Генерация целочисленного массива состоящего из 100 элементов:" << endl;
+	for (int i = 0; i < 100; i++)
+		arrayHund[i] = (rand() % 90 + 10) * (rand() % 2 != 0 ? 1 : -1);
+	for (int i = 0; i < 10; i++) {
+		cout << "  ";
+		for (int j = 0; j < 10; j++)
+			cout << (arrayHund[i * 10 + j] < 0 ? "" : " ") << arrayHund[i * 10 + j] << " ";
+		cout << endl;
+	}
+	cout << "  Сумма 10-и элементов массива начиная с исходного:" << endl;
+	cout << "   N сумма|   N сумма|   N сумма|   N сумма|   N сумма|   N сумма|   N сумма|   N сумма|   N сумма|   N сумма|" << endl;
+	FuncMinSumElem(arrayHund, 0, position);
+	cout << endl;
+	cout << "  Начальная позиция минимальной суммы 10-и элементов – " << position << "." << endl;
+	system("pause");
+
+	cout << "\n\t\tУКАЗАТЕЛИ\n";
+	const int size = 10;
+
+	cout << "\n\tЗадание 1 \"Копирование массива в другой\"\n\n";
+	int sourAr[size], resAr[size];
+	int* poinSourAr = sourAr;
+	int* poinResAr = resAr;
+	cout << "  Генерация целочисленного массива состоящего из "<< size <<" элементов:" << endl;
+	cout << "  ";
+	for (int i = 0; i <size; i++) {
+		sourAr[i] = (rand() % 90 + 10);
+		cout << sourAr[i] << " ";
+	}
+	cout << endl;
+	cout << "  Результат копирования полученных значений в другой массив:" << endl;
+	cout << "  ";
+	for (int i = 0; i < size; i++) {
+		*(poinResAr++) = *(poinSourAr++);
+		cout << resAr[i] << " ";
+	}
+	cout << endl;
+	system("pause");
+
+	cout << "\n\tЗадание 2 \"Изменение порядка следования элементов массива на противоположный\"\n\n";
+	int Ar[size];
+	int* poinAr = Ar;
+	cout << "  Генерация целочисленного массива состоящего из " << size << " элементов:" << endl;
+	cout << "  ";
+	for (int i = 0; i < size; i++) {
+		Ar[i] = (rand() % 90 + 10);
+		cout << Ar[i] << " ";
+	}
+	cout << endl;
+	cout << "  Исходный массив с изменённым порядком следования элементов:" << endl;
+	cout << "  ";
+	for (int i = 0; i < size; i++) {
+		cout << *(size - 1 + poinAr--) << " ";
+	}
+	cout << endl;
+	system("pause");
+
+	cout << "\n\tЗадание 3 \"Копирование массива в другой в обратном порядке\"\n\n";
+	int sourRevAr[size], resRevAr[size];
+	int* poinSourRevAr = sourRevAr;
+	int* poinResRevAr = resRevAr;
+	cout << "  Генерация целочисленного массива состоящего из "<< size <<" элементов:" << endl;
+	cout << "  ";
+	for (int i = 0; i <size; i++) {
+		sourRevAr[i] = (rand() % 90 + 10);
+		cout << sourRevAr[i] << " ";
+	}
+	cout << endl;
+	cout << "  Результат копирования полученных значений в другой массив в обратном порядке:" << endl;
+	cout << "  ";
+	for (int i = 0; i < size; i++) {
+		*(poinResRevAr++) = *(size - 1 + poinSourRevAr--);
+		cout << resRevAr[i] << " ";
+	}
+	cout << endl;
+	system("pause");
+	
+	cout << "\n\tЗадание 4 \"Определение наибольшего из 2-х чисел\"\n\n";
+	int comNum1, comNum2;
+	int* poinComNum1 = &comNum1;
+	int* poinComNum2 = &comNum2;
+	comNum1 = rand() * (rand() % 2 != 0 ? 1 : -1);
+	comNum2 = rand() * (rand() % 2 != 0 ? 1 : -1);
+	cout << "  Генерация 2-х случайных чисел: " << comNum1 << " и " << comNum2 <<"." << endl;
+	cout << "  Наибольшее из чисел: " << (*poinComNum2 > *poinComNum1 ? *poinComNum2 : *poinComNum1) << "." << endl;
+	system("pause");
+
+	cout << "\n\tЗадание 5 \"Определение знака числа\"\n\n";
+	double singNum;
+	double* poinSingNum = &singNum;
+	cout << "  Введите число: ";
+	cin >> singNum;
+	cout << "  Число " << *poinSingNum << " – " << (*poinSingNum > 0 ? "положительное" : (*poinSingNum < 0 ? "отрицательное" : "не является ни положительным, ни отрицательным")) << "." << endl;
+	system("pause");
+
+	cout << "\n\tЗадание 6 \"Обмен местами значений двух переменных\"\n\n";
+	double x, y;
+	double* poinX = &x;
+	double* poinY = &y;
+	x = (double)rand() / (double)RAND_MAX * 1000;
+	y = (double)rand() / (double)RAND_MAX * 1000;
+    cout << "  Генерация 2-х случайных чисел и присвоение их значений переменным x = " << x << ", y = " << y <<"." << endl;
+	swap(*poinX, *poinY);
+	cout << "  Обмен местами значений присвоенных переменным – x = " << x << ", y = " << y << "." << endl;
+	system("pause");
+
+	cout << "\n\tЗадание 7 \"Примитивный калькулятор\"\n\n";
+	double numA, numB, numRes;
+	double* poinNumA = &numA;
+	double* poinNumB = &numB;
+	double* poinNumRes = &numRes;
+	cout << "  Введите:" << endl;
+	cout << "  – 1-ое число: ";
+	cin >> *poinNumA;
+	cout << "  – 2-ое число: ";
+	cin >> *poinNumB;
+	char key;
+	cout << "  Выберите математическую операцию и введите" << endl;
+	cout << "  соответствующий оператор:" << endl;
+	cout << "   + - сложение;" << endl;
+	cout << "   - - вычитание;" << endl;
+	cout << "   * - умножение;" << endl;
+	cout << "   / - деление." << endl;
+	cout << "  ";
+	cin >> key;
+	switch (key) {
+	case '+':
+		*poinNumRes = *poinNumA + *poinNumB;
+		cout << "  Ответ: " << *poinNumRes <<".";
+		break;
+	case '-':
+		*poinNumRes = *poinNumA - *poinNumB;
+		cout << "  Ответ: " << *poinNumRes << ".";
+		break;
+	case '*':
+		*poinNumRes = *poinNumA * *poinNumB;
+		cout << "  Ответ: " << *poinNumRes << ".";
+		break;
+	case '/':
+		if (*poinNumB) {
+			*poinNumRes = *poinNumA / *poinNumB;
+			cout << "  Ответ: " << *poinNumRes << ".";
+		}
+		else 
+			cout << "  Ошибка! Деление на ноль!";
+		break;
+	default:
+		cout << "  Ошибка! Этот оператор не корректен!";
+		break;
+	}
+	cout << endl;
+	system("pause");
+
+	cout << "\n\tЗадание 8 \"Сумма элементов массива\"\n\n";
+	int sumElemAr[size];
+	int sumElem = 0;
+	int* poinSumElemAr = sumElemAr;
+	int* poinSumElem = &sumElem;
+	cout << "  Генерация целочисленного массива состоящего из " << size << " элементов:" << endl;
+	cout << "  ";
+	for (int i = 0; i < size; i++) {
+		sumElemAr[i] = rand() * (rand() % 2 != 0 ? 1 : -1);
+		cout << sumElemAr[i] << " ";
+		*poinSumElem += *(poinSumElemAr++);
+	}
+	cout << endl;
+	cout << "  Сумма элементов массива = " << *poinSumElem << "." << endl;
+	system("pause");
+	return 0;
+}
