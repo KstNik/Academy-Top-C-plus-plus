@@ -1,0 +1,464 @@
+#include <iostream>
+#include <math.h>
+#include <stdlib.h>
+#include <time.h>
+#include <string>
+#include <Windows.h>
+using namespace std;
+
+void FuncWorkArrays(int variant) {
+	int M, N;
+	bool flag;
+	cout << "  Введите 2 целых положительных числа определяющих размеры массивов:" << endl;
+	cout << "  – 1-го: ";
+	cin >> M;
+	cout << "  – 2-го: ";
+	cin >> N;
+	int* arA = new int[M];
+	int* arB = new int[N];
+	cout << "  Генерация 2-х целочисленных массивов:" << endl;
+	cout << "  – 1-го: ";
+	for (int i = 0; i < M; i++) {
+		arA[i] = rand() % 9 + 1;
+		cout << arA[i] << " ";
+	}
+	cout << endl;
+	cout << "  – 2-го: ";
+	for (int i = 0; i < N; i++) {
+		arB[i] = rand() % 9 + 1;
+		cout << arB[i] << " ";
+	}
+	cout << endl;
+	int* arC = new int[M + N];
+	int O = 0;
+	switch (variant) {
+	case 1:
+		for (int i = 0; i < M; i++) {
+			flag = false;
+			for (int j = 0; j < N; j++) {
+				if (arA[i] == arB[j]) {
+					flag = true;
+					break;
+				}
+			}
+			if (flag == false) {
+				arC[O] = arA[i];
+				O++;
+			}
+		}
+		break;
+	case 3:
+		for (int i = 0; i < M; i++) {
+			arC[O] = arA[i];
+			O++;
+		}
+		for (int i = 0; i < N; i++) {
+			arC[O] = arB[i];
+			O++;
+		}
+		break;
+	default:
+		for (int i = 0; i < M; i++) {
+			flag = (variant == 2 ? false : true);
+			for (int j = 0; j < N; j++) {
+				if (arA[i] == arB[j]) {
+					flag = (variant == 2 ? true : false);
+					break;
+				}
+			}
+			if (flag == false) {
+				arC[O] = arA[i];
+				O++;
+			}
+		}
+		for (int i = 0; i < N; i++) {
+			flag = (variant == 2 ? false : true);
+			for (int j = 0; j < M; j++) {
+				if (arB[i] == arA[j]) {
+					flag = (variant == 2 ? true : false);
+					break;
+				}
+			}
+			if (flag == false) {
+				arC[O] = arB[i];
+				O++;
+			}
+		}
+		break;
+	}
+	int* arD = new int[O];
+	int P = 0;
+	for (int i = 0; i < O; i++) {
+		flag = false;
+		for (int j = i + 1; j < O; j++) {
+			if (arC[i] == arC[j]) {
+				flag = true;
+				break;
+			}
+		}
+		if (flag == false) {
+			arD[P] = arC[i];
+			P++;
+		}
+	}
+	cout << "  Массив, соответствующий условиям задания:" << endl;
+	if ((variant != 3 ? P : O) > 0) {
+		cout << "    ";
+		for (int i = 0; i < (variant != 3 ? P : O); i++)
+			cout << (variant != 3 ? arD[i] : arC[i]) << " ";
+	}
+	else
+		cout << "  – не существует.";
+	cout << endl;
+	delete[] arA;
+	delete[] arB;
+	delete[] arC;
+	delete[] arD;
+}
+
+// Функция определяющая простые числа
+bool FuncPrimeNumber(int num) {
+	bool result = true;
+	if ((num == 2) || (num == 3)) result = true;
+	else {
+		for (int i = 2; i <= floor(sqrt(num)); i++)
+			if (num % i == 0) {
+				result = false;
+				break;
+			}
+	}
+	return (result && (num != 1));
+}
+
+int* FuncRemovePrimeNumbers(int* arr, int P, int& PnoPrNum) {
+	for (int i = 0; i < P; i++)
+		if (!FuncPrimeNumber(arr[i])) PnoPrNum++;
+	int* arrnoPrNum = new int[PnoPrNum];
+	int j = 0;
+	for (int i = 0; i < P; i++)
+		if (!FuncPrimeNumber(arr[i])) {
+			arrnoPrNum[j] = arr[i];
+			j < PnoPrNum - 1 ? j++ : j;
+		}
+	return arrnoPrNum;
+}
+
+void FuncSeparationSigns(int* array, int R) {
+	int* arrayMinuc = new int[R];
+	int* arrayZero = new int[R];
+	int* arrayPlus = new int[R];
+	int Rminuc = 0, Rzero = 0, Rplus = 0;
+	for (int i = 0; i < R; i++) {
+		if (array[i] < 0) {
+			arrayMinuc[Rminuc] = array[i];
+			Rminuc++;
+		}
+		else if (array[i] == 0) {
+			arrayZero[Rzero] = array[i];
+			Rzero++;
+		}
+		else {
+			arrayPlus[Rplus] = array[i];
+			Rplus++;
+		}
+	}
+	cout << "  Массивы полученные из исходного, содержащие только:" << endl;
+	cout << "  а) отрицательные значения:" << endl;
+	cout << "     ";
+	for (int i = 0; i < Rminuc; i++)
+		cout << arrayMinuc[i] << " ";
+	cout << endl;
+	cout << "  б) нулевые значения:" << endl;
+	cout << "     ";
+	for (int i = 0; i < Rzero; i++)
+		cout << arrayZero[i] << " ";
+	cout << endl;
+	cout << "  в) положительные значения:" << endl;
+	cout << "     ";
+	for (int i = 0; i < Rplus; i++)
+		cout << arrayPlus[i] << " ";
+	cout << endl;
+	delete[] arrayMinuc;
+	delete[] arrayZero;
+	delete[] arrayPlus;
+}
+
+void FuncDelChar(string& str, int numChar) {
+	if (numChar - 1 < str.length()) str.erase(str.begin() + numChar - 1);
+}
+
+void FuncDelAllChar(string& str, char symbol) {
+	bool flag;
+	do {
+		flag = false;
+		for (int i = 0; i < str.length(); i++) {
+			if (str[i] == symbol) {
+				str.erase(i, 1);
+				flag = true;
+			}
+		}
+	} while (flag);
+}
+
+void FuncInsChar(string& str, int numChar, char symbol) {
+	str.insert((numChar - 1 < str.length() ? numChar - 1 : str.length()), 1, symbol);
+}
+
+void FuncRepChar(string& str) {
+	char initSymbol = '.', finitSymbol = '!';
+	for (int i = 0; i < str.length(); i++)
+		if (str[i] == initSymbol) str[i] = finitSymbol;
+}
+
+int FuncCountChar(string& str, char symbol) {
+	int count = 0;
+	for (int i = 0; i < str.length(); i++)
+		if (str[i] == symbol) count++;
+	return count;
+}
+
+void FuncStringComposit(string& str) {
+	int countNum = 0, countLetter = 0, countSymbol = 0, charCode;
+	for (int i = 0; i < str.length(); i++) {
+		charCode = (int)(str[i]);
+		if (charCode >= 48 && charCode < 58)
+			countNum++;
+		if ((charCode >= 65 && charCode < 91) || (charCode >= 97 && charCode < 123))
+			countLetter++;
+		if ((charCode >= -64 && charCode < 0) || (charCode == -88) || (charCode == -72))
+			countLetter++;
+		if ((charCode >= 33 && charCode < 48) || (charCode >= 58 && charCode < 65) || (charCode >= 91 && charCode < 97) || (charCode >= 123 && charCode < 127))
+			countSymbol++;
+	}
+	cout << "  Строка содержит:" << endl;
+	cout << "   – цифр – " << countNum << ";" << endl;
+	cout << "   – букв – " << countLetter << ";" << endl;
+	cout << "   – символов – " << countSymbol << "." << endl;
+}
+int main() {
+	setlocale(LC_ALL, "Rus");
+	srand(time(NULL));
+	SetConsoleCP(1251);
+	SetConsoleOutputCP(1251);
+
+	cout << "\n\t\tУКАЗАТЕЛИ\n";
+	int variant;
+
+	cout << "\n\tЗадание 1 \"Создание массива, в котором собраны элементы 1-го массива\n";
+	cout << "\t\t\tне включённые во 2-ой, без повторений\"\n\n";
+	variant = 1;
+	FuncWorkArrays(variant);
+	system("pause");
+
+	cout << "\n\tЗадание 2 \"Создание массива, в котором собраны не являющиеся общими элементы\n";
+	cout << "\t\t\t1-го и 2-го массивов, без повторений\"\n\n";
+	variant = 2;
+	FuncWorkArrays(variant);
+	system("pause");
+
+	cout << "\n\tЗадание 3 \"Создание массива, в котором собраны элементы 1-го и 2-го массивов\"\n\n";
+	variant = 3;
+	FuncWorkArrays(variant);
+	system("pause");
+
+	cout << "\n\tЗадание 4 \"Создание массива, в котором собраны общие элементы\n";
+	cout << "\t\t\t1-го и 2-го массивов, без повторений\"\n\n";
+	variant = 4;
+	FuncWorkArrays(variant);
+	system("pause");
+
+	cout << "\n\tЗадание 5 \"Удаление из массива чётных или нечётных элементов\n";
+	int M, sign;
+	char eVoD;
+	cout << "  Введите целое положительное число определяющее размер массива: ";
+	cin >> M;
+	int* arA = new int[M];
+	cout << "  Заполните массив целочисленными значениями:" << endl;
+	for (int i = 0; i < M; i++) {
+		cout << "    " << (i + 1 > 9 ? "" : " ") << i + 1 << ") ";
+		cin >> arA[i];
+	}
+	cout << "  Отображение заполненного массива на экране:" << endl;
+	cout << "    ";
+	for (int i = 0; i < M; i++)
+		cout << arA[i] << " ";
+	cout << endl;
+	cout << "  Введите символ какие числа необходимо удалить из массива," << endl;
+	cout << "  e – even (чётные), o – odd (нечётные): ";
+	cin >> eVoD;
+	int* arB = new int[M];
+	int N = 0;
+	for (int i = 0; i < M; i++) {
+		arA[i] >= 0 ? sign = 1 : sign = -1;
+		arA[i] *= sign;
+		if (((eVoD == 'e') || (eVoD == 'o')) && (arA[i] % 2 == (eVoD == 'e' ? 1 : 0))) {
+			arB[N] = arA[i] * sign;
+			N++;
+		}
+	}
+	cout << "  Преобразованный массив:" << endl;
+	cout << "    ";
+	for (int i = 0; i < N; i++)
+		cout << arB[i] << " ";
+	cout << endl;
+	delete[] arA;
+	delete[] arB;
+	system("pause");
+
+	cout << "\n\tЗадание 6 \"Функция удаляющая из массива все простые числа\"\n\n";
+	int P;
+	cout << "  Введите целое положительное число определяющее размер массива: ";
+	cin >> P;
+	int* arr = new int[P];
+	cout << "  Генерация целочисленного массива:" << endl;
+	cout << "    ";
+	for (int i = 0; i < P; i++) {
+		arr[i] = rand() % 99 + 1;
+		cout << arr[i] << " ";
+	}
+	cout << endl;
+	int PnoPrNum = 0;
+	int* arrnoPrNum = FuncRemovePrimeNumbers(arr, P, PnoPrNum);
+	cout << "  Массив полученный из исходного не содержащий простых чисел:" << endl;
+	cout << "    ";
+	for (int i = 0; i < PnoPrNum; i++)
+		cout << arrnoPrNum[i] << " ";
+	cout << endl;
+	delete[] arr;
+	delete[] arrnoPrNum;
+	system("pause");
+
+	cout << "\n\tЗадание 7 \"Функция распределяющая положительные, отрицательные и нулевые\n";
+	cout << "\t\t\tэлементы массива в отдельные динамические массивы\"\n\n";
+	int R;
+	cout << "  Введите целое положительное число определяющее размер массива: ";
+	cin >> R;
+	int* array = new int[R];
+	cout << "  Генерация целочисленного массива:" << endl;
+	cout << "  ";
+	for (int i = 0; i < R; i++) {
+		array[i] = (rand() % 6) * (rand() % 2 == 0 ? 1 : -1);
+		cout << (array[i] < 0 ? " " : "  ") << array[i];
+	}
+	cout << endl;	
+	FuncSeparationSigns(array, R);
+	system("pause");
+
+	cout << "\n\t\tСТРОКИ\n";
+	string str;
+	int numChar, word;
+	char symbol;
+
+	cout << "\n\tЗадание 1 \"Функция удаляющая из строки символ с заданным номером\"\n\n";
+	str = "Shroedinger`s cat";
+	cout << "  Исходная строка: " << str << endl;
+	cout << "  Введите позицию символа в строке, который необходимо удалить (позиция первого символа – 1): ";
+	cin >> numChar;
+	FuncDelChar(str, numChar);
+	cout << "  Преобразованная строка: " << str << endl;
+	system("pause");
+
+	cout << "\n\tЗадание 2 \"Функция удаляющая из строки все вхождения в неё данного символа\"\n\n";
+	str = "Demon Laplace";
+	cout << "  Исходная строка: " << str << endl;
+	cout << "  Введите символ, все вхождения которого необходимо удалить из строки: ";
+	cin >> symbol;
+	FuncDelAllChar(str, symbol);
+	cout << "  Преобразованная строка: " << str << endl;
+	system("pause");
+
+	cout << "\n\tЗадание 3 \"Функция вставляющая в строку в указанную позицию заданный символ\"\n\n";
+	str = "Maxwell's demon";
+	cout << "  Исходная строка: " << str << endl;
+	cout << "  Введите позицию в строке, куда необходимо вставить символ (позиция первого символа – 1): ";
+	cin >> numChar;
+	cout << "  Введите символ, который необходимо вставить: ";
+	cin >> symbol;
+	FuncInsChar(str, numChar, symbol);
+	cout << "  Преобразованная строка: " << str << endl;
+	system("pause");
+
+	cout << "\n\tЗадание 4 \"Замена в строке всех символов точки \".\" на символы восклицательного знака \"!\"\n\n";
+	cout << "  Введите текст: ";
+	getline(cin, str);
+	getline(cin, str); // оператор повторён т.к. при выполнении кода программы целиком она "проскакивает" 1-ый
+	FuncRepChar(str);
+	cout << "  Преобразованная строка: " << str << endl;
+	system("pause");
+
+	cout << "\n\tЗадание 5 \"Подсчёт сколько раз символ встречается в строке\"\n\n";
+	cout << "  Введите текст: ";
+	getline(cin, str);
+	cout << "  Введите символ, количество вхождений которого необходимо посчитать: ";
+	cin >> symbol;	
+	cout << "  Результат: " << FuncCountChar(str, symbol) << endl;
+	system("pause");
+
+	cout << "\n\tЗадание 6 \"Определение во введённой строке количеств букв, цифр и остальных символов\"\n\n";
+	cout << "  Введите текст: ";
+	getline(cin, str);
+	getline(cin, str); // оператор повторён т.к. при выполнении кода программы целиком она "проскакивает" 1-ый
+	FuncStringComposit(str);
+	system("pause");
+
+	cout << "\n\tЗадание 7 \"Замена в строке всех пробелов на табуляции\"\n\n";
+	cout << "  Введите текст: ";
+	getline(cin, str);
+	int* arrStr = new int[str.length()];
+	int elemStr = 0;
+	for (int i = 0; i < str.length(); i++)
+		if (str[i] == ' ') {
+			arrStr[elemStr] = i;
+			elemStr++;
+		}
+	for (int i = 0; i < elemStr; i++) {
+		str.insert(arrStr[i], 3, ' ');
+		for (int j = i; j < elemStr; j++) {
+			arrStr[j] += 3;
+		}
+	}
+	cout << "  Преобразованная строка: " << str << endl;
+	delete[] arrStr;
+	system("pause");
+
+	cout << "\n\tЗадание 8 \"Определение в строке количеств букв, цифр и остальных символов\"\n\n";
+	str = "Killing machine, honour in the skies, B-17 flying home ...";
+	cout << "  Исследуемая строка: " << str << endl;
+	FuncStringComposit(str);
+	system("pause");
+
+	cout << "\n\tЗадание 9 \"Количество слов во введённом предложении\"\n\n";
+	word = 0;
+	cout << "  Введите предложение: ";
+	getline(cin, str);
+	for (int i = 1; i < str.size(); i++)
+		if (str[i - 1] != ' ' && (str[i] == ' ' || str[i + 1] == '\0')) word++;
+	cout << "  Количество слов в данном предложении :" << word << endl;
+	system("pause");
+
+	cout << "\n\tЗадание 10 \"Проверка строки на палиндромность\"\n\n";
+	cout << "  Внимание! При проверке:" << endl;
+	cout << "  – прописные буквы приравниваются к строчным;" << endl;
+	cout << "  – знаки препинания не учитываются;" << endl;
+	cout << "  – считаются одинаковыми буквы \"е\" и \"ё\", \"и\" и \"й\";" << endl;
+	cout << "  – буквы \"ь\" и \"ъ\" – игнорируются." << endl;
+	cout << "  Введите текст: ";
+	getline(cin, str);
+	for (int i = 0; i < str.size(); i++) {
+		if ((str[i] >= 65 && str[i] < 91) || (str[i] >= 97 && str[i] < 123) || (str[i] >= -64 && str[i] < 0) || (str[i] == -88) || (str[i] == -72)) {
+			str[i] = tolower(str[i]);
+			if (str[i] == 'ё') str[i] = 'е';
+			if (str[i] == 'й') str[i] = 'и';
+			if ((str[i] == 'ъ') || (str[i] == 'ь')) str[i] = ' ';
+		}
+		else
+			str[i] = ' ';		
+	}
+	FuncDelAllChar(str, ' ');
+	string strBW = str;
+	for (int i = 0; (i != (strBW.size() / 2)); i++)
+		swap (strBW[i], strBW[strBW.size() - (i + 1)]);
+	cout << "  Результат: строка " << (str == strBW ? "" : "не") << "палиндромна." << endl;
+	system("pause");
+	return 0;
+}
