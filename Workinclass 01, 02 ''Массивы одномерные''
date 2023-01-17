@@ -1,0 +1,191 @@
+#include <iostream>
+#include <math.h>
+#include <stdlib.h>
+#include <time.h>
+using namespace std;
+
+// Определение прибыли за период, min и max её значений
+void FuncProfit() {
+	float arProfit[12];
+	int monthStart, monthEnd;
+	float profit = 0;
+	cout << "  Заполните прибыль фирмы за год по месяцам (январь – 1 месяц, февраль – 2 месяц и т.д.):" << endl;
+	for (int i = 0; i < 12; i++) {
+		cout << "   – " << ++i << " месяц [тыс. руб.]: ";
+		i--;
+		cin >> arProfit[i];
+	}
+	cout << "  Введите границы периода, за который необходимо сформировать отчёт:" << endl;
+	cout << "   – начало периода [№ месяца]: ";
+	cin >> monthStart;
+	monthStart--;
+	cout << "   – окончание периода [№ месяца]: ";
+	cin >> monthEnd;
+	monthEnd--;
+	cout << endl;
+	float minProfit = arProfit[monthStart], maxProfit = arProfit[monthStart];
+	int  monthMin = monthStart, monthMax = monthStart;
+	for (int j = monthStart; j <= monthEnd; j++) {
+		profit += arProfit[j];
+		if (minProfit > arProfit[j]) {
+			minProfit = arProfit[j];
+			monthMin = j;
+		}
+		if (maxProfit < arProfit[j]) {
+			maxProfit = arProfit[j];
+			monthMax = j;
+		}
+	}
+	int monthMinKolvo = 0, monthMaxKolvo = 0;
+	for (int k = monthStart; k <= monthEnd; k++) {
+		if (minProfit == arProfit[k]) monthMinKolvo++;
+		if (maxProfit == arProfit[k]) monthMaxKolvo++;
+	}
+	int mMin = 0, nMax = 0;
+	if (monthMinKolvo == monthEnd - monthStart + 1)
+		cout << "  Ежемесячная прибыль полученная за весь период одинаковая и составляет – " << minProfit << " тыс. руб. в месяц.";
+	else {
+		cout << "  Минимальная прибыль получена в";
+		(monthMin != 1) ? cout << " " : cout << "о ";
+		for (int m = monthStart; m <= monthEnd; m++) {
+			if (minProfit == arProfit[m]) {
+				mMin++;
+				cout << ++m;
+				m--;
+				(mMin != monthMinKolvo) ? cout << ", " : cout << " ";
+			}
+		}
+		(monthMinKolvo == 1) ? cout << "месяце " : cout << "месяцах ";
+		cout << "и составила – " << minProfit << " тыс. руб., максимальная в";
+		(monthMax != 1) ? cout << " " : cout << "о ";
+		for (int n = monthStart; n <= monthEnd; n++) {
+			if (maxProfit == arProfit[n]) {
+				nMax++;
+				cout << ++n;
+				n--;
+				(nMax != monthMaxKolvo) ? cout << ", " : cout << " ";
+			}
+		}
+		cout << "– " << maxProfit << " тыс. руб.";
+	}
+	cout << endl;
+	cout << "  Прибыль полученная за весь период составляет – " << profit << " тыс. руб." << endl;
+}
+
+// Вывод массива в обратном порядке
+void FuncArr() {
+	const int arNumSize = 10;
+	int arNum[arNumSize], znak;
+	cout << "  Генерация целочисленного массива состоящего из " << arNumSize << " элементов: ";
+	for (int i = 0; i < arNumSize; i++) {
+		rand() % 2 == 0 ? znak = -1 : znak = 1;
+		arNum[i] = (1 + rand() % 99) * znak;
+		cout << arNum[i];
+		(i < 9) ? cout << ", " : cout << "." << endl;
+	}
+	cout << "  Вывод сгенерированного массива в обратном порядке: ";
+	for (int i = 0; (i != (arNumSize / 2)); i++)
+		swap(arNum[i], arNum[10 - (i + 1)]);
+	for (int i = 0; i < 10; i++) {
+		cout << arNum[i];
+		(i < 9) ? cout << ", " : cout << "." << endl;
+	}
+}
+
+void FuncPerimetr() {
+	const int sizePerim = 5;
+	float Perimetr[sizePerim];
+	float perimetr = 0;
+	cout << "  Введите длины сторон пятиугольника:" << endl;
+	for (int i = 0; i < sizePerim; i++) {
+		cout << "   – " << i + 1 << "-я сторона [см]: ";
+		cin >> Perimetr[i];
+		perimetr += Perimetr[i];
+	}
+	cout << "  Периметр пятиугольника = " << perimetr << " см." << endl;
+}
+
+// Удаление 0 из массива, сдвиг элементов влево и присвоение оставшимся значения -1
+void FuncDelZero() {
+	const int arSize = 15;
+	int ar[arSize], i, j;
+	cout << "  Генерация целочисленного массива:";
+	for (i = 0; i < arSize; i++) {
+		ar[i] = (rand() % 6) * (rand() % 2 == 0 ? 1 : -1);
+		cout << (ar[i] < 0 ? " " : "  ") << ar[i];
+	}
+	cout << endl;
+	for (i = 0; i < arSize; i++) {
+		for (j = arSize - 1; j > i; j--)
+			if ((ar[j - 1] == 0) && (ar[j] != 0)) swap(ar[j - 1], ar[j]);
+	}
+	cout << "  Преобразованный массив:";
+	for (i = 0; i < arSize; i++) {
+		if (ar[i] == 0) ar[i] = -1;
+		cout << (ar[i] < 0 ? " " : "  ") << ar[i];
+	}
+	cout << endl;
+}
+
+// Объединение массивов в порядке – положительные, нулевые и отрицательные элементы
+void FuncSortArr() {
+	const int arrSize = 5;
+	int arr1[arrSize], arr2[arrSize], conArr[arrSize * 2];
+	int i, j;
+	cout << "  Генерация 2-х целочисленных массивов:" << endl;
+	cout << "   – 1-ый:";
+	for (int i = 0; i < arrSize; i++) {
+		arr1[i] = (rand() % 6) * (rand() % 2 == 0 ? 1 : -1);
+		cout << (arr1[i] < 0 ? " " : "  ") << arr1[i];
+	}
+	cout << endl;
+	cout << "   – 2-ой:";
+	for (i = 0; i < arrSize; i++) {
+		arr2[i] = (rand() % 6) * (rand() % 2 == 0 ? 1 : -1);
+		cout << (arr2[i] < 0 ? " " : "  ") << arr2[i];
+	}
+	cout << endl;
+	for (i = 0; i < arrSize * 2; i++) {
+		if (i < arrSize) conArr[i] = arr1[i];
+		if (i >= arrSize) conArr[i] = arr2[i - arrSize];
+	}
+	for (i = 0; i < arrSize * 2; i++) {
+		for (j = arrSize * 2 - 1; j > i; j--) 
+			if ((conArr[j - 1] <= 0) && (conArr[j]>0)) swap (conArr[j - 1], conArr[j]);
+	}
+	for (i = 0; i < arrSize * 2; i++) {
+		for (j = arrSize * 2 - 1; j > i; j--)
+			if ((conArr[j - 1] < 0) && (conArr[j] == 0)) swap(conArr[j - 1], conArr[j]);
+	}
+	cout << "  Преобразованный массив:";
+	for (i = 0; i < arrSize * 2; i++)
+		cout << (conArr[i] < 0 ? " " : "  ") << conArr[i];
+	cout << endl;
+}
+
+int main() {
+	setlocale(LC_ALL, "Rus");
+	srand(time(NULL));
+
+	cout << "\n\t\tМАССИВЫ ОДНОМЕРНЫЕ\n";
+	cout << "\n\tЗадание 2.1, 2.4 \"Прибыль фирмы\"\n\n";
+	FuncProfit();
+	system("pause");
+
+	cout << "\n\tЗадание 2.2 \"Вывод одномерного массива в обратном порядке\"\n\n";
+	FuncArr();
+	system("pause");
+
+	cout << "\n\tЗадание 2.3 \"Периметр пятиугольника\"\n\n";
+	FuncPerimetr();
+	system("pause");
+
+	cout << "\n\tЗадание 1.1 \"Удаление 0 из массива, сдвиг элементов влево и присвоение оставшимся значения -1\"\n\n";
+	FuncDelZero();
+	system("pause");
+
+	cout << "\n\tЗадание 1.2 \"Объединение массивов в порядке – положительные, нулевые и отрицательные элементы\"\n\n";
+	FuncSortArr();
+	system("pause");
+	return 0;
+}
