@@ -718,6 +718,7 @@ template <typename T> void FuncMappingArray(T array[], int size) { // Отобр
 int main() {
 	setlocale(LC_ALL, "Rus");
 	srand(time(NULL));
+	
 	cout << "\n\t\tФУНКЦИИ. ПЕРЕГРУЗКА ФУНКЦИЙ\n";
 
 	cout << "\n\tЗадание 1, 3 \"Перегруженные функции и шаблоны (int, double, char)\"\n\n";
