@@ -832,5 +832,6 @@ int main() {
 	FuncFillingArray(array, size);
 	FuncSortPart(array, size);
 	FuncMappingArray(array, size);
+	system("pause");
 	return 0;
 }
