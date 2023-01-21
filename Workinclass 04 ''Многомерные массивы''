@@ -1,0 +1,118 @@
+#include <iostream>
+#include <math.h>
+#include <stdlib.h>
+#include <time.h>
+using namespace std;
+
+// Элементы массива
+void FuncArrayElements() {
+	int const rowNum = 3;
+	int const colNum = 4;
+	int arrayNum[rowNum][colNum];
+	int numMax, numMin, sumNum = 0;
+	double numAver;
+	cout << "  Генерация целочисленного массива:" << endl;
+	for (int i = 0; i < rowNum; i++) {
+		cout << "    ";
+		for (int j = 0; j < colNum; j++) {
+			arrayNum[i][j] = rand() % 89 + 10;
+			if (i == 0 && j == 0) {
+				numMin = arrayNum[i][j];
+				numMax = arrayNum[i][j];
+			}
+			else {
+				if (numMin > arrayNum[i][j]) numMin = arrayNum[i][j];
+				if (numMax < arrayNum[i][j]) numMax = arrayNum[i][j];
+			}
+			sumNum += arrayNum[i][j];
+			cout << arrayNum[i][j] << " ";
+		}
+		cout << endl;
+	}
+	numAver = sumNum / static_cast<double>(rowNum * colNum);
+	cout << "  Характеристики массива:" << endl;
+	cout << "  – сумма всех элементов массива = " << sumNum << ";" << endl;
+	cout << "  – среднее арифметическое всех элементов массива = " << numAver << ";" << endl;
+	cout << "  – минимальный элемент массива = " << numMin << ";" << endl;
+	cout << "  – максимальный элемент массива = " << numMax << "." << endl;
+}
+
+// Суммы элементов строк и столбцов массива
+void FuncSumRowsColumns() {
+	int const rowSum = 3;
+	int const colSum = 4;
+	int arraySum[rowSum][colSum];
+	int arraySumRow[rowSum] = {}, arraySumCol[colSum] = {};
+	int sumSum = 0;
+	for (int i = 0; i < rowSum; i++) {
+		cout << "   ";
+		for (int j = 0; j < colSum; j++) {
+			arraySum[i][j] = rand() % 89 + 10;
+			cout << " " << arraySum[i][j] << " ";
+			arraySumRow[i] += arraySum[i][j];
+			arraySumCol[j] += arraySum[i][j];
+			sumSum += arraySum[i][j];
+		}
+		cout << "| " << arraySumRow[i] << endl;
+	}
+	cout << "   ";
+	for (int k = 0; k <= colSum; k++)
+		cout << "____";
+	cout << "_";
+	cout << endl;
+	cout << "   ";
+	for (int l = 0; l < colSum; l++) {
+		cout << (arraySumCol[l] < 100 ? " " : "");
+		cout << arraySumCol[l] << " ";
+	}
+	cout << "| " << sumSum << endl;
+}
+
+// Преобразование массива
+void FuncArrayConversion() {
+	int const rowLongShort = 5;
+	int const colLong = 10;
+	int const colShort = 5;
+	int arrayLong[rowLongShort][colLong];
+	int arrayShort[rowLongShort][colShort];
+	cout << "  Исходный массив:" << endl;
+	for (int i = 0; i < rowLongShort; i++) {
+		cout << "   ";
+		for (int j = 0; j < colLong; j++) {
+			arrayLong[i][j] = rand() % 51;
+			cout << (arrayLong[i][j] < 10 ? "  ": " ");
+			cout << arrayLong[i][j] << " ";
+		}
+		cout << endl;
+	}
+	cout << "  Массив, состоящий из парных сумм соседних элементов исходного:" << endl;
+	for (int k = 0; k < rowLongShort; k++) {
+		cout << "   ";
+		for (int l = 0; l < colShort; l++) {
+			arrayShort[k][l] = arrayLong[k][l * 2] + arrayLong[k][l * 2 + 1];
+			cout << (arrayShort[k][l] < 10 ? "  " : " ");
+			cout << arrayShort[k][l] << " ";
+		}
+		cout << endl;
+	}
+}
+
+int main() {
+	setlocale(LC_ALL, "Rus");
+	srand(time(NULL));
+
+	cout << "\n\t\tМНОГОМЕРНЫЕ МАССИВЫ\n";
+
+	cout << "\n\tЗадание 1 \"Элементы массива\"\n\n";
+	FuncArrayElements();
+	system("pause");
+
+	cout << "\n\tЗадание 2 \"Суммы элементов строк и столбцов массива\"\n\n";
+	FuncSumRowsColumns();
+	system("pause");
+
+	cout << "\n\tЗадание 3 \"Преобразование массива\"\n\n";
+	FuncArrayConversion();
+	system("pause");
+	return 0;
+}
