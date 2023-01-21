@@ -105,70 +105,12 @@ void FuncPerimetr() {
 	cout << "  Периметр пятиугольника = " << perimetr << " см." << endl;
 }
 
-// Удаление 0 из массива, сдвиг элементов влево и присвоение оставшимся значения -1
-void FuncDelZero() {
-	const int arSize = 15;
-	int ar[arSize], i, j;
-	cout << "  Генерация целочисленного массива:";
-	for (i = 0; i < arSize; i++) {
-		ar[i] = (rand() % 6) * (rand() % 2 == 0 ? 1 : -1);
-		cout << (ar[i] < 0 ? " " : "  ") << ar[i];
-	}
-	cout << endl;
-	for (i = 0; i < arSize; i++) {
-		for (j = arSize - 1; j > i; j--)
-			if ((ar[j - 1] == 0) && (ar[j] != 0)) swap(ar[j - 1], ar[j]);
-	}
-	cout << "  Преобразованный массив:";
-	for (i = 0; i < arSize; i++) {
-		if (ar[i] == 0) ar[i] = -1;
-		cout << (ar[i] < 0 ? " " : "  ") << ar[i];
-	}
-	cout << endl;
-}
-
-// Объединение массивов в порядке – положительные, нулевые и отрицательные элементы
-void FuncSortArr() {
-	const int arrSize = 5;
-	int arr1[arrSize], arr2[arrSize], conArr[arrSize * 2];
-	int i, j;
-	cout << "  Генерация 2-х целочисленных массивов:" << endl;
-	cout << "   – 1-ый:";
-	for (int i = 0; i < arrSize; i++) {
-		arr1[i] = (rand() % 6) * (rand() % 2 == 0 ? 1 : -1);
-		cout << (arr1[i] < 0 ? " " : "  ") << arr1[i];
-	}
-	cout << endl;
-	cout << "   – 2-ой:";
-	for (i = 0; i < arrSize; i++) {
-		arr2[i] = (rand() % 6) * (rand() % 2 == 0 ? 1 : -1);
-		cout << (arr2[i] < 0 ? " " : "  ") << arr2[i];
-	}
-	cout << endl;
-	for (i = 0; i < arrSize * 2; i++) {
-		if (i < arrSize) conArr[i] = arr1[i];
-		if (i >= arrSize) conArr[i] = arr2[i - arrSize];
-	}
-	for (i = 0; i < arrSize * 2; i++) {
-		for (j = arrSize * 2 - 1; j > i; j--) 
-			if ((conArr[j - 1] <= 0) && (conArr[j]>0)) swap (conArr[j - 1], conArr[j]);
-	}
-	for (i = 0; i < arrSize * 2; i++) {
-		for (j = arrSize * 2 - 1; j > i; j--)
-			if ((conArr[j - 1] < 0) && (conArr[j] == 0)) swap(conArr[j - 1], conArr[j]);
-	}
-	cout << "  Преобразованный массив:";
-	for (i = 0; i < arrSize * 2; i++)
-		cout << (conArr[i] < 0 ? " " : "  ") << conArr[i];
-	cout << endl;
-}
-
 int main() {
 	setlocale(LC_ALL, "Rus");
 	srand(time(NULL));
 
 	cout << "\n\t\tМАССИВЫ ОДНОМЕРНЫЕ\n";
-	cout << "\n\tЗадание 2.1, 2.4 \"Прибыль фирмы\"\n\n";
+	cout << "\n\tЗадание 1, 4 \"Прибыль фирмы\"\n\n";
 	FuncProfit();
 	system("pause");
 
@@ -176,16 +118,8 @@ int main() {
 	FuncArr();
 	system("pause");
 
-	cout << "\n\tЗадание 2.3 \"Периметр пятиугольника\"\n\n";
+	cout << "\n\tЗадание 3 \"Периметр пятиугольника\"\n\n";
 	FuncPerimetr();
-	system("pause");
-
-	cout << "\n\tЗадание 1.1 \"Удаление 0 из массива, сдвиг элементов влево и присвоение оставшимся значения -1\"\n\n";
-	FuncDelZero();
-	system("pause");
-
-	cout << "\n\tЗадание 1.2 \"Объединение массивов в порядке – положительные, нулевые и отрицательные элементы\"\n\n";
-	FuncSortArr();
 	system("pause");
 	return 0;
 }
