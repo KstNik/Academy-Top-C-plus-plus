@@ -1,0 +1,173 @@
+#include<iostream>
+#include <stdio.h>
+#include <Windows.h>
+using namespace std;
+
+struct videoStore {
+	char movie[50];
+	char producer[50];
+	char genre[50];
+	double rating;
+	double price;
+};
+
+videoStore* FuncCreate(int size) {
+	videoStore* films = new videoStore[size];
+	return films;
+}
+
+void FuncDeleteFilms(videoStore* films) {
+	delete[]films;
+}
+
+videoStore FuncInput() {
+	videoStore film;
+	cout << "  Заполните поля:" << endl;
+	cout << "   1) Название фильма: ";
+	gets_s(film.movie, 50);
+	cout << "   2) Имя и фамилия режиссёра: ";
+	gets_s(film.producer, 50);
+	cout << "   3) Жанр: ";
+	gets_s(film.genre, 50);
+	cout << "   4) Рейтинг [от 0.0 до 10.0]: ";
+	cin >> film.rating;
+	cout << "   5) Стоимость [руб.]: ";
+	cin >> film.price;
+	return film;
+}
+
+videoStore* FuncAddFilm(videoStore* films, int& size, videoStore film) {
+	videoStore* tmp = FuncCreate(size + 1);
+	for (int i = 0; i < size; i++)
+		*(tmp + i) = *(films + i);
+	*(tmp + size) = film;
+	cout << "  Фильм " << film.movie << " добавлен в каталог." << endl;
+	FuncDeleteFilms(films);
+	size++;
+	return tmp;
+}
+
+videoStore* FuncDeleteTitleFilms(videoStore* films, int& size, char* filmName) {
+	videoStore* tmp = FuncCreate(size - 1);
+	int k = 0;
+	for (int i = 0; i < size; i++) {
+		if (strcmp(filmName, films[i].movie) == 0) continue;
+		tmp[k] = films[i];
+		k++;
+	}
+	cout << "  Фильм " << filmName << " удалён из каталога." << endl;
+	FuncDeleteFilms(films);
+	size--;
+	return tmp;
+}
+
+void FuncMovieDisplay(videoStore film) {
+	cout << film.movie << ", ";
+	cout << "реж. " << film.producer << ", ";
+	cout << "жанр " << film.genre << ", ";
+	cout << "рейтинг " << film.rating << ", ";
+	cout << "цена " << film.price << " руб." << endl;
+}
+
+void FuncMovieAllDisplay(videoStore* films, int size) {
+	for (int i = 0; i < size; i++) {
+		cout << (i + 1 < 10 ? "   " : "  ") << i + 1 << ". ";
+		FuncMovieDisplay(films[i]);
+	}
+	cout << endl;
+}
+
+void FuncSearch(videoStore* films, int& size, int number, char* search) {
+	if ((number > 1) && (number < 6)) {
+		bool flag = true;
+		double best = 0;
+		if (number == 5) {
+			for (int i = 0; i < size; i++)
+				if ((strcmp(search, films[i].genre) == 0) && (films[i].rating > best)) best = films[i].rating;
+		}
+		for (int i = 0; i < size; i++) {
+			if ((strcmp(search, (number == 2 ? films[i].movie : (number == 4 ? films[i].producer : films[i].genre))) == 0) && (number == 5 ? films[i].rating == best : true)) {
+				cout << "      ";
+				FuncMovieDisplay(films[i]);
+				flag = false;
+			}
+		}
+		if (flag) cout << "По запросу ничего не найдено!" << endl;
+		cout << endl;
+	}
+}
+
+int main() {
+	setlocale(LC_ALL, "rus");
+	SetConsoleOutputCP(1251);
+	SetConsoleCP(1251);
+
+	cout << "\n\t\tСТРУКТУРА\n";
+
+	cout << "\n\tЗадание \"Видеомагазин\"\n\n";
+
+	int size = 10;
+	videoStore* films = FuncCreate(size);
+	films[0] = { "Стражи галактики", "Джеймс Ганн", "фантастика", 8.7 , 149.00 };
+	films[1] = { "Марсианин", "Ридли Скотт", "фантастика", 8.3, 119.00 };
+	films[2] = { "Хоббит: Пустошь Смауга", "Питер Джексон", "фэнтези", 8.9, 125.00 };
+	films[3] = { "Аватар", "Джеймс Кэмерон", "фэнтези", 9.1, 129.00 };
+	films[4] = { "Терминатор: Судный день", "Джеймс Кэмерон", "боевик", 9.4, 109.00 };
+	films[5] = { "Маска", "Чак Рассел", "комедия", 8.5, 99.00 };
+	films[6] = { "Форд против Феррари", "Джеймс Мэнголд", "драмма", 8.8, 139.00 };
+	films[7] = { "Чудо на Гудзоне", "Клинт Иствуд", "драмма", 9.1, 105.00 };
+	films[8] = { "Мидуэй", "Роланд Эммерих", "военный фильм", 8.4, 115.00 };
+	films[9] = { "Грейхаунд", "Аарон Шнайдер", "военный фильм", 9.2, 124.00 };
+	int number;
+	do {
+		cout << "  Пункты меню:" << endl;
+		cout << "   1. Отображение всех фильмов." << endl;
+		cout << "   2. Поиск по названию фильма." << endl;
+		cout << "   3. Поиск по жанру." << endl;
+		cout << "   4. Поиск по режиссёру." << endl;
+		cout << "   5. Самый популярный фильм в жанре." << endl;
+		cout << "   6. Добавление фильма." << endl;
+		cout << "   7. Удаление фильма." << endl;
+		cout << "   *. Выход из программы – любой другой символ." << endl;
+		cout << "  Выберите пункт и введите соответствующее число: ";
+		cin >> number;
+		cin.ignore();
+		switch (number) {
+		case 1: 
+			FuncMovieAllDisplay(films, size);
+			break;
+		case 6: {
+			films = FuncAddFilm(films, size, FuncInput());
+			cout << endl;
+		}
+			break;
+		case 7: {
+			char filmName[50];
+			cout << "  Введите название фильма: ";
+			gets_s(filmName, 50);
+			boolean flag = false;
+			for (int i = 0; i < size; i++)
+				if (strcmp(filmName, films[i].movie) == 0) flag = true;
+			if (flag == true)
+				films = FuncDeleteTitleFilms(films, size, filmName);
+			else
+				cout << "      По запросу ничего не найдено!" << endl;
+		}
+		      break;
+		default: {
+			if ((number > 1) && (number < 6)) {
+				char search[50];
+				cout << "  Введите ";
+				if (number == 2) cout << "название фильма: ";
+				if ((number == 3) || (number == 5)) cout << "жанр: ";
+				if (number == 4) cout << "фамилию и имя режиссёра: ";
+				gets_s(search, 50);
+				FuncSearch(films, size, number, search);
+			}
+		}
+			break;
+		}
+	} while ((number >= 1) && (number <= 7));
+	system("pause");
+	return 0;
+}
