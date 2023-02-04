@@ -390,7 +390,7 @@ int main() {
 	cout << "  Введите текст: ";
 	getline(cin, str);
 	cout << "  Введите символ, количество вхождений которого необходимо посчитать: ";
-	cin >> symbol;	
+	cin >> symbol;
 	cout << "  Результат: " << FuncCountChar(str, symbol) << endl;
 	system("pause");
 
