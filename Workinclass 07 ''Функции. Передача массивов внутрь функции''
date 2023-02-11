@@ -1,0 +1,149 @@
+#include <iostream>
+#include <math.h>
+#include <stdlib.h>
+#include <time.h>
+using namespace std;
+
+// Генерация целочисленного массива
+int FuncFillingArray(int array[], int size, int minValue = 10, int maxValue = 99, bool sing = false) {
+	array[size];
+	int i;
+	cout << "  Генерация одномерного целочисленного массива, состоящего из " << size << " элементов:" << endl;
+	cout << "    ";
+	for (i = 0; i < size; i++) {
+		array[i] = (sing ? (rand() % 2 == 0 ? 1 : -1) : 1) * (rand() % (maxValue + 1 - minValue) + minValue);
+		cout << array[i];
+		(i < size - 1) ? cout << ", " : cout << "." << endl;
+	}
+	return array[size];
+}
+
+// "Пузырьковая" сортировка с изменяемым направлением
+template <typename T> T FuncBubbleSortReorder(T array[], int size, bool sortOrder = false) {
+	array[size];
+	bool sorted;
+	int i, j, k;
+	for (i = 0; i < size; i++) {
+		sorted = true;
+		for (j = size - 1; j > i; j--) {
+			if (sortOrder) {
+				if (array[j - 1] < array[j]) {
+					swap(array[j - 1], array[j]);
+					sorted = false;
+				}
+			}
+			else {
+				if (array[j - 1] > array[j]) {
+					swap(array[j - 1], array[j]);
+					sorted = false;
+				}
+			}
+		}
+		if (sorted) break;
+	}
+	return array[size];
+}
+
+// Сортировка вставками 1-ой половины массива по убыванию, 2-ой – по возрастанию
+template <typename T> T FuncSortPartDescAsc(T array[], int size) {
+	array[size];
+	T elemDesc, elemAsc;
+	int i, j;
+	for (i = 0; i < size; i++) {
+		if (i < size / 2) {
+			elemDesc = array[i];
+			for (j = i - 1; j >= 0 && array[j] <= elemDesc; j--)
+				array[j + 1] = array[j];
+			array[j + 1] = elemDesc;
+		}
+		else {
+			elemAsc = array[i];
+			for (j = i - 1; j >= size / 2 && array[j] >= elemAsc; j--)
+				array[j + 1] = array[j];
+			array[j + 1] = elemAsc;
+		}
+	}
+	return array[size];
+}
+
+// "Пузырьковая" сортировка массива меду крайними отрицательными элементами
+template <typename T> T FuncBubbleSortBetNegativeElem(T array[], int size) {
+	array[size];
+	bool sorted;
+	int i, j, k = -1, l = -1;
+	for (i = 0; i < size; i++) {
+		if (array[i] < 0) {
+			k = i;
+			break;
+		}
+	}
+	for (i = size - 1; i >= 0; i--) {
+		if (array[i] < 0) {
+			l = i;
+			break;
+		}
+	}
+	if (l - k > 2) {
+		for (i = k + 1; i < l - 1; i++) {
+			sorted = true;
+			for (j = l - 1; j > i; j--) {
+				if (array[j - 1] > array[j]) {
+					swap(array[j - 1], array[j]);
+					sorted = false;
+				}
+			}
+			if (sorted) break;
+		}
+	}
+	return array[size];
+}
+
+// Отображение массива на экране
+template <typename T> void FuncMappingArray(T array[], int size) {
+	array[size];
+	int i;
+	cout << "  Преобразованный массив:" << endl;
+	cout << "    ";
+	for (i = 0; i < size; i++) {
+		cout << array[i];
+		(i < size - 1) ? cout << ", " : cout << "." << endl;
+	}
+}
+
+int main() {
+	setlocale(LC_ALL, "Rus");
+	srand(time(NULL));
+
+	cout << "\n\t\t\tФУНКЦИИ. ПЕРЕДАЧА МАССИВА ВНУТРЬ ФУНКЦИИ\n";
+	const int size = 10;
+	int array[size];
+
+	cout << "\n\tЗадание 1 \"Сортировка массива\"\n\n";
+	FuncFillingArray(array, size);
+	bool sortOrder;
+	cout << "  Для сортировки массива по убыванию введите число отличное от нуля," << endl;
+	cout << "    по возрастанию – любой другой символ или ноль: ";
+	cin >> sortOrder;
+	if (sortOrder) FuncBubbleSortReorder(array, size, sortOrder);
+	else FuncBubbleSortReorder(array, size);
+	FuncMappingArray(array, size);
+	cout << "  ";
+	system("pause");
+
+	cout << "\n\tЗадание 2 \"Сортировка вставками 1-ой половины массива по убыванию, 2-ой – по возрастанию\"\n\n";
+	FuncFillingArray(array, size);
+	FuncSortPartDescAsc(array, size);
+	FuncMappingArray(array, size);
+	cout << "  ";
+	system("pause");
+
+	cout << "\n\tЗадание 3 \"Сортировка массива меду крайними отрицательными элементами\"\n\n";
+	int minValue = 0, maxValue = 20;
+	bool sing = true;
+	FuncFillingArray(array, size, minValue, maxValue, sing);
+	FuncBubbleSortBetNegativeElem(array, size);
+	FuncMappingArray(array, size); 
+	cout << "  ";
+	system("pause");
+	return 0;
+}
