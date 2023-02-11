@@ -1,0 +1,120 @@
+#include <iostream>
+#include <math.h>
+using namespace std;
+
+// Вывод прямоугольника на консоль
+void FuncDrawRectangle(int width, int height) {
+	for (int i = 0; i <= height; i++) {
+		cout << "  ";
+		i != 0 ? cout << "|" : cout << " ";
+		for (int j = 0; j < width; j++) {
+			if ((i == 0) || (i == height)) cout << "__";
+			else cout << "  ";
+		}
+		i != 0 ? cout << "|" : cout << " ";
+		cout << endl;
+	}
+}
+
+// Вычисление факториала числа (рекурсия)
+long long Factorial(long long number) {
+	long long result;
+	if (number == 1) return 1;
+	result = Factorial(number - 1) * number;
+	return result;
+}
+
+// Проверка числа – простое или составное
+bool FuncPrimeNumber(int number) {
+	bool result = true;
+	if ((number == 2) || (number == 3)) result = true;
+	else {
+		for (int i = 2; i <= floor(sqrt(number)); i++)
+			if (number % i == 0) {
+				result = false;
+				break;
+			}
+	}
+	return (result && (number != 1));
+}
+
+// Возведение числа в степень (рекурсия)
+template <typename T> T FuncExp(T number, int exp) {
+	if (exp == 0)
+		return 1;
+	return number * FuncExp(number, exp - 1);
+}
+
+// Определение наибольшего двух чисел
+template <typename T1, typename T2> T2 FuncMax(T1 x, T2 y) {
+	return x > y ? x : y;
+}
+
+// Определение знака числа
+bool FuncNumberSing(double number) {
+	return number < 0 ? false : true;
+}
+
+int main() {
+	setlocale(LC_ALL, "Rus");
+
+	cout << "\n\t\t\tФУНКЦИИ\n";
+
+	cout << "\n\tЗадание 1 \"Прямоугольник\"\n\n";
+	int width, height;
+	cout << "  Введите 2 целых положительных числа:" << endl;
+	cout << "    – ширину прямоугольника: ";
+	cin >> width;
+	cout << "    – высоту прямоугольника: ";
+	cin >> height;
+	FuncDrawRectangle(width, height);
+	cout << "  ";
+	system("pause");
+
+	cout << "\n\tЗадание 2 \"Факториал\"\n\n";
+	long long n;
+	cout << "  Введите целое положительное число: ";
+	cin >> n;
+	cout << "    " << n << "! = " << Factorial(n) << endl;
+	cout << "  ";
+	system("pause");
+
+	cout << "\n\tЗадание 3 \"Проверка числа – простое или составное\"\n\n";
+	int num;
+	cout << "  Введите целое положительное число: ";
+	cin >> num;
+	cout << "    - ";
+	FuncPrimeNumber(num) ? cout << "простое" : cout << "составное";
+	cout << endl;
+	cout << "  ";
+	system("pause");
+
+	cout << "\n\tЗадание 4 \"Куб числа\"\n\n";
+	double number;
+	int exp = 3;
+	cout << "  Введите число: ";
+	cin >> number;
+	cout << "    " << number << "*" << number << "*" << number << " = " << FuncExp(number, exp) << endl;
+	cout << "  ";
+	system("pause");
+
+	cout << "\n\tЗадание 5 \"Наибольшее двух чисел\"\n\n";
+	double x, y;
+	cout << "  Введите числа:" << endl;
+	cout << "    - 1-ое: ";
+	cin >> x;
+	cout << "    - 2-ое: ";
+	cin >> y;
+	cout << "    max (" << x << ", " << y <<") = " << FuncMax(x, y) << endl;
+	cout << "  ";
+	system("pause");
+
+	cout << "\n\tЗадание 6 \"Определение знака числа\"\n\n";
+	double numb;
+	cout << "  Введите число: ";
+	cin >> numb;
+	cout << "    результат (0 - число отрицательное, 1 - ноль или положительное) = " << FuncNumberSing(numb) << endl;
+	cout << "  ";
+	system("pause");
+	return 0;
+}
