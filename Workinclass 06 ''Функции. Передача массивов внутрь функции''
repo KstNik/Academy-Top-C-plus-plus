@@ -1,0 +1,137 @@
+#include <iostream>
+#include <math.h>
+#include <stdlib.h>
+#include <time.h>
+using namespace std;
+
+// Проверка числа – простое или составное
+bool FuncPrimeNumber(int number) {
+	bool result = true;
+	if ((number == 2) || (number == 3)) result = true;
+	else {
+		for (int i = 2; i <= floor(sqrt(number)); i++)
+			if (number % i == 0) {
+				result = false;
+				break;
+			}
+	}
+	return (result && (number != 1));
+}
+
+// Генерация целочисленного массива
+int FuncFillingArray(int array[], int size, int minValue = 10, int maxValue = 99, bool sing = false) {
+	array[size];
+	int i;
+	cout << "  Генерация одномерного целочисленного массива, состоящего из " << size << " элементов:" << endl;
+	cout << "    ";
+	for (i = 0; i < size; i++) {
+		array[i] = (sing ? (rand() % 2 == 0 ? 1 : -1) : 1) * (rand() % (maxValue + 1 - minValue) + minValue);
+		cout << array[i];
+		(i < size - 1) ? cout << ", " : cout << "." << endl;
+	}
+	return array[size];
+}
+
+// Минимальный и максимальный элементы массива, их позиции
+template <typename T> void FuncExtremumArray(T array[], int size) {
+	T minNumber = array[0], maxNumber = array[0];
+	int i, j = -1, k = -1, m = 0, n = 0;
+	for (i = 1; i < size; i++) {
+		if (minNumber > array[i]) minNumber = array[i];
+		if (maxNumber < array[i]) maxNumber = array[i];
+	}
+	for (i = 0; i < size; i++) {
+		if (minNumber == array[i]) m++;
+		if (maxNumber == array[i]) n++;
+	}
+	int* posMinNumber = new int[m];
+	int* posMaxNumber = new int[n];
+	for (i = 0; i < size; i++) {
+		if (minNumber == array[i]) {
+			j++;
+			posMinNumber[j] = i;
+		}
+		if (maxNumber == array[i]) {
+			k++;
+			posMaxNumber[k] = i;
+		}
+	}
+	if (m != size) {
+		cout << "  Элементы массива:" << endl;
+		cout << "    - min = " << minNumber << ", его индекс";
+		m == 1 ? cout << " - " : cout << "ы - ";
+		for (i = 0; i < m; i++) {
+			cout << posMinNumber[i];
+			(i < m - 1) ? cout << ", " : cout << ";" << endl;
+		}
+		cout << "    - max = " << maxNumber << ", его индекс";
+		n == 1 ? cout << " - " : cout << "ы - ";
+		for (i = 0; i < n; i++) {
+			cout << posMaxNumber[i];
+			(i < n - 1) ? cout << ", " : cout << "." << endl;
+		}
+	}
+	else
+		cout << "  Все элементы массива равны между собой." << endl;
+	delete[] posMinNumber;
+	delete[] posMaxNumber;
+};
+
+// Изменение порядка следования элементов массива на противоположный
+template <typename T> T FuncRewersOrder(T array[], int size) {
+	array[size];
+	int i;
+	for (i = 0; (i != (size / 2)); i++)
+		swap(array[i], array[10 - (i + 1)]);
+	return array[size];
+}
+
+// Отображение массива на экране
+template <typename T> void FuncMappingArray(T array[], int size) {
+	array[size];
+	int i;
+	cout << "  Преобразованный массив:" << endl;
+	cout << "    ";
+	for (i = 0; i < size; i++) {
+		cout << array[i];
+		(i < size - 1) ? cout << ", " : cout << "." << endl;
+	}
+}
+
+// Количество простых чисел в массиве
+int FuncPrimeNumberArray(int array[], int size) {
+	array[size];
+	int i, primeNumber = 0;
+	for (i = 0; i < size; i++)
+		if (FuncPrimeNumber(array[i])) primeNumber++;
+	return primeNumber;
+}
+
+int main() {
+	setlocale(LC_ALL, "Rus");
+	srand(time(NULL));
+
+	cout << "\n\t\t\tФУНКЦИИ. ПЕРЕДАЧА МАССИВА ВНУТРЬ ФУНКЦИИ\n";
+	const int size = 10;
+	int array[size];
+
+	cout << "\n\tЗадание 1 \"Минимальный и максимальный элементы массива\"\n\n";
+	FuncFillingArray(array, size);
+	FuncExtremumArray(array, size);
+	cout << "  ";
+	system("pause");
+
+	cout << "\n\tЗадание 2 \"Вывод одномерного массива в обратном порядке\"\n\n";
+	FuncFillingArray(array, size);
+	FuncRewersOrder(array, size);
+	FuncMappingArray(array, size);
+	cout << "  ";
+	system("pause");
+
+	cout << "\n\tЗадание 3 \"Количество простых чисел в массиве\"\n\n";
+	FuncFillingArray(array, size);
+	cout << "  Количество простых чисел в массиве = " << FuncPrimeNumberArray(array, size) << "." << endl;
+	cout << "  ";
+	system("pause");
+	return 0;
+}
