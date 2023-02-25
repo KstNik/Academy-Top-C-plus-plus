@@ -1,0 +1,262 @@
+#include <iostream>
+#include <math.h>
+#include <stdlib.h>
+#include <time.h>
+using namespace std;
+
+void FuncChessBoard() {
+	cout << "  Шахматная доска:" << endl;
+	cout << R"(       10    20    30    40    50    60    70    80
+    |******      ******      ******      ******      |
+  1 |******      ******      ******      ******      |
+    |******      ******      ******      ******      |
+    |      ******      ******      ******      ******|
+  2 |      ******      ******      ******      ******|
+    |      ******      ******      ******      ******|
+    |******      ******      ******      ******      |
+  3 |******      ******      ******      ******      |
+    |******      ******      ******      ******      |
+    |      ******      ******      ******      ******|
+  4 |      ******      ******      ******      ******|
+    |      ******      ******      ******      ******|
+    |******      ******      ******      ******      |
+  5 |******      ******      ******      ******      |
+    |******      ******      ******      ******      |
+    |      ******      ******      ******      ******|
+  6 |      ******      ******      ******      ******|
+    |      ******      ******      ******      ******|
+    |******      ******      ******      ******      |
+  7 |******      ******      ******      ******      |
+    |******      ******      ******      ******      |
+    |      ******      ******      ******      ******|
+  8 |      ******      ******      ******      ******|
+    |      ******      ******      ******      ******|)";
+	cout << endl;
+}
+
+void Visualization4x4(int array[][4], int size) {
+	int i, j;
+	cout << "   ___________________________" << endl;
+	for (i = 0; i < size; i++) {
+		cout << "  |      |      |      |      |" << endl;
+		cout << "  |";
+		for (j = 0; j < size; j++) {
+			if (array[i][j] != 0)
+				array[i][j] > 9 ? cout << "  " << array[i][j] << "  |" : cout << "   " << array[i][j] << "  |";
+			else cout << "      |";
+		}
+		cout << endl;
+		cout << "  |______|______|______|______|" << endl;
+	}
+}
+
+void Visualization3x3(int array[][3], int size) {
+	int i, j;
+	cout << "     __10____20____30_" << endl;
+	for (i = 0; i < size; i++) {
+		cout << "    |     |     |     |" << endl;
+		cout << "  " << i + 1 << " |";
+		for (j = 0; j < size; j++)
+			array[i][j] == -1 ? cout << "  O  |" : (array[i][j] == 1 ? cout << "  X  |" : cout << "     |");
+		cout << endl;
+		cout << "    |_____|_____|_____|" << endl;
+	}
+}
+
+int FuncLogics(int array[][3], int arrayOption[], int size, int sizeOption) {
+	int i, j, maxElement, minElement;
+	bool flagLogics;
+	for (i = 0; i < sizeOption; i++)
+		arrayOption[i] = 0;
+	for (i = 0; i < size; i++) {
+		for (j = 0; j < size; j++) {
+			arrayOption[i] += array[i][j];
+			arrayOption[i + size] += array[j][i];
+		}
+		arrayOption[6] += array[i][i];
+		arrayOption[7] += array[i][size - 1 - i];
+	}
+	maxElement = arrayOption[0];
+	minElement = arrayOption[0];
+	for (i = 0; i < sizeOption; i++) {
+		if (maxElement < arrayOption[i]) maxElement = arrayOption[i];
+		if (minElement > arrayOption[i]) minElement = arrayOption[i];
+	}
+	flagLogics = false;
+	for (i = 0; i < size; i++) {
+		for (j = 0; j < size; j++)
+			if (array[i][j] == 0) flagLogics = true;
+	}
+	return maxElement == 3 ? 1 : (minElement == -3 ? 2 : (!flagLogics ? 3 : 0));
+}
+
+int main() {
+	setlocale(LC_ALL, "Rus");
+	srand(time(NULL));
+
+	cout << "\n\t\tФУНКЦИИ. ПЕРЕГРУЗКА ФУНКЦИЙ. РЕКУРСИЯ\n";
+	int i, j;
+	bool flag;
+
+	cout << "\n\tЗадание 1 \"Путь шахматного коня\"\n\n";
+  // ВНИМАНИЕ! ПРОГРАММА НЕ ОТЫСКИВАЕТ ХОДЫ И ВЫПОЛНЕНА С ПОМОЩЬЮ ИТЕРАЦИИ (Т.Е. ЦИКЛА) А НЕ РЕКУРСИИ, КАК ТРЕБУЕТ ЗАДАНИЕ!
+	const int sizeСheck = 64;
+	int a, n;
+	int arrayMoves[sizeСheck] = { 11, 32, 44, 56, 75, 87, 68, 47, 28, 16, 35, 14, 22, 41, 33, 45, 37, 18, 26, 38, 17, 25, 46, 34, 13, 21, 42, 63, 51, 72, 84, 76, 88, 67, 55, 43, 24, 12, 31, 52, 71, 83, 64, 85, 77, 58, 66, 54, 62, 81, 73, 61, 82, 74, 53, 65, 86, 78, 57, 36, 48, 27, 15, 23 };
+	FuncChessBoard ();
+	do {
+		flag = true;
+		cout << "  Введите координату клетки – двухзначное число," << endl;
+		cout << "  где находится конь (например 11): ";
+		cin >> n;
+		for (int i = 0; i < sizeСheck; i++)
+			if (n == arrayMoves[i]) flag = false;
+	} while (flag);
+	while (n != arrayMoves[0]) {
+		a = arrayMoves[0];
+		for (int i = 0; i < sizeСheck; i++)
+			if (i > 0) arrayMoves[i - 1] = arrayMoves[i];
+		arrayMoves[sizeСheck - 1] = a;
+	}
+	cout << "  Ходы шахматного коня:" << endl;
+	cout << "  ";
+	for (int i = 1; i < sizeСheck; i++) {
+		cout << arrayMoves[i] << " ";
+		if (i % 21 == 0) cout << endl;
+		if (i % 21 == 0) cout << "  ";
+	}
+	system("pause");
+
+	cout << "\n\tЗадание 2 \"Игра \"Пятнашки\"\n\n";
+	const int size15 = 4;
+	int arrayLine[size15 * size15] = { 1, 2, 3, 4, 8, 7, 6, 5, 9, 10, 11, 12, 15, 14, 13, 0};
+	int arrayShift[size15 * size15 * size15 * size15];
+	int array15[size15][size15];
+	int number, iZero, jZero, iNum, jNum;
+	for (i = 0; i < size15 * size15 * size15 * size15; i++)
+		arrayShift[i] = rand()%13;
+	for (i = 0; i < size15 * size15 * size15 * size15; i++) {
+		swap(arrayLine[arrayShift[i]], arrayLine[arrayShift[i] + 1]);
+		swap(arrayLine[arrayShift[i]+1], arrayLine[arrayShift[i] + 2]);
+	}
+	for (i = 0; i < size15; i++) {
+		for (j = 0; j < size15; j++) {
+			array15[i][i % 2 == 0 ? j : size15 - 1 - j] = arrayLine[i * size15 + j];
+		}
+	}
+	for (i = 0; i < size15; i++) {
+		for (j = 0; j < size15; j++) {
+			if (array15[i][j] == 0) {
+				iZero = i;
+				jZero = j;
+			}
+		}
+	}
+	do{
+		Visualization4x4(array15, size15);
+		flag = false;
+		do {
+			cout << "  Введите числовое значение элемента, который необходимо переместить" << endl;
+			cout << "  (0 – выход из игры): ";
+			cin >> number;
+			for (i = 0; i < size15; i++) {
+				for (j = 0; j < size15; j++) {
+					if (array15[i][j] == number) {
+						iNum = i;
+						jNum = j;
+					}
+				}
+			}
+		} while ((!((((iNum - iZero == 1) || (iNum - iZero == -1)) && (jNum == jZero)) || (((jNum - jZero == 1) || (jNum - jZero == -1)) && (iNum == iZero)))) && (number != 0));
+		swap(array15[iNum][jNum], array15[iZero][jZero]);
+		swap(iNum, iZero);
+		swap(jNum, jZero);
+		for (i = 0; i < size15; i++) {
+			for (j = 0; j < size15; j++) {
+				if (array15[i][j] != (i * size15 + j + 1 < 16 ? i * size15 + j + 1 : 0)) {
+					flag = true;
+					break;
+				}
+			}
+		}
+	} while ((flag) && (number != 0));
+	if (number != 0) {
+		Visualization4x4(array15, size15);
+		cout << "  Игра завершена!" << endl;
+	}
+	cout << "  ";
+	system("pause");
+
+	cout << "\n\tЗадание 3 \"Игра \"Крестики – нолики\"\n\n";
+	const int size = 3;
+	const int sizeOption = 8;
+	int array[size][size] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+	int arrayOption[sizeOption];
+	int index, max, maxIndex, m;
+	cout << "  Внимание!" << endl; 
+	cout << "  Программа случайным выбором определяет, кто начинает игру." << endl;
+	cout << "  Вы заполняете свободные клетки \"X\", компьютер – \"O\"." << endl;
+	if (rand() % 2 == 0) {
+		cout << "  Первым ходит компьютер." << endl;
+		array[1][1] = -1;
+	}
+	do {
+		Visualization3x3(array, size);
+		do {
+			flag = true;
+			cout << "  Ваш ход, введите координаты одной из свободных клеток (например 11): ";
+			cin >> index;
+			if (array[index % 10 - 1][index / 10 - 1] == 0) flag = false;
+		} while (flag);
+		array[index % 10 - 1][index / 10 - 1] = 1;
+		if ((FuncLogics(array, arrayOption, size, sizeOption) != 1) && (FuncLogics(array, arrayOption, size, sizeOption) != 3)) {
+			FuncLogics(array, arrayOption, size, sizeOption);
+			max = sizeOption - 1;
+			maxIndex = -3;
+			for (i = sizeOption - 1; i >= 0; i--) {
+				if (arrayOption[i] == -2) {
+					max = i;
+					break;
+				}
+				if (arrayOption[i] > maxIndex) {
+					maxIndex = arrayOption[i];
+					max = i;
+				}
+			}
+			if (array[1][1] != 0) {
+				m = 0;
+				do {
+					flag = true;
+					if (m != 0) max = sizeOption - m;
+					for (i = 0; i < size; i++) {
+						if (max < 6) {
+							if (array[(max < 3 ? max : i)][(max < 3 ? i : max)] == 0) {
+								array[(max < 3 ? max : i)][(max < 3 ? i : max)] = -1;
+								flag = false;
+								break;
+							}
+						}
+						else {
+							if (array[i][(max < 7 ? i : size - 1 - i)] == 0) {
+								array[i][(max < 7 ? i : size - 1 - i)] = -1;
+								flag = false;
+								break;
+							}
+						}
+					}
+					m++;
+				} while ((flag) && (sizeOption >= m));
+			}
+			else
+				array[1][1] = -1;
+			FuncLogics(array, arrayOption, size, sizeOption);
+		}
+	} while (FuncLogics(array, arrayOption, size, sizeOption) == 0);
+	Visualization3x3(array, size);
+	cout << "  Результат игры: ";
+	FuncLogics(array, arrayOption, size, sizeOption) == 1 ? cout << "Вы победили." : (FuncLogics(array, arrayOption, size, sizeOption) == 2 ? cout << "выиграл компьютер." : cout << "ничья.");
+	cout << endl;
+	cout << "  ";
+	system("pause");
+	return 0;
+}
