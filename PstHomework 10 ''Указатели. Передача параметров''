@@ -1,0 +1,188 @@
+#include <iostream>
+#include <math.h>
+#include <stdlib.h>
+#include <time.h>
+using namespace std;
+
+// Распределение динамической памяти
+void FuncDynamicMemoryAllocation(int*& array, int& size) {
+	array = new int[size];
+}
+
+// Заполнение массива целочисленными значениями
+void FuncFillingDynamicArray(int*& array, int& size, int minValue = 10, int maxValue = 99, bool sing = false) {
+	int i;
+	for (i = 0; i < size; i++) {
+		array[i] = (sing ? (rand() % 2 == 0 ? 1 : -1) : 1) * (rand() % (maxValue + 1 - minValue) + minValue);
+	}
+}
+
+// Отображение массива на экране
+template <typename T> void FuncMappingDynamicArray(T*& array, int& size) {
+	int i;
+	cout << "    ";
+	for (i = 0; i < size; i++) {
+		cout << array[i];
+		(i < size - 1) ? cout << ", " : cout << "." << endl;
+	}
+}
+
+// Удаление динамического массива
+// ВНИМАНИЕ! ФУНКЦИЯ РАБОТАЕТ НЕКОРРЕКТНО, ПОЭТОМУ НЕ ВКЛЮЧЕНА В MAIN
+void FuncDeletingDynamicArray(int*& array) {
+	delete[] array;
+}
+
+// Добавление элемента в конец массива
+void FuncAddingElementEndDynamicArray(int*& array, int& size, int element) {
+	size++;
+	array[size - 1] = element;
+}
+
+// Вставка элемента по указанному индексу
+void FuncInsertElementByIndexDynamicArray(int*& array, int& size, int element, int index) {
+	int i;
+	if ((index >= 0) && (index <= size)) {
+		size++;
+		for (i = size - 1; i >= index; i--)
+			array[i] = array[i - 1];
+		array[index] = element;
+	}
+}
+
+// Удаление элемента по указанному индексу
+void FuncDeletElementByIndexDynamicArray(int*& array, int& size, int index) {
+	int i;
+	if ((index >= 0) && (index < size)) {
+		for (i = index; i < size; i++)
+			array[i] = array[i + 1];
+		size--;
+	}
+}
+
+// Проверка числа – простое или составное
+bool FuncPrimeNumber(int number) {
+	bool result = true;
+	if ((number == 2) || (number == 3)) result = true;
+	else {
+		for (int i = 2; i <= floor(sqrt(number)); i++)
+			if (number % i == 0) {
+				result = false;
+				break;
+			}
+	}
+	return (result && (number != 1));
+}
+
+// Удаление простых чисел из массива
+void FuncRemovePrimeNumbersDynamicArray(int*& array, int& size) {
+	int i = 0;
+	while (i < size) {
+		if ((FuncPrimeNumber(array[i]))) 
+			FuncDeletElementByIndexDynamicArray(array, size, i);
+		else ++i;
+	}
+}
+
+// Распределение положительных, отрицательных и нулевых элементов в отдельные динамические массивы
+void FuncSeparationSigns(int* array, int size) {
+	int* arrayMinuc = new int[size];
+	int* arrayZero = new int[size];
+	int* arrayPlus = new int[size];
+	int sizeMinuc = 0, sizeZero = 0, sizePlus = 0;
+	for (int i = 0; i < size; i++) {
+		if (array[i] < 0) {
+			arrayMinuc[sizeMinuc] = array[i];
+			sizeMinuc++;
+		}
+		else if (array[i] == 0) {
+			arrayZero[sizeZero] = array[i];
+			sizeZero++;
+		}
+		else {
+			arrayPlus[sizePlus] = array[i];
+			sizePlus++;
+		}
+	}
+	cout << "  Массивы полученные из исходного, содержащие только:" << endl;
+	cout << "  а) отрицательные значения:" << endl;
+	cout << "     ";
+	for (int i = 0; i < sizeMinuc; i++) {
+		cout << arrayMinuc[i];
+		(i < sizeMinuc - 1) ? cout << ", " : cout << ";";
+	}
+	cout << endl;
+	cout << "  б) нулевые значения:" << endl;
+	cout << "     ";
+	for (int i = 0; i < sizeZero; i++) {
+		cout << arrayZero[i];
+		(i < sizeZero - 1) ? cout << ", " : cout << ";";
+	}
+	cout << endl;
+	cout << "  в) положительные значения:" << endl;
+	cout << "     ";
+	for (int i = 0; i < sizePlus; i++) {
+		cout << arrayPlus[i];
+		(i < sizePlus - 1) ? cout << ", " : cout << ".";
+	}
+	cout << endl;
+	delete[] arrayMinuc;
+	delete[] arrayZero;
+	delete[] arrayPlus;
+}
+
+int main() {
+	setlocale(LC_ALL, "Rus");
+	srand(time(NULL));
+
+	cout << "\n\t\tУКАЗАТЕЛИ. ПЕРЕДАЧА ПАРАМЕТРОВ\n";
+	int size, element, index;
+	int* array;
+
+	cout << "\n\tЗадание 1 \"Функции для работы с динамическим массивом\"\n\n";
+	cout << "  Введите целое положительное число определяющее размер массива: ";
+	cin >> size;
+	FuncDynamicMemoryAllocation(array, size);
+	cout << "  Генерация целочисленного массива и отображение его на экране:" << endl;
+	FuncFillingDynamicArray(array, size);
+	FuncMappingDynamicArray(array, size);
+	cout << "  Добавление элемента в конец массива, введите целое положительное число – значение элемента: ";
+	cin >> element;
+	FuncAddingElementEndDynamicArray(array, size, element);
+	cout << "  Преобразованный массив:" << endl;
+	FuncMappingDynamicArray(array, size);
+	cout << "  Вставка элемента в массив, введите 2 целых числа:" << endl;
+	cout << "    – индекс элемента (индекс 1-го элемента = 0): ";
+	cin >> index;
+	cout << "    – значение элемента: ";
+	cin >> element;
+	FuncInsertElementByIndexDynamicArray(array, size, element, index);
+	cout << "  Преобразованный массив:" << endl;
+	FuncMappingDynamicArray(array, size);
+	cout << "  Удаление элемента из массива, введите целое положительное число или 0 – индекс элемента: ";
+	cin >> index;
+	FuncDeletElementByIndexDynamicArray(array, size, index);
+	cout << "  Преобразованный массив:" << endl;
+	FuncMappingDynamicArray(array, size);
+	cout << "  ";
+	system("pause");
+
+	cout << "\n\tЗадание 2 \"Удаление из массива всех простых чисел\"\n\n";
+	FuncRemovePrimeNumbersDynamicArray(array, size);
+	cout << "  Преобразованный массив:" << endl;
+	FuncMappingDynamicArray(array, size);
+	cout << "  ";
+	system("pause");
+
+	cout << "\n\tЗадание 3 \"Распределение положительных, отрицательных и нулевых элементов\n";
+	cout << "\t\t\tмассива в отдельные динамические массивы\"\n\n";
+	int minValue = 0, maxValue = 3;
+	bool sing = true;
+	cout << "  Генерация целочисленного массива и отображение его на экране:" << endl;
+	FuncFillingDynamicArray(array, size, minValue, maxValue, sing);
+	FuncMappingDynamicArray(array, size);
+	FuncSeparationSigns(array, size);
+	cout << "  ";
+	system("pause");
+	return 0;
+}
