@@ -1,0 +1,162 @@
+#include <iostream>
+#include <math.h>
+#include <stdlib.h>
+#include <time.h>
+using namespace std;
+
+void FuncWorkArrays(int variant) {
+	int M, N;
+	bool flag;
+	cout << "  Введите 2 целых положительных числа определяющих размеры массивов:" << endl;
+	cout << "  – 1-го: ";
+	cin >> M;
+	cout << "  – 2-го: ";
+	cin >> N;
+	int* arA = new int[M];
+	int* arB = new int[N];
+	cout << "  Генерация 2-х целочисленных массивов:" << endl;
+	cout << "  – 1-го: ";
+	for (int i = 0; i < M; i++) {
+		arA[i] = rand() % 9 + 1;
+		cout << arA[i] << " ";
+	}
+	cout << endl;
+	cout << "  – 2-го: ";
+	for (int i = 0; i < N; i++) {
+		arB[i] = rand() % 9 + 1;
+		cout << arB[i] << " ";
+	}
+	cout << endl;
+	int* arC = new int[M + N];
+	int O = 0;
+	switch (variant) {
+	case 1:
+		for (int i = 0; i < M; i++) {
+			arC[O] = arA[i];
+			O++;
+		}
+		for (int i = 0; i < N; i++) {
+			arC[O] = arB[i];
+			O++;
+		}
+		break;
+	case 2:
+		for (int i = 0; i < M; i++) {
+			flag = true;
+			for (int j = 0; j < N; j++) {
+				if (arA[i] == arB[j]) {
+					flag = false;
+					break;
+				}
+			}
+			if (flag == false) {
+				arC[O] = arA[i];
+				O++;
+			}
+		}
+		for (int i = 0; i < N; i++) {
+			flag = true;
+			for (int j = 0; j < M; j++) {
+				if (arB[i] == arA[j]) {
+					flag = false;
+					break;
+				}
+			}
+			if (flag == false) {
+				arC[O] = arB[i];
+				O++;
+			}
+		}
+		break;
+	}
+	int* arD = new int[O];
+	int P = 0;
+	for (int i = 0; i < O; i++) {
+		flag = false;
+		for (int j = i + 1; j < O; j++) {
+			if (arC[i] == arC[j]) {
+				flag = true;
+				break;
+			}
+		}
+		if (flag == false) {
+			arD[P] = arC[i];
+			P++;
+		}
+	}
+	cout << "  Массив, соответствующий условиям задания:" << endl;
+	if ((variant != 1 ? P : O) > 0) {
+		cout << "    ";
+		for (int i = 0; i < (variant != 1 ? P : O); i++)
+			cout << (variant != 1 ? arD[i] : arC[i]) << " ";
+	}
+	else
+		cout << "  – не существует.";
+	cout << endl;
+	delete[] arA;
+	delete[] arB;
+	delete[] arC;
+	delete[] arD;
+}
+
+void FuncRemovEvenOddElem() {
+	int M, sign;
+	char eVoD;
+	cout << "  Введите целое положительное число определяющее размер массива: ";
+	cin >> M;
+	int* arA = new int[M];
+	cout << "  Генерация целочисленного массива:" << endl;
+	cout << "    ";
+	for (int i = 0; i < M; i++) {
+		arA[i] = rand() % 9 + 1;
+		cout << arA[i] << " ";
+	}
+	cout << endl;
+	cout << "  Введите символ какие числа необходимо удалить из массива," << endl;
+	cout << "  1 – нечётные, 2 – чётные: ";
+	cin >> eVoD;
+	int* arB = new int[M];
+	int N = 0;
+	for (int i = 0; i < M; i++) {
+		arA[i] >= 0 ? sign = 1 : sign = -1;
+		arA[i] *= sign;
+		if (((eVoD == '2') || (eVoD == '1')) && (arA[i] % 2 == (eVoD == '2' ? 1 : 0))) {
+			arB[N] = arA[i] * sign;
+			N++;
+		}
+	}
+	cout << "  Преобразованный массив:" << endl;
+	cout << "    ";
+	for (int i = 0; i < N; i++)
+		cout << arB[i] << " ";
+	cout << endl;
+	delete[] arA;
+	delete[] arB;
+}
+
+int main() {
+	setlocale(LC_ALL, "Rus");
+	srand(time(NULL));
+
+	cout << "\n\t\tУКАЗАТЕЛИ\n";
+	int variant;
+
+	cout << "\n\tЗадание 1 \"Создание массива, в котором собраны элементы 1-го и 2-го массивов\"\n\n";
+	variant = 1;
+	FuncWorkArrays(variant);
+	cout << "  ";
+	system("pause");
+
+	cout << "\n\tЗадание 2 \"Создание массива, в котором собраны общие элементы\n";
+	cout << "\t\t\t1-го и 2-го массивов, без повторений\"\n\n";
+	variant = 2;
+	FuncWorkArrays(variant);
+	cout << "  ";
+	system("pause");
+
+	cout << "\n\tЗадание 3 \"Удаление из массива чётных или нечётных элементов\n";
+	FuncRemovEvenOddElem();
+	cout << "  ";
+	system("pause");
+	return 0;
+}
