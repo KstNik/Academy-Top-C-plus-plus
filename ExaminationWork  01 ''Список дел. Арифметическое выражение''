@@ -6,7 +6,7 @@
 #include <Windows.h>
 using namespace std;
 
-bool FuncLeapYear(int i) {
+ool FuncLeapYear(int i) {
 	bool leapYear;
 	(((i % 100 != 0) && (i % 4 == 0)) || ((i % 100 == 0) && ((i / 100) % 4 == 0))) ? leapYear = true : leapYear = false;
 	return leapYear;
