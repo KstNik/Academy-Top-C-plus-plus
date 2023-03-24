@@ -1,0 +1,364 @@
+#include <iostream>
+#include <stack>
+using namespace std;
+const double pi = acos(-1);
+double Sin(double x)
+{
+	return (round(sin(x) * 10000000) / 10000000);
+}
+double Cos(double x)
+{
+	return (round(cos(x) * 10000000) / 10000000);
+}
+double ctg(double x)
+{
+	double a = Cos(x);
+	double b = Sin(x);
+	return (a / b);
+}
+struct simvol
+{
+	char type;
+	double value;
+};
+bool mat(stack <simvol> &n, stack <simvol> &o, simvol &item)
+{
+	double a,b,c;
+	a = n.top().value;
+	n.pop();
+	switch (o.top().type)
+	{
+		case '+':
+		{
+			b = n.top().value;
+			n.pop();
+			c = a + b;
+			item.type = '0';
+			item.value = c;
+			n.push(item);
+			o.pop();
+			break;
+		}
+		case '-':
+		{
+			b = n.top().value;
+			n.pop();
+			c = b - a;
+			item.type = '0';
+			item.value = c;
+			n.push(item);
+			o.pop();
+			break;
+		}
+		case '*':
+		{
+			b = n.top().value;
+			n.pop();
+			c = a * b;
+			item.type = '0';
+			item.value = c;
+			n.push(item);
+			o.pop();
+			break;
+		}
+		case '/':
+		{
+			b = n.top().value;
+			if (a==0)
+			{
+				cerr << "\nНа 0 делить нельзя :(" << endl;
+				return false;
+			}
+			else
+			{
+				n.pop();
+				c = (b / a);
+				item.type = '0';
+				item.value = c;
+				n.push(item);
+				o.pop();
+				break;
+			}
+		}
+		case '^':
+		{
+			b = n.top().value;
+			n.pop();
+			c = pow(b,a);
+			item.type = '0';
+			item.value = c;
+			n.push(item);
+			o.pop();
+			break;
+		}
+		case 's':
+		{
+			c = Sin(a);
+			item.type = '0';
+			item.value = c;
+			n.push(item);
+			o.pop();
+			break;
+		}
+		case 'c':
+		{
+			c = Cos(a);
+			item.type = '0';
+			item.value = c;
+			n.push(item);
+			o.pop();
+			break;
+		}
+		case 't':
+		{
+			if (cos(a)==0)
+			{
+				return false;
+				cerr << "\nНеверный аргумент для тангенса ^(" << endl;
+			}
+			else
+			{
+				c = tan(a);
+				item.type = '0';
+				item.value = c;
+				n.push(item);
+				o.pop();
+				break;
+			}
+		}
+		case 'g':
+		{
+			if (sin(a) == 0)
+			{
+				return false;
+				cerr << "\nНеверный аргумент для катангенса ;(" << endl;
+			}
+			else
+			{
+				c = ctg(a);
+				item.type = '0';
+				item.value = c;
+				n.push(item);
+				o.pop();
+				break;
+			}
+		}
+		case 'e':
+		{
+			c = exp(a);
+			item.type = '0';
+			item.value = c;
+			n.push(item);
+			o.pop();
+			break;
+		}
+		case 'q':
+		{
+			c = sqrt(a);
+			item.type = '0';
+			item.value = c;
+			n.push(item);
+			o.pop();
+			break;
+		}
+		default:
+		{
+			cerr << "\nОшибка :(" << endl;
+			return false;
+			break;
+		}
+	}
+	return true;
+}
+int rang(char c)
+{
+	if (c=='+' || c=='-')
+	{
+		return 1;
+	}
+	if (c == '*' || c == '/')
+	{
+		return 2;
+	}
+	if (c == '^')
+	{
+		return 3;
+	}
+	if (c == 's' || c == 'c' || c == 't' || c == 'g' || c == 'e')
+	{
+		return 4;
+	}
+	return 0;
+}
+int main()
+{
+	setlocale(LC_ALL, "rus");
+	stack <simvol> n;
+	stack <simvol> o;
+	simvol item;
+	char c;
+	double value;
+	bool f = 1;
+	cout << "Для использования числа Пи введите 'p'" << endl;
+	cout << "Для использования числа Е введите 'exp(1)'" << endl;
+	cout << "Для использования тригонометрических функций введите:\n'sin(x)', 'cos(x)', 'tan(x)', 'ctg(x)', 'exp(x)', где 'x' - это число" << endl;
+	cout << "'+'- сумма двух числел\n'-' - разница двух числел\n'*' - произведение двух числел\n'/' - частное двух числел\n'^' - квадрат числа\n'sqr(x)' - квадратный корень числа, где 'x' - это число" << endl;
+	cout << "Введите выражение:" << endl;
+	while (true)
+	{
+		c = cin.peek();
+		if (c == '\n')
+		{
+			break;
+		}
+		if (c == ' ')
+		{
+			cin.ignore();
+			continue;
+		}
+		if (c == 's' || c == 'c' || c == 't' || c == 'e')
+		{
+			char tr[3];
+			for (int i = 0; i < 3; i++)
+			{
+				c = cin.peek();
+				tr[i] = c;
+				cin.ignore();
+			}
+			if (tr[0] == 's' && tr[1] == 'i' && tr[2] == 'n')
+			{
+				item.type = 's';
+				item.value = 0;
+				o.push(item);
+				continue;
+			}
+			if (tr[0] == 'c' && tr[1] == 'o' && tr[2] == 's')
+			{
+				item.type = 'c';
+				item.value = 0;
+				o.push(item);
+				continue;
+			}
+			if (tr[0] == 't' && tr[1] == 'a' && tr[2] == 'n')
+			{
+				item.type = 't';
+				item.value = 0;
+				o.push(item);
+				continue;
+			}
+			if (tr[0] == 'c' && tr[1] == 't' && tr[2] == 'g')
+			{
+				item.type = 'g';
+				item.value = 0;
+				o.push(item);
+				continue;
+			}
+			if (tr[0] == 's' && tr[1] == 'q' && tr[2] == 'r')
+			{
+				item.type = 'q';
+				item.value = 0;
+				o.push(item);
+				continue;
+			}
+			if (tr[0] == 'e' && tr[1] == 'x' && tr[2] == 'p')
+			{
+				item.type = 'e';
+				item.value = 0;
+				o.push(item);
+				continue;
+			}
+		}
+		if (c == 'p')
+		{
+			item.type = '0';
+			item.value = pi;
+			n.push(item);
+			f = 0;
+			cin.ignore();
+			continue;
+		}
+		if (c >= '0' && c <= '9' || c == '-' && f == 1)
+		{
+			cin >> value;
+			item.type = '0';
+			item.value = value;
+			n.push(item);
+			f = 0;
+			continue;
+		}
+		if (c == '+' || c == '-' && f == 0 || c == '*' || c == '/' || c == '^')
+		{
+			if (o.size() == 0)
+			{
+				item.type = c;
+				item.value = 0;
+				o.push(item);
+				cin.ignore();
+				continue;
+			}
+			if (o.size() != 0 && rang(c) > rang(o.top().type))
+			{
+				item.type = c;
+				item.value = 0;
+				o.push(item);
+				cin.ignore();
+				continue;
+			}
+			if (o.size() != 0 && rang(c) <= rang(o.top().type))
+			{
+				if (mat(n, o, item) == false)
+				{
+					system("pause");
+					return 0;
+				}
+				continue;
+			}
+		}
+		if (c == '(')
+		{
+			item.type = c;
+			item.value = 0;
+			o.push(item);
+			cin.ignore();
+			continue;
+		}
+		if (c == ')')
+		{
+			while (o.top().type != '(')
+			{
+				if (mat(n, o, item) == false)
+				{
+					system("pause");
+					return 0;
+				}
+				else
+				{
+					continue;
+				}
+			}
+			o.pop();
+			cin.ignore();
+			continue;
+		}
+		else
+		{
+			cout << "\nНеверно введено выражение :(" << endl;
+			system("pause");
+			return 0;
+		}
+	}
+	while (o.size() != 0)
+	{
+		if (mat(n, o, item) == false)
+		{
+			system("pause");
+			return 0;
+		}
+		else
+		{
+			continue;
+		}
+	}
+	cout << "Ответ: " << n.top().value << endl;
+	return 42;
+}
