@@ -1,0 +1,108 @@
+#include<iostream>
+using namespace std;
+
+struct Fraction {
+	int m_ = 1;
+	int n_ = 1;
+	int FuncGreatComDiv(int n, int m) {
+		if (m == 0) return n;
+		return FuncGreatComDiv(m, n % m);
+	}
+	int FuncExamZero() {
+		int n;
+		bool flag = false;
+		do {
+			flag ? cout << "       не может равняться 0, введите другое число: " : cout << "       знаменатель: ";
+			cin >> n;
+			flag = true;
+		} while (n == 0);
+		return n;
+	}
+	void FuncInput(int m, int n) {
+		m_ = m;
+		n_ = n;
+	}
+	void FuncReduct(int x) {
+		m_ /= x;
+		n_ /= x;
+	}
+	void FuncSumSubt(int m, int n, bool direct) {
+		m_ *= n;
+		m *= n_;
+		direct ? m_ += m : m_ -= m;
+		n_ *= n;
+	}
+	bool FuncMultDiv(int m, int n, bool direct) {
+		if (direct) {
+			m_ *= m;
+			n_ *= n;
+		}
+		else {
+			m_ *= n;
+			n_ *= m;
+		}
+		return n_ != 0 ? true : false;
+	}
+	void FuncVisual() {
+		if (n_ < 0) {
+			m_ *= -1;
+			n_ *= -1;
+		}
+		cout << m_ << '/' << n_;
+	}
+};
+
+int main() {
+	setlocale(LC_ALL, "rus");
+
+	cout << "\n\t\"Арифметические действия над дробями\"\n\n";
+	Fraction fractBasic, fractAuxil;
+	int a, b, c, d;
+	char sign;
+	bool direct = true, flag = true;
+	cout << "  Введите 2 дроби:" << endl;
+	cout << "  - 1-ая числитель: ";
+	cin >> a;
+	b = fractBasic.FuncExamZero();
+	cout << "  - 2-ая числитель: ";
+	cin >> c;
+	d = fractBasic.FuncExamZero();
+	fractBasic.FuncInput(a, b);
+	fractBasic.FuncReduct(fractBasic.FuncGreatComDiv(a, b));
+	fractAuxil.FuncInput(c, d);
+	fractAuxil.FuncReduct(fractAuxil.FuncGreatComDiv(c, d));
+	cout << "  Выберите действие:" << endl;
+	cout << "  - сложение - \"+\";" << endl;
+	cout << "  - вычитание - \"-\";" << endl;
+	cout << "  - умножение - \"*\";" << endl;
+	cout << "  - деление - \"/\"." << endl;
+	cout << "  Введите символ: ";
+	cin >> sign;
+	if ((sign == '+') || (sign == '-') || (sign == '*') || (sign == '/')) {
+		switch (sign) {
+		case '+':
+			fractBasic.FuncSumSubt(fractAuxil.m_, fractAuxil.n_, direct);
+			break;
+		case '-':
+			direct = false;
+			fractBasic.FuncSumSubt(fractAuxil.m_, fractAuxil.n_, direct);
+			break;
+		case '*':
+			fractBasic.FuncMultDiv(fractAuxil.m_, fractAuxil.n_, direct);
+			break;
+		case '/':
+			direct = false;
+			flag = fractBasic.FuncMultDiv(fractAuxil.m_, fractAuxil.n_, direct);
+			break;
+		}
+		if (flag) {
+			cout << "  Ответ: ";
+			fractBasic.FuncReduct(fractBasic.FuncGreatComDiv(fractBasic.m_, fractBasic.n_));
+			fractBasic.FuncVisual();
+		}
+		else
+			cout << "  Ошибка! Деление на ноль!";
+		cout << endl;
+	}
+	return 0;
+}
