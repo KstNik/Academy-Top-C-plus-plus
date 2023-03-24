@@ -1,0 +1,117 @@
+#include<iostream>
+using namespace std;
+
+class Fraction {
+private:
+	int m_ = 1;
+	int n_ = 1;
+public:
+	void FuncInput(int m, int n) {
+		m_ = m;
+		n_ = n;
+	}
+	int FuncGreatComDiv(int n, int m) {
+		if (m == 0) return n;
+		return FuncGreatComDiv(m, n % m);
+	}
+	int FuncExamZero() {
+		int n;
+		bool flag = false;
+		do {
+			flag ? cout << "       не может равняться 0, введите другое число: " : cout << "       знаменатель: ";
+			cin >> n;
+			flag = true;
+		} while (n == 0);
+		return n;
+	}
+	void FuncReduct(int x) {
+		m_ /= x;
+		n_ /= x;
+	}
+	void FuncSumSubt(int m, int n, bool direct) {
+		m_ *= n;
+		m *= n_;
+		direct ? m_ += m : m_ -= m;
+		n_ *= n;
+	}
+	bool FuncMultDiv(int m, int n, bool direct) {
+		if (direct) {
+			m_ *= m;
+			n_ *= n;
+		}
+		else {
+			m_ *= n;
+			n_ *= m;
+		}
+		return n_ != 0 ? true : false;
+	}
+	int FuncОutput(bool screen, int index = 0) {
+		if (n_ < 0) {
+			m_ *= -1;
+			n_ *= -1;
+		}
+		int arrFract[3] = { 0, m_, n_ };
+		if (screen) cout << m_ << '/' << n_;
+		return arrFract[index];
+	}
+};
+
+int main() {
+	setlocale(LC_ALL, "rus");
+
+	cout << "\n\t\"Арифметические действия над дробями. Возвращение результата как значения функции\"\n\n";
+	Fraction fractBasic, fractAuxil;
+	int a, b, c, d;
+	char sign;
+	bool direct = true, screen = true, flag = true;
+	cout << "  Введите 2 дроби:" << endl;
+	cout << "  - 1-ая числитель: ";
+	cin >> a;
+	b = fractBasic.FuncExamZero();
+	cout << "  - 2-ая числитель: ";
+	cin >> c;
+	d = fractBasic.FuncExamZero();
+	fractBasic.FuncInput(a, b);
+	fractBasic.FuncReduct(fractBasic.FuncGreatComDiv(a, b));
+	fractAuxil.FuncInput(c, d);
+	fractAuxil.FuncReduct(fractAuxil.FuncGreatComDiv(c, d));
+	cout << "  Выберите действие:" << endl;
+	cout << "  - сложение - \"+\";" << endl;
+	cout << "  - вычитание - \"-\";" << endl;
+	cout << "  - умножение - \"*\";" << endl;
+	cout << "  - деление - \"/\"." << endl;
+	cout << "  Введите символ: ";
+	cin >> sign;
+	if ((sign == '+') || (sign == '-') || (sign == '*') || (sign == '/')) {
+		switch (sign) {
+		case '+':
+			fractBasic.FuncSumSubt(c, d, direct);
+			break;
+		case '-':
+			direct = false;
+			fractBasic.FuncSumSubt(c, d, direct);
+			break;
+		case '*':
+			fractBasic.FuncMultDiv(c, d, direct);
+			break;
+		case '/':
+			direct = false;
+			flag = fractBasic.FuncMultDiv(c, d, direct);
+			break;
+		}
+		if (flag) {
+			cout << "  Ответ: ";
+			fractBasic.FuncReduct(fractBasic.FuncGreatComDiv(a, b));
+			fractBasic.FuncОutput(screen);
+			cout << " - отображение результата в консоли" << endl;
+			screen = false;
+			cout << "         ";
+			cout << fractBasic.FuncОutput(screen, 1) << '/' << fractBasic.FuncОutput(screen, 2);
+			cout << " - вывод значений функции";
+		}
+		else
+			cout << "  Ошибка! Деление на ноль!";
+		cout << endl;
+	}
+	return 0;
+}
