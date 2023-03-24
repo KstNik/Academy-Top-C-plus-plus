@@ -1,0 +1,291 @@
+#include <iostream>
+#include <time.h>
+#include <vector>
+#include <algorithm>
+#include <windows.h>
+#include <chrono>
+using namespace std;
+int game2(vector <string> a, vector <string> b, int size)
+{
+    int q, w, v=0,t;
+    bool z = 0;
+    auto start = chrono::high_resolution_clock::now();
+    for (int j = 0; j < size; j++)
+    {
+        if (size == 4)
+        {
+            cout << a[j] << "\t";
+            if (j == 1)
+            {
+                cout << endl;
+            }
+        }
+        if (size == 16)
+        {
+            cout << a[j] << "\t";
+            if (j == 3 || j == 7 || j == 11)
+            {
+                cout << endl;
+            }
+        }
+        if (size == 64)
+        {
+            cout << a[j] << "\t";
+            if (j == 7 || j == 15 || j == 23 || j == 31 || j == 39 || j == 47 || j == 55)
+            {
+                cout << endl;
+            }
+        }
+    }
+    Sleep(10000);
+    system("cls");
+    for (int j = 0; j < size; j++)
+    {
+        if (size == 4)
+        {
+            cout << b[j] << "\t";
+            if (j == 1)
+            {
+                cout << endl;
+            }
+        }
+        if (size == 16)
+        {
+            cout << b[j] << "\t";
+            if (j == 3 || j == 7 || j == 11)
+            {
+                cout << endl;
+            }
+        }
+        if (size == 64)
+        {
+            cout << b[j] << "\t";
+            if (j == 7 || j == 15 || j == 23 || j == 31 || j == 39 || j == 47 || j == 55)
+            {
+                cout << endl;
+            }
+        }
+    }
+    do
+    {
+        cout << "\n" << "Выберите карты:\n";
+        cout << "Выберите первую карту:";
+        cin >> q;
+        cout << "Выберите вторую карту:";
+        cin >> w;
+        if (q>size || w>size)
+        {
+            do
+            {
+                cout << "Неверные карты, выберите снова\n";
+                cout << "Выберите первую карту:";
+                cin >> q;
+                cout << "Выберите вторую карту:";
+                cin >> w;
+            } while (q>size || w>size);
+        }
+        if (a[q - 1] == a[w - 1])
+        {
+            b[q - 1] = a[q - 1];
+            b[w - 1] = a[w - 1];
+            system("cls");
+            for (int j = 0; j < size; j++)
+            {
+                if (size == 4)
+                {
+                    cout << b[j] << "\t";
+                    if (j == 1)
+                    {
+                        cout << endl;
+                    }
+                }
+                if (size == 16)
+                {
+                    cout << b[j] << "\t";
+                    if (j == 3 || j == 7 || j == 11)
+                    {
+                        cout << endl;
+                    }
+                }
+                if (size == 64)
+                {
+                    cout << b[j] << "\t";
+                    if (j == 7 || j == 15 || j == 23 || j == 31 || j == 39 || j == 47 || j == 55)
+                    {
+                        cout << endl;
+                    }
+                }
+            }
+            Beep(420, 420);
+        }
+        if (a[q - 1] != a[w - 1])
+        {
+            system("cls");
+            for (int j = 0; j < size; j++)
+            {
+                if (j == q - 1)
+                {
+                    cout << a[q - 1] << "\t";
+                }
+                if (j == w - 1)
+                {
+                    cout << a[w - 1] << "\t";
+                }
+                if (j != q - 1 && j != w - 1)
+                {
+                    cout << b[j] << "\t";
+                }
+                if (size == 4)
+                {
+                    if (j == 1)
+                    {
+                        cout << endl;
+                    }
+                }
+                if (size == 16)
+                {
+                    if (j == 3 || j == 7 || j == 11)
+                    {
+                        cout << endl;
+                    }
+                }
+                if (size == 64)
+                {
+                    if (j == 7 || j == 15 || j == 23 || j == 31 || j == 39 || j == 47 || j == 55)
+                    {
+                        cout << endl;
+                    }
+                }
+            }
+            Beep(100, 1000);
+        }
+        Sleep(1000);
+        system("cls");
+        for (int j = 0; j < size; j++)
+        {
+            if (size == 4)
+            {
+                cout << b[j] << "\t";
+                if (j == 1)
+                {
+                    cout << endl;
+                }
+            }
+            if (size == 16)
+            {
+                cout << b[j] << "\t";
+                if (j == 3 || j == 7 || j == 11)
+                {
+                    cout << endl;
+                }
+            }
+            if (size == 64)
+            {
+                cout << b[j] << "\t";
+                if (j == 7 || j == 15 || j == 23 || j == 31 || j == 39 || j == 47 || j == 55)
+                {
+                    cout << endl;
+                }
+            }
+        }
+        v++;
+        if (a == b)
+        {       
+            z = 1;
+        }
+    } while (z==0);
+    auto end = chrono::high_resolution_clock::now();
+    chrono::duration<double> duration = end - start;
+    cout << "\nВы выиграли ;)" << "\nВремя игры:" << duration.count() << "\nКоличество ходов:" << v;
+    Beep(440, 300);
+    Beep(329, 300);
+    Beep(440, 300);
+    Beep(329, 300);
+    Beep(440, 300);
+    Beep(415, 300);
+    Beep(415, 300);
+    return 0;
+}
+int main()
+{
+    int a;
+    setlocale(LC_ALL, "rus");
+    int size2 = 4, size4 = 16, size8 = 64, size16 = 256;    
+    vector <string> a2 = { "a","a","b","b" };
+    vector <string> b2 = { "1","2","3","4" };
+    vector <string> a4 = { "a","a","b","b","c","c","d","d","e","e","f","f","g","g","h","h" };
+    vector <string> b4 = { "1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16"};
+    vector <string> a8 = { "a","a","b","b","c","c","d","d","e","e","f","f","g","g","h","h",
+                            "i","i","j","j","k","k","l","l","m","m","n","n","o","o","p","p",
+                            "q","q","r","r","s","s","t","t","u","u","v","v","w","w","x","x",
+                            "y","y","z","z","*","*","+","+","-","-","|","|","~","~","@","@" };
+    vector <string> b8 = { "1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16",
+                           "17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32",
+                           "33","34","35","36","37","38","39","40","41","42","43","44","45","46","47","48",
+                           "49","50","51","52","53","54","55","56","57","58","59","60","61","62","63","64" };
+    vector <string> a16 = { "a","a","b","b","c","c","d","d","e","e","f","f","g","g","h","h",
+                            "i","i","j","j","k","k","l","l","m","m","n","n","o","o","p","p",
+                            "q","q","r","r","s","s","t","t","u","u","v","v","w","w","x","x",
+                            "y","y","z","z","*","*","+","+","-","-","|","|","~","~","@","@",
+                            "a","a","b","b","c","c","d","d","e","e","f","f","g","g","h","h",
+                            "i","i","j","j","k","k","l","l","m","m","n","n","o","o","p","p",
+                            "q","q","r","r","s","s","t","t","u","u","v","v","w","w","x","x",
+                            "y","y","z","z","*","*","+","+","-","-","|","|","~","~","@","@",
+                            "a","a","b","b","c","c","d","d","e","e","f","f","g","g","h","h",
+                            "i","i","j","j","k","k","l","l","m","m","n","n","o","o","p","p",
+                            "q","q","r","r","s","s","t","t","u","u","v","v","w","w","x","x",
+                            "y","y","z","z","*","*","+","+","-","-","|","|","~","~","@","@",
+                            "a","a","b","b","c","c","d","d","e","e","f","f","g","g","h","h",
+                            "i","i","j","j","k","k","l","l","m","m","n","n","o","o","p","p",
+                            "q","q","r","r","s","s","t","t","u","u","v","v","w","w","x","x",
+                            "y","y","z","z","*","*","+","+","-","-","|","|","~","~","@","@", };
+    srand(time(NULL));
+    random_shuffle(begin(a2), end(a2));
+    random_shuffle(begin(a4), end(a4));
+    random_shuffle(begin(a8), end(a8));
+    cout << "Правила игры:\nИгрок выбирает и переворачивает две карты:\nЕсли карты не совпадают(это не пара), они переворачиваются обратно.\nОднако, если две карты совпадают, это пара! Они остаются раскрытыми и игрок продолжает играть...\nВремя на подготовку - 10 секунд\n";
+    cout << "Выберите режим игры:\n(1)2х2\n(2)4х4\n(3)8х8\n(4)Выход\n";
+    do
+    {
+        cin >> a;
+        switch (a)
+        {
+        case 1:
+        {
+            game2(a2, b2, size2);
+            a = 4;
+        }
+        break;
+        case 2:
+        {
+            game2(a4, b4, size4);
+            a = 4;
+        }
+        break;
+        case 3:
+        {
+            game2(a8, b8, size8);
+            a = 4;
+        }
+        break;
+        case 4:
+        {
+            break;
+        }
+        default:
+            do
+            {
+                cout << "Неверная команда\n";
+                cout << "Выберите режим игры:\n(1)2х2\n(2)4х4\n(3)8х8\n(4)16х16\n(5)Выход\n";
+                cin >> a;
+                if (a < 0 || a>5)
+                {
+                    cout << "Неверная команда\n";
+                    cout << "Выберите режим игры:\n(1)2х2\n(2)4х4\n(3)8х8\n(4)16х16\n(5)Выход\n";
+                    cin >> a;
+                }
+            } while (4 >= a >= 1);
+        }
+    } while (a!=4);
+    return 42;
+}
