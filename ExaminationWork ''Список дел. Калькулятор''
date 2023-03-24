@@ -1,0 +1,607 @@
+#include<iostream>
+#include <vector> 
+#include <stdio.h>
+#include <string>
+#include <sstream> 
+#include <Windows.h>
+using namespace std;
+
+bool FuncLeapYear(int i) {
+	bool leapYear;
+	(((i % 100 != 0) && (i % 4 == 0)) || ((i % 100 == 0) && ((i / 100) % 4 == 0))) ? leapYear = true : leapYear = false;
+	return leapYear;
+}
+
+int FuncPeriod(int day, int month, int year, int daySt = 1, int monthSt = 1, int yearSt = 2023) {
+	int arDaysOfYearMonth[] = { 365, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+	int periodDays = 0;
+	for (int i = yearSt; i <= year; i++) {
+		if (FuncLeapYear(i) == true) {
+			arDaysOfYearMonth[0] = 366;
+			arDaysOfYearMonth[2] = 29;
+		}
+		else {
+			arDaysOfYearMonth[0] = 365;
+			arDaysOfYearMonth[2] = 28;
+		}
+		if (i == yearSt) {
+			for (int j = 1; j < monthSt; j++)
+				periodDays -= arDaysOfYearMonth[j];
+			periodDays -= daySt;
+		}
+		if (i < year) periodDays += arDaysOfYearMonth[0];
+		if (i == year) {
+			for (int k = 1; k < month; k++)
+				periodDays += arDaysOfYearMonth[k];
+			periodDays += day;
+		}
+	}
+	return periodDays;
+}
+
+struct todoList {
+	char name[31] = "Наименование";
+	int priority = 1;
+	char description[71] = "Описание";
+	int day = 1;
+	int month = 1;
+	int year = 2023;
+	int hours = 0;
+	int minutes = 0;
+	int date = FuncPeriod(day, month, year) * 1440 + hours * 60 + minutes;
+	int week = FuncPeriod(day, month, year) != 0 ? 1 + FuncPeriod(day, month, year) / 7 : 1;
+};
+
+todoList* FuncCreate(int size) {
+	todoList* works = new todoList[size];
+	return works;
+}
+
+void FuncDeleteWorks(todoList* works) {
+	delete[]works;
+}
+
+todoList FuncInput() {
+	todoList work;
+	cout << "      Заполните поля:" << endl;
+	cout << "      1. Наименование дела [не более 30 символов]: ";
+	gets_s(work.name, 30);
+	cout << "      2. Рейтинг [целое число от 1 (max) до 9 (min)]: ";
+	cin >> work.priority;
+	cout << "      3. Описание [не более 70 символов]: ";
+	gets_s(work.description, 70);
+	gets_s(work.description, 70);
+	cout << "      4. Дата выполнения:" << endl;
+	cout << "         - день [1-31]: ";
+	cin >> work.day;
+	cout << "         - месяц [1-12]: ";
+	cin >> work.month;
+	cout << "         - год [>=2023]: ";
+	cin >> work.year;
+	cout << "      5. Время выполнения:" << endl;
+	cout << "         - часы [0-23]: ";
+	cin >> work.hours;
+	cout << "         - минуты [0-59]: ";
+	cin >> work.minutes;
+	work.date = FuncPeriod(work.day, work.month, work.year) * 1440 + work.hours * 60 + work.minutes;
+	work.week = FuncPeriod(work.day, work.month, work.year) != 0 ? 1 + FuncPeriod(work.day, work.month, work.year) / 7 : 1;
+	return work;
+}
+
+todoList* FuncAddWork(todoList* works, int& size, todoList work) {
+	todoList* tmp = FuncCreate(size + 1);
+	for (int i = 0; i < size; i++)
+		*(tmp + i) = *(works + i);
+	*(tmp + size) = work;
+	cout << "  Дело \"" << work.name << "\" добавлено в каталог." << endl;
+	FuncDeleteWorks(works);
+	size++;
+	return tmp;
+}
+
+todoList* FuncDeleteDescriptionWorks(todoList* works, int& size, char* workDescription) {
+	todoList* tmp = FuncCreate(size - 1);
+	int k = 0;
+	for (int i = 0; i < size; i++) {
+		if (strcmp(workDescription, works[i].description) == 0) continue;
+		tmp[k] = works[i];
+		k++;
+	}
+	cout << "  Дело c описанием: \"" << workDescription << "\" удалено из каталога." << endl;
+	FuncDeleteWorks(works);
+	size--;
+	return tmp;
+}
+
+void FuncHeader() {
+	cout << "       _______________________________________________________________________________________________________________________________________" << endl;
+	cout << "      |       Наименование дела      |Приоритет|                             Описание дела                            |  Дата и время  |Неделя|" << endl;
+	cout << "      |---------------------------------------------------------------------------------------------------------------------------------------|" << endl;
+}
+
+void FuncTrait() {
+	cout << "       ---------------------------------------------------------------------------------------------------------------------------------------" << endl;
+}
+
+void FuncNameDisplay(todoList work) {
+	int n;
+	cout << "|" << work.name;
+	n = 0;
+	while (n < 30 - strlen(work.name)) {
+		cout << " ";
+		n++;
+	}
+	cout << "|    " << work.priority << "    ";
+	cout << "|" << work.description;
+	n = 0;
+	while (n < 70 - strlen(work.description)) {
+		cout << " ";
+		n++;
+	}
+	cout << "|" << (work.day < 10 ? "0" : "") << work.day << "." << (work.month < 10 ? "0" : "") << work.month << "." << work.year << " ";
+	cout << (work.hours < 10 ? "0" : "") << work.hours << ":" << (work.minutes < 10 ? "0" : "") << work.minutes;
+	cout << "|" << (work.week < 10 ? "   " : (work.week < 1000 ? "  " : (work.week < 100000 ? " " : ""))) << work.week <<
+		(work.week < 100 ? "  " : (work.week < 10000 ? " " : "")) << "|" << endl;
+}
+
+void FuncAllHeader() {
+	cout << "   ___________________________________________________________________________________________________________________________________________" << endl;
+	cout << "  | N |       Наименование дела      |Приоритет|                             Описание дела                            |  Дата и время  |Неделя|" << endl;
+	cout << "  |---|---------------------------------------------------------------------------------------------------------------------------------------|" << endl;
+}
+
+void FuncAllTrait() {
+	cout << "   -------------------------------------------------------------------------------------------------------------------------------------------" << endl;
+}
+
+void FuncNameAllDisplay(todoList* works, int size) {
+	FuncAllHeader();
+	if (size != 0) {
+		for (int i = 0; i < size; i++) {
+			cout << "  |";
+			cout << (i < 9 ? "  " : (i < 99 ? " " : ""));
+			cout << i + 1;
+			FuncNameDisplay(works[i]);
+		}
+	}
+	else
+		cout << "  |Список дел пуст!                                                                                                                           |" << endl;
+	FuncAllTrait();
+}
+
+void FuncSearch(todoList* works, int& size, int date) {
+	FuncHeader();
+	bool flag = true;
+	for (int i = 0; i < size; i++)
+		if (date == works[i].date) {
+			cout << "      ";
+			FuncNameDisplay(works[i]);
+			flag = false;
+		}
+	if (flag)
+			cout << "      |По запросу ничего не найдено!                                                                                                          |" << endl;
+	FuncTrait();
+}
+
+void FuncVisual(todoList* works, int& size, int number, int day, int month, int year, int week) {
+	bool flag = true;
+	FuncHeader();
+	for (int i = 0; i < size; i++)
+		if (((number != 2) && (month == works[i].month) && (year == works[i].year) && (number == 3 ? day == works[i].day : true))
+			|| ((number == 2) && (week == works[i].week))) {
+			cout << "      ";
+			FuncNameDisplay(works[i]);
+			flag = false;
+		}
+	if (flag)
+		cout << "      |По запросу ничего не найдено!                                                                                                          |" << endl;
+	FuncTrait();
+}
+
+void FuncBubbleSort(todoList* works, int& size, int number) {
+	bool sorted;
+	int i, j;
+	for (i = 0; i < size; i++) {
+		sorted = true;
+		for (j = size - 1; j > i; j--) {
+			if (((works[j - 1].priority > works[j].priority) && (number == 1)) ||
+				((works[j - 1].date > works[j].date) && (number == 2))) {
+				swap(works[j - 1], works[j]);
+				sorted = false;
+			}
+		}
+		if (sorted) break;
+	}
+	cout << "      Сортировка завершена" << endl;
+}
+
+void FuncDelAllChar(string& str, char symbol = ' ') {
+	bool flag;
+	int i;
+	do {
+		flag = false;
+		for (i = 0; i < str.length(); i++) {
+			if (str[i] == symbol) {
+				str.erase(i, 1);
+				flag = true;
+			}
+		}
+	} while (flag);
+}
+
+bool FuncCharBrack(char symbol) {
+	int charCode = (int)(symbol);
+	bool result = false;
+	if (charCode == 40)
+		result = true;
+	return result;
+}
+
+bool FuncCharNumBrack(char symbol) {
+	int charCode = (int)(symbol);
+	bool result = false;
+	if (((charCode >= 48) && (charCode < 58)) || (charCode == 41))
+		result = true;
+	return result;
+}
+
+void FuncInsChar(string& str, int numChar, char symbol) {
+	str.insert(numChar, 1, symbol);
+}
+
+void FuncIncMinusOne(string& str) {
+	int i;
+	char symbolNum = '1';
+	char symbolSign = '*';
+	for (i = 0; i < str.length() - 1; i++) {
+		if ((str[i] == '-') && (FuncCharBrack(str[i+1]))) {
+			FuncInsChar(str, i + 1, symbolNum);
+			FuncInsChar(str, i + 2, symbolSign);
+		}
+	}
+}
+
+void FuncIncMultipSign(string& str) {
+	int i;
+	char symbol = '*';
+	for (i = 0; i < str.length()-1; i++) {
+		if ((FuncCharNumBrack(str[i])) && (str[i + 1] == '('))
+			FuncInsChar(str, i + 1, symbol);
+	}
+}
+
+void FuncIncZero(string& str) {
+	int i;
+	char symbol = '0';
+	if (str[0] == '-')
+		FuncInsChar(str, 0, symbol);
+	for (i = 0; i < str.length() - 1; i++) {
+		if ((str[i] == '(') && (str[i + 1] == '-'))
+			FuncInsChar(str, i + 1, symbol);
+	}
+}
+
+bool FuncRepChar(string& str, string  strSymbol = "()+-*/", char symbol = ' ') {
+	int i, j;
+	bool result = false;
+	for (i = 0; i < str.length(); i++) {
+		for (j = 0; j < strSymbol.length(); j++)
+			if (str[i] == strSymbol[j]) str[i] = symbol;
+	}
+	for (i = 0; i < str.length(); i++)
+		if ((((int)(str[i]) < 48) || ((int)(str[i]) >= 58)) && ((int)(str[i]) != 44) && (str[i] != symbol))
+			result = true;
+	return result;
+}
+
+int main() {
+	setlocale(LC_ALL, "rus");
+	SetConsoleOutputCP(1251);
+	SetConsoleCP(1251);
+
+	cout << "\n\t\tЭКЗАМЕНАЦИОННАЯ РАБОТА\n";
+	int i, j, size;
+
+	cout << "\n\tЗадание 1 \"Список дел\"\n\n";
+	cout << "  Внимание! Программа работает с датами позже 01.01.2023 00:00, нумерация недель начинается с указанной даты." << endl;
+	cout << "            Разверните окно на весь экран для полного отображения таблицы со списком дел." << endl;
+	cout << "            Для корректной работы программы описания дел не должны совпадать." << endl;
+	size = 34;
+	todoList* works = FuncCreate(size);
+	works[0] = { "Наблюдение за метеорами", 1, "Метеорный поток Квадрантиды - до 40 метеоров в час", 4, 1, 2023, 1, 0 };
+	works[1] = { "Наблюдение за планетой", 2, "Меркурий на востоке, незадолго до рассвета", 30, 1, 2023, 7, 30 };
+	works[2] = { "Наблюдение за Солнцем", 4, "Весеннее равноденствие, восход", 20, 3, 2023, 6, 35 };
+	works[3] = { "Наблюдение за Солнцем", 4, "Весеннее равноденствие, закат", 20, 3, 2023, 18, 40 };
+	works[4] = { "Наблюдение за планетой", 2, "Меркурий на западе, после заката", 11, 4, 2023, 20, 30 };
+	works[5] = { "Наблюдение за Солнцем", 4, "Гибридное солнечное затмение", 20, 4, 2023, 7, 12 };
+	works[6] = { "Наблюдение за метеорами", 1, "Метеорный поток Лириды - до 20 метеоров в час", 23, 4, 2023, 0, 30 };
+	works[7] = { "Наблюдение за планетой", 2, "Меркурий в утреннем свете на востоке, незадолго до рассвета", 29, 5, 2023, 3, 30 };
+	works[8] = { "Наблюдение за планетой", 2, "Венера на западе, после заката", 4, 6, 2023, 21, 30 };
+	works[9] = { "Наблюдение за Солнцем", 4, "Летнее солнцестояние, восход", 21, 6, 2023, 3, 47 };
+	works[10] = { "Наблюдение за Солнцем", 4, "Летнее солнцестояние, закат", 21, 6, 2023, 21, 15 };
+	works[11] = { "Наблюдение за Луной", 3, "Первое полнолуние и суперлуние", 3, 7, 2023, 23, 0 };
+	works[12] = { "Наблюдение за метеорами", 1, "Метеорный поток Южные дельта-Аквариды - до 20 метеоров в час", 29, 7, 2023, 0, 30 };
+	works[13] = { "Наблюдение за Луной", 3, "Летнее полнолуние и суперлуние", 2, 8, 2023, 1, 30 };
+	works[14] = { "Наблюдение за планетой", 2, "Меркурий на западе в высшей точке, после заката", 10, 8, 2023, 20, 45 };
+	works[15] = { "Наблюдение за метеорами", 1, "Метеорный поток Персеиды — до 60 метеоров в час", 13, 8, 2023, 2, 0 };
+	works[16] = { "Наблюдение за планетой", 2, "Сатурн ближе всего к Земле, полностью освещён солнечным светом", 27, 8, 2023, 23, 0 };
+	works[17] = { "Наблюдение за Луной", 3, "Осеннее полнолуние и суперлуние", 31, 8, 2023, 2, 30 };
+	works[18] = { "Наблюдение за планетой", 2, "Нептун ближе всего к Земле, хорошо освещён солнечным светом", 19, 9, 2023, 23, 30 };
+	works[19] = { "Наблюдение за планетой", 2, "Меркурий на востоке, в утреннем небе", 22, 9, 2023, 5, 45 };
+	works[20] = { "Наблюдение за Солнцем", 4, "Осеннее равноденствие, восход", 23, 9, 2023, 6, 17 };
+	works[21] = { "Наблюдение за Солнцем", 4, "Осеннее равноденствие, закат", 23, 9, 2023, 18, 25 };
+	works[22] = { "Наблюдение за Луной", 3, "Последнее полнолуние и суперлуние", 29, 9, 2023, 21, 0 };
+	works[23] = { "Наблюдение за метеорами", 1, "Метеорный поток Дракониды - до 10 метеоров в час", 7, 10, 2023, 22, 30 };
+	works[24] = { "Наблюдение за Солнцем", 4, "Кольцевое солнечное затмение", 14, 10, 2023, 7, 30 };
+	works[25] = { "Наблюдение за метеорами", 1, "Метеорный поток Ориониды - до 20 метеоров в час", 21, 10, 2023, 21, 30 };
+	works[26] = { "Наблюдение за планетой", 2, "Венера на востоке в утреннем небе", 23, 10, 2023, 6, 45 };
+	works[27] = { "Наблюдение за Луной", 3, "Частное Лунное затмение", 29, 10, 2023, 3, 23 };
+	works[28] = { "Наблюдение за планетой", 2, "Юпитер ближе всего к Земле, хорошо освещён солнечным светом", 3, 11, 2023, 23, 30 };
+	works[29] = { "Наблюдение за метеорами", 1, "Метеорный поток Леониды - до 15 метеоров в час", 18, 11, 2023, 4, 30 };
+	works[30] = { "Наблюдение за планетой", 2, "Меркурий в вечернем западном небе", 4, 12, 2023, 16, 15 };
+	works[31] = { "Наблюдение за метеорами", 1, "Метеорный поток Геминиды - до 120 метеоров в час", 13, 12, 2023, 23, 30 };
+	works[32] = { "Наблюдение за Солнцем", 4, "Зимнее солнцестояние, восход", 21, 12, 2023, 9, 0 };
+	works[33] = { "Наблюдение за Солнцем", 4, "Зимнее солнцестояние, закат", 21, 12, 2023, 15, 55 };
+	int number, numEdit, numVisual, numSort, day = 0, week = 0, month = 0, year = 0, hours, minutes, date;
+	boolean flag;
+	do {
+		cout << "  Пункты меню:" << endl;
+		cout << "  1. Отображение всех дел." << endl;
+		cout << "  2. Поиск по дате и времени исполнения." << endl;
+		cout << "  3. Отображение списка дел за период." << endl,
+		cout << "  4. Сортировка списка дел." << endl;
+		cout << "  5. Добавление дела." << endl;
+		cout << "  6. Удаление дела." << endl;
+		cout << "  7. Редактирование дела." << endl;
+		cout << "  *. Выход из программы – любой другой символ." << endl;
+		cout << "  Выберите пункт и введите соответствующее число: ";
+		cin >> number;
+		cin.ignore();
+		switch (number) {
+		case 1:
+			FuncNameAllDisplay(works, size);
+			cout << endl;
+			break;
+		case 2:
+			cout << "      Введите дату выполнения:" << endl;
+			cout << "      - день [1-31]: ";
+			cin >> day;
+			cout << "      - месяц [1-12]: ";
+			cin >> month;
+			cout << "      - год [>= 2023]: ";
+			cin >> year;
+			cout << "      время выполнения:" << endl;
+			cout << "      - часы [0-23]: ";
+			cin >> hours;
+			cout << "      - минуты [0-59]: ";
+			cin >> minutes;
+			date = FuncPeriod(day, month, year) * 1440 + hours * 60 + minutes;
+			FuncSearch(works, size, date);
+			cout << endl;
+			break;
+		case 3:
+			cout << "      Период за который необходимо вывести список:" << endl;
+			cout << "      1. Месяц." << endl;
+			cout << "      2. Неделя." << endl;
+			cout << "      3. День." << endl;
+			cout << "      Выберите пункт и введите соответствующее число: ";
+			cin >> numVisual;
+			cout << "      Введите:" << endl;
+			switch (numVisual) {
+			case 2:
+				cout << "      - неделю [>=1]: ";
+				cin >> week;
+				break;
+			default:
+				if (numVisual == 3) {
+					cout << "      - день [1-31]: ";
+					cin >> day;
+				}
+				cout << "      - месяц [1-12]: ";
+				cin >> month;
+				cout << "      - год [>=2023]: ";
+				cin >> year;
+				break;
+			}
+			FuncVisual(works, size, numVisual, day, month, year, week);
+			cout << endl;
+			break;
+		case 4:
+			cout << "      Выполнить сортировку списка:" << endl;
+			cout << "      1. По приоритету." << endl;
+			cout << "      2. По дате и времени." << endl;
+			cout << "      Выберите пункт и введите соответствующее число: ";
+			cin >> numSort;
+			FuncBubbleSort(works, size, numSort);
+			cout << endl;
+			break;
+		case 5:
+			works = FuncAddWork(works, size, FuncInput());
+			cout << endl;
+			break;
+		case 6:
+			char workDescription[71];
+			cout << "  Введите описание дела: ";
+			gets_s(workDescription, 70);
+			flag = false;
+			for (i = 0; i < size; i++)
+				if (strcmp(workDescription, works[i].description) == 0) flag = true;
+			if (flag)
+				works = FuncDeleteDescriptionWorks(works, size, workDescription);
+			else
+				cout << "      По запросу ничего не найдено!";
+			cout << endl;
+			break;
+		case 7: {
+			char workDescription[71];
+			cout << "  Введите описание дела: ";
+			gets_s(workDescription, 70);
+			flag = false;
+			for (i = 0; i < size; i++) {
+				if (strcmp(workDescription, works[i].description) == 0) {
+					flag = true;
+					j = i;
+				}
+			}
+			if (flag) {
+				do {
+					cout << "      Что необходимо отредактировать в деле:" << endl;
+					cout << "      1. Наименование." << endl;
+					cout << "      2. Приоритет." << endl;
+					cout << "      3. Описание." << endl;
+					cout << "      4. Дату выполнения." << endl;
+					cout << "      5. Время выполнения." << endl;
+					cout << "      *. Выход из меню – любой другой символ." << endl;
+					cout << "      Выберите пункт и введите соответствующее число: ";
+					cin >> numEdit;
+					switch (numEdit) {
+					case 1:
+						cout << "      Исходное наименование: " << works[j].name << endl;
+						cout << "      Введите новое наименование [не более 30 символов]: ";
+						gets_s(works[j].name, 30);
+						break;
+					case 2:
+						cout << "      Исходный рейтинг: " << works[j].priority << endl;
+						cout << "      Введите новый рейтинг [целое число от 1 (max) до 9 (min)]: ";
+						cin >> works[j].priority;
+						break;
+					case 3:
+						cout << "      Исходное описание: " << works[j].description << endl;
+						cout << "      Введите новое описание [не более 70 символов]: ";
+						gets_s(works[j].description, 70);
+						break;
+					case 4:
+						cout << "      Исходная дата: " << (works[j].day < 10 ? "0" : "") << works[j].day << "."
+							<< (works[j].month < 10 ? "0" : "") << works[j].month << "." << works[j].year << endl;
+						cout << "      Введите новую дату:" << endl;
+						cout << "      - день [1-31]: ";
+						cin >> works[j].day;
+						cout << "      - месяц [1-12]: ";
+						cin >> works[j].month;
+						cout << "      - год [>=2023]: ";
+						cin >> works[j].year;
+						break;
+					case 5:
+						cout << "      Исходное время: " << (works[j].hours < 10 ? "0" : "") << works[j].hours << ":"
+							<< (works[j].minutes < 10 ? "0" : "") << works[j].minutes << endl;
+						cout << "      Введите новое время:" << endl;
+						cout << "      - часы [0-23]: ";
+						cin >> works[j].hours;
+						cout << "      - минуты [0-59]: ";
+						cin >> works[j].minutes;
+						break;
+					}
+					works[j].date = FuncPeriod(works[j].day, works[j].month, works[j].year) * 1440 + works[j].hours * 60 + works[j].minutes;
+					works[j].week = FuncPeriod(works[j].day, works[j].month, works[j].year) != 0 ? 1 + FuncPeriod(works[j].day, works[j].month, works[j].year) / 7 : 1;
+				} while ((numEdit >= 1) && (numEdit <= 5));
+			}
+			else
+				cout << "      По запросу ничего не найдено!";
+			cout << endl;
+		}
+			  break;
+		}
+	} while ((number >= 1) && (number <= 7));
+	cout << "  ";
+	system("pause");
+
+	cout << "\n\tЗадание 2 \"Вычисление арифметического выражения\"\n\n";
+	vector<double> vec;
+	string str, strNum, word;
+	const int sizeArray = 2;
+	int arrayIndex[sizeArray][sizeArray] = { 0, 0, 0, 0};
+	int m = 1, n = -1;
+	bool flagBrack = true, flagZero = true;
+	cout << "  ВНИМАНИЕ! Арифметическое выражение может содержать следующие знаки – (), +, -, *, /." << endl;
+	cout << "            Разделитель целой и дробной частей действительных чисел – ЗАПЯТАЯ." << endl;
+	cout << "  Введите арифметическое выражение: ";
+	getline(cin, str);
+	FuncDelAllChar(str);
+	FuncIncMinusOne(str);
+	FuncIncMultipSign(str);
+	FuncIncZero(str);
+	strNum = str;
+	FuncRepChar(strNum);
+	if (!FuncRepChar(strNum)) {
+		stringstream s(strNum);
+		while (s >> word)
+			vec.push_back(stod(word));
+		size = vec.size();
+		double* arrayNum = new double[size];
+		for (i = 0; i < size; i++)
+			arrayNum[i] = vec[i];
+		int* arraySign = new int[size - 1];
+		if (size != 1) {
+			for (i = 0; i < str.length(); i++) {
+				if (str[i] == '(') m++;
+				if (str[i] == ')') m--;
+				if (str[i] == '+' || str[i] == '-' || str[i] == '*' || str[i] == '/') {
+					n++;
+					switch (str[i]) {
+					case '+': arraySign[n] = 2 * m - 1;
+						break;
+					case '-': arraySign[n] = -(2 * m - 1);
+						break;
+					case '*': arraySign[n] = 2 * m;
+						break;
+					case '/': arraySign[n] = -(2 * m);
+						break;
+					}
+				}
+			}
+			if (m == 1) {
+				do {
+					for (i = 0; i < sizeArray; i++) {
+						for (j = 0; j < sizeArray; j++)
+							arrayIndex[i][j] = 0;
+					}
+					for (i = 0; i < size - 1; i++) {
+						if ((arraySign[i] > arrayIndex[0][0]) && (arraySign[i] > 0)) {
+							arrayIndex[0][0] = arraySign[i];
+							arrayIndex[1][0] = i;
+						}
+						if ((arraySign[i] < arrayIndex[0][1]) && (arraySign[i] < 0)) {
+							arrayIndex[0][1] = arraySign[i];
+							arrayIndex[1][1] = i;
+						}
+					}
+					if ((arrayIndex[0][0] < -arrayIndex[0][1]) || ((arrayIndex[0][0] == -arrayIndex[0][1]) && (arrayIndex[1][0] > arrayIndex[1][1]))) {
+						arrayIndex[0][0] = arrayIndex[0][1];
+						arrayIndex[1][0] = arrayIndex[1][1];
+					}
+					if ((arrayIndex[0][0] > 0) && (arrayIndex[0][0] % 2 == 1)) arrayNum[arrayIndex[1][0]] += arrayNum[arrayIndex[1][0] + 1];
+					if ((arrayIndex[0][0] < 0) && (-arrayIndex[0][0] % 2 == 1)) arrayNum[arrayIndex[1][0]] -= arrayNum[arrayIndex[1][0] + 1];
+					if ((arrayIndex[0][0] > 0) && (arrayIndex[0][0] % 2 == 0)) arrayNum[arrayIndex[1][0]] *= arrayNum[arrayIndex[1][0] + 1];
+					if ((arrayIndex[0][0] < 0) && (-arrayIndex[0][0] % 2 == 0)) {
+						if (arrayNum[arrayIndex[1][0] + 1] != 0)
+							arrayNum[arrayIndex[1][0]] /= arrayNum[arrayIndex[1][0] + 1];
+						else
+							flagZero = false;
+					}
+					for (i = arrayIndex[1][0] + 1; i < size - 1; i++)
+						arrayNum[i] = arrayNum[i + 1];
+					for (i = arrayIndex[1][0]; i < size - 2; i++)
+						arraySign[i] = arraySign[i + 1];
+					size--;
+				} while ((size != 1) && (flagZero));
+			}
+			else
+				flagBrack = false;
+		}
+		cout << "  ";
+		if ((flagBrack) && (flagZero))
+			cout << "Ответ: " << arrayNum[0] << ".";
+		else {
+			cout << "Ошибка в вычислении. ";
+			(!flagBrack) ? cout << "Скобки расставлены неверно!" : cout << "Деление на ноль!";
+		}
+		delete[] arrayNum;
+		delete[] arraySign;
+	}
+	else
+		cout << "  Выражение содержит недопустимые символы!";
+	cout << endl;
+	cout << "  ";
+	system("pause");
+	return 0;
+}
