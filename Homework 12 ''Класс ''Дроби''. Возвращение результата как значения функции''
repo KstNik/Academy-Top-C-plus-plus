@@ -100,6 +100,8 @@ int main() {
 			break;
 		}
 		if (flag) {
+			a = fractBasic.GetM();
+			b = fractBasic.GetN();
 			cout << "  Ответ: ";
 			fractBasic.FuncReduct(fractBasic.FuncGreatComDiv(a, b));
 			fractBasic.FuncОutput(screen);
