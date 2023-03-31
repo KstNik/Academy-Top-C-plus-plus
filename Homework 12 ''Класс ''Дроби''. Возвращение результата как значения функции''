@@ -54,6 +54,12 @@ public:
 		if (screen) cout << m_ << '/' << n_;
 		return arrFract[index];
 	}
+	int GetM() {
+		return m_;
+	}
+	int GetN() {
+		return n_;
+	}
 };
 
 int main() {
