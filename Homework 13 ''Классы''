@@ -1,0 +1,211 @@
+#include<iostream>
+#include <cstring>
+using namespace std;
+
+class Fraction {
+private:
+	int m_;
+	int n_;
+	double* decimal_ = new double;
+	static int quant_;
+public:
+	Fraction() : Fraction(1, 1) {}
+	Fraction(int m, int n) {
+		*decimal_ = FuncDecimal(m, n);
+		quant_++;
+	}
+	~Fraction() {}
+	static void FuncNumObject() {
+		cout << "  Количество созданных объектов класса – " << quant_ << ".";
+	}
+	void FuncInput(int m, int n) {
+		m_ = m;
+		n_ = n;
+	}
+	static double FuncDecimal(int m, int n) {
+		return m / static_cast<double>(n);
+	}
+	static int FuncGreatComDiv(int n, int m) {
+		if (m == 0) return n;
+		return FuncGreatComDiv(m, n % m);
+	}
+	static int FuncExamZero() {
+		int n;
+		bool flag = false;
+		do {
+			flag ? cout << "       не может равняться 0, введите другое число: " : cout << "       знаменатель: ";
+			cin >> n;
+			flag = true;
+		} while (n == 0);
+		return n;
+	}
+	void FuncReduct(int x) {
+		m_ /= x;
+		n_ /= x;
+	}
+	void FuncSumSubt(int m, int n, bool direct) {
+		m_ *= n;
+		m *= n_;
+		direct ? m_ += m : m_ -= m;
+		n_ *= n;
+	}
+	bool FuncMultDiv(int m, int n, bool direct) {
+		if (direct) {
+			m_ *= m;
+			n_ *= n;
+		}
+		else {
+			m_ *= n;
+			n_ *= m;
+		}
+		return n_ != 0 ? true : false;
+	}
+	int FuncОutput(bool screen, int index = 0) {
+		if (n_ < 0) {
+			m_ *= -1;
+			n_ *= -1;
+		}
+		int arrFract[3] = { 0, m_, n_ };
+		if (screen) cout << m_ << '/' << n_;
+		return arrFract[index];
+	}
+	int GetM() {
+		return m_;
+	}
+	int GetN() {
+		return n_;
+	}
+	void SetDecimal(double decimal){
+		*decimal_ = decimal;
+	}
+	double GetDecimal() {
+		return *decimal_;
+	}
+	friend void FuncMult(Fraction);
+};
+
+int Fraction::quant_ = 0;
+
+void FuncMult(Fraction fractBasic) {
+	fractBasic.m_ *= 5;
+	fractBasic.n_ *= 5;
+	cout << fractBasic.m_ << '/' << fractBasic.n_;
+}
+
+class Human {
+	char* name_;
+	int age_;
+	char* tel_;
+public:
+	Human() : Human{ nullptr, 0, nullptr } {}
+	Human(const char* name) : Human{ name, 0, nullptr } {}
+	Human(const char* name, int age) : Human{ name, age, nullptr } {}
+	Human(const char* name, int age, const char* tel) : name_{ name ? new char[strlen(name) + 1] : nullptr },
+		age_{ age }, tel{tel ? new char[strlen(tel) + 1] : nullptr } {
+		if (name_) strcpy_s(name_, strlen(name) + 1, name);
+		if (tel_) strcpy_s(tel_, strlen(tel) + 1, tel);
+	}
+	~Human() { delete[] name_; delete[] tel_;}
+	void FuncPrint() {
+		cout << "  Фамилия, инициалы: " << name_ << ':' << endl;
+		cout << "  - возраст: " << age_ << ';' << endl;
+		cout << "  - телефон: " << tel_ << '.' << endl;
+	}
+};
+
+int main() {
+	setlocale(LC_ALL, "Rus");
+
+	cout << "\n\t\t\t\t\tКЛАССЫ\n";
+	Fraction fractBasic, fractAuxil;
+
+	cout << "\n\tЗадание 1 \"Арифметические действия над дробями. Возвращение результата\n";
+	cout << "\t\t\tв виде десятичной дроби\"\n\n";
+	int a, b, c, d;
+	double dec;
+	char sign;
+	bool direct = true, screen = true, flag = true;
+	cout << "  Введите 2 дроби:" << endl;
+	cout << "  - 1-ая числитель: ";
+	cin >> a;
+	b = fractBasic.FuncExamZero();
+	cout << "  - 2-ая числитель: ";
+	cin >> c;
+	d = fractBasic.FuncExamZero();
+	fractBasic.FuncInput(a, b);
+	fractBasic.FuncReduct(fractBasic.FuncGreatComDiv(a, b));
+	fractAuxil.FuncInput(c, d);
+	fractAuxil.FuncReduct(fractAuxil.FuncGreatComDiv(c, d));
+	cout << "  Выберите действие:" << endl;
+	cout << "  - сложение - \"+\";" << endl;
+	cout << "  - вычитание - \"-\";" << endl;
+	cout << "  - умножение - \"*\";" << endl;
+	cout << "  - деление - \"/\"." << endl;
+	cout << "  Введите символ: ";
+	cin >> sign;
+	if ((sign == '+') || (sign == '-') || (sign == '*') || (sign == '/')) {
+		switch (sign) {
+		case '+':
+			fractBasic.FuncSumSubt(c, d, direct);
+			break;
+		case '-':
+			direct = false;
+			fractBasic.FuncSumSubt(c, d, direct);
+			break;
+		case '*':
+			fractBasic.FuncMultDiv(c, d, direct);
+			break;
+		case '/':
+			direct = false;
+			flag = fractBasic.FuncMultDiv(c, d, direct);
+			break;
+		}
+		if (flag) {
+			a = fractBasic.GetM();
+			b = fractBasic.GetN();
+			cout << "  Ответ: ";
+			fractBasic.FuncReduct(fractBasic.FuncGreatComDiv(a, b));
+			fractBasic.FuncОutput(screen);
+			cout << " - отображение результата в консоли" << endl;
+			screen = false;
+			cout << "         ";
+			cout << fractBasic.FuncОutput(screen, 1) << '/' << fractBasic.FuncОutput(screen, 2);
+			cout << " - вывод значений функции" << endl;
+			dec = fractBasic.FuncDecimal(fractBasic.FuncОutput(screen, 1), fractBasic.FuncОutput(screen, 2));
+			fractBasic.SetDecimal(dec);
+			cout << "         " << fractBasic.GetDecimal();
+			cout << " - в виде десятичной дроби";
+		}
+		else
+			cout << "  Ошибка! Деление на ноль!";
+		cout << endl;
+	}
+	cout << "  ";
+	system("pause");
+
+	cout << "\n\tЗадание 2 \"Созданные объекты класса \"Дробь\"\n\n";
+	Fraction::FuncNumObject();
+	cout << endl;
+	cout << "  ";
+	system("pause");
+
+	cout << "\n\tЗадание 3 \"Методы класса \"Дробь\", которые можно сделать константными\"\n\n";
+	cout << "  FuncDecimal // преобразование дроби в десятичную;" << endl;
+	cout << "  FuncGreatComDiv // вычисление наибольшего общего делителя." << endl;
+	cout << "  ";
+	system("pause");
+
+	cout << "\n\tЗадание 4 \"Дружественная функция для умножения числителя и знаменателя\"\n\n";
+	cout << "  Умножение на 5, результат = ";
+	FuncMult(fractBasic);
+	cout << '.' << endl;
+	cout << "  ";
+	system("pause");
+
+	cout << "\n\tЗадание 5 \"Класс \"Human\"\n\n";
+	Human human{ "Ivanov I.I.", 25, "22-32-23" };
+	human.FuncPrint();
+	cout << "  ";
+	system("pause");
+	return 0;
+}
