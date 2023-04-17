@@ -1,0 +1,104 @@
+#include <iostream>
+#include <stdlib.h>
+#include <time.h>
+using namespace std;
+
+class String {
+	char* str_;
+	int len_;
+public:
+	String() : String(10) {}
+	String(int len) : str_{ new char [len] {} }, len_{ len } {}
+	String(const String& object) : str_{ new char[object.len_] }, len_{ object.len_ } {
+		for (int i = 0; i < len_; i++)
+			str_[i] = object.str_[i];
+	}
+	String(String&& object) : str_{ object.str_ }, len_{ object.len_ } {
+		object.str_ = nullptr;
+		object.len_ = 0;
+	}
+	String & operator = (const String & object) {
+		if (!(this == &object)) {
+			if (len_ != object.len_) {
+				delete[] str_;
+				str_ = new char[object.len_];
+			}
+			len_ = object.len_;
+			for (int i = 0; i < len_; i++)
+				str_[i] = object.str_[i];
+		}
+		return *this;
+	}
+	~String() { delete[] str_;}
+	void FuncSymb() {
+		for (int i = 0; i < len_; i++)
+			str_[i] = int(rand() % 26 + 97);
+	}
+	void FuncUnit(char* strBasic, int lenBasic, char* strAuxil) {
+		for (int i = 0; i < len_; i++) {
+			if (i < lenBasic) str_[i] = strBasic[i];
+			else str_[i] = strAuxil[i - lenBasic];
+		}
+	}
+	void FuncPrint() {
+		for (int i = 0; i < len_; i++)
+			cout << str_[i];
+	}
+	char* GetStr() { return str_; }
+	void SetStr(int len, char symb) { str_[len] = symb; }
+	int GetLen() { return len_; }
+	void SetLen(int len) { len_ = len; }
+};
+
+int main() {
+	setlocale(LC_ALL, "Rus");
+	srand(time(NULL));
+
+	cout << "\n\t\tКЛАСС \"СТРОКА\"\n\n";
+
+	cout << "  Строки: " << endl;
+	cout << "  1. Копирование:" << endl;
+	cout << "     - исходная:  ";
+	String strInit{ 15 };
+	strInit.FuncSymb();
+	strInit.FuncPrint();
+	cout << ';' << endl;
+	cout << "     – результат: ";
+	String strCopy{ strInit };
+	strCopy.FuncPrint();
+	cout << ';' << endl;
+	cout << "     - исходная:  ";
+	strInit.FuncPrint();
+	cout << '.' << endl;
+	cout << "  2. Перемещение:" << endl;
+	cout << "     - исходная:  ";
+	strInit.FuncSymb();
+	strInit.FuncPrint();
+	cout << ';' << endl;
+	cout << "     – результат: ";
+	String strMov{ std::move(strInit) };
+	strMov.FuncPrint();
+	cout << ';' << endl;
+	cout << "     - исходная:  ";
+	strInit.FuncPrint();
+	cout << '.' << endl;
+	cout << "  3. Объединение (конкатенация):" << endl;
+	cout << "     - исходные:  ";
+	String strBasic{ 15 };
+	strBasic.FuncSymb();
+	strBasic.FuncPrint();
+	cout << ';' << endl;
+	cout << "                  ";
+	String strAuxil{ 10 };
+	strAuxil.FuncSymb();
+	strAuxil.FuncPrint();
+	cout << ';' << endl;
+	cout << "     – результат: ";
+	String strConc{ strBasic.GetLen() + strAuxil.GetLen() };
+	strConc.FuncUnit(strBasic.GetStr(), strBasic.GetLen(), strAuxil.GetStr());
+	strConc.FuncPrint();
+	cout << '.' << endl;
+	cout << "  ";
+	system("pause");
+	return 0;
+}
