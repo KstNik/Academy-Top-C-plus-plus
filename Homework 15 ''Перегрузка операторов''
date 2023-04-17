@@ -1,0 +1,249 @@
+#include<iostream>
+#include <cstring>
+#include <Windows.h>
+using namespace std;
+
+class Fraction {
+	int* m_;
+	int* n_;
+public:
+	Fraction() : Fraction(1, 1) {}
+	Fraction(int m, int n) : m_(new int(m)), n_(new int(n)) {
+		GreatComDiv(n, m);
+		*m_ /= GreatComDiv(n, m);
+		*n_ /= GreatComDiv(n, m);
+		if (*n_ < 0) {
+			*m_ *= -1;
+			*n_ *= -1;
+		}
+	}
+	Fraction(const Fraction& from) {
+		m_ = new int{ *(from.m_) };
+		n_ = new int{ *(from.n_) };
+	}
+	Fraction& operator= (const Fraction& from) {
+		*m_ = *(from.m_);
+		*n_ = *(from.n_);
+		return *this;
+	}
+	~Fraction() { delete m_, delete n_; }
+	static int GreatComDiv(int n, int m) {
+		if (m == 0) return n;
+		return GreatComDiv(m, n % m);
+	}
+	Fraction operator+ (const Fraction& right) {
+		return Fraction{ *m_ * *right.n_ + *right.m_ * *n_, *n_ * *right.n_ };
+	}
+	Fraction operator- (const Fraction& right) {
+		return Fraction{ *m_ * *right.n_ - *right.m_ * *n_, *n_ * *right.n_ };
+	}
+	Fraction operator* (const Fraction& right) {
+		return Fraction{ *m_ * *right.m_, *n_ * *right.n_ };
+	}
+	Fraction operator/ (const Fraction& right) {
+		return Fraction{ *m_ * *right.n_, *n_ * *right.m_ };
+	}
+	bool operator== (const Fraction& right) {
+		return { (*m_ == *right.m_) && (*n_ == *right.n_) };
+	}
+	bool operator!= (const Fraction& right) {
+		return { (*m_ != *right.m_) || (*n_ != *right.n_) };
+	}
+	bool operator> (const Fraction& right) {
+		return { *m_ * *right.n_ > *right.m_ * *n_ };
+	}
+	bool operator< (const Fraction& right) {
+		return { *m_ * *right.n_ < *right.m_ * *n_ };
+	}
+	Fraction& operator++ () {
+		 ++*m_;
+		return *this;
+	}
+	Fraction operator++ (int) {
+		Fraction before(*this);
+		++*m_;
+		return before;
+	}
+	void Print() {
+		*n_ != 0 ? (*n_ != 1 ? printf("%d/%d\n", *m_, *n_) : printf("%d\n", *m_)) : printf("error /0!\n");
+	}
+	friend ostream& operator<< (ostream& out, const Fraction& fract) {
+		out << *fract.m_ << '/' << *fract.n_;
+		return out;
+	}
+	friend istream& operator>> (istream& in, Fraction& fract) {
+		in >> *fract.m_;
+		in.ignore(1);
+		in >> *fract.n_;
+		return in;
+	}
+};
+
+class String {
+ char* str_;
+ int len_;
+public:
+	String() : String{ nullptr} {}
+	String(const char* str) : str_{ str ? new char[strlen(str) + 1] : nullptr } {
+		len_ = 0;
+		if (str_) {
+			strcpy_s(str_, strlen(str) + 1, str);
+			len_ = strlen(str) + 1;
+		}
+	}
+	String(const String& object) : str_{ new char[object.len_] }, len_{ object.len_ } {
+		for (int i = 0; i < len_; i++)
+			str_[i] = object.str_[i];
+	}
+	~String() { delete[] str_; }
+	String& operator = (const String& object) {
+		if (!(this == &object)) {
+			if (len_ != object.len_) {
+				delete[] str_;
+				str_ = new char[object.len_];
+			}
+			len_ = object.len_;
+			for (int i = 0; i < len_; i++)
+				str_[i] = object.str_[i];
+		}
+		return *this;
+	}
+	bool operator== (const String& right) {
+		bool res = true;
+		if (len_ != right.len_) res = false;
+		else {
+			for (int i = 0; i < len_; i++)
+				if (str_[i] != right.str_[i])
+					res = false;
+		};
+		return res;
+	}
+	bool operator!= (const String& right) {
+		bool res = false;
+		if (len_ != right.len_) res = true;
+		else {
+			for (int i = 0; i < len_; i++)
+				if (str_[i] != right.str_[i])
+					res = true;
+		};
+		return res;
+	}
+	bool operator> (const String& right) {
+		return { len_ > right.len_ };
+	}
+	bool operator< (const String& right) {
+		return { len_ < right.len_ };
+	}
+	void Print() {
+		cout << str_;
+		cout << "\n";
+	}
+	friend ostream& operator<< (ostream& out, const String& str) {
+		out << str.str_;
+		return out;
+	}
+	friend istream& operator>> (istream& in, String& str) {
+		in >> str.str_;
+		return in;
+	}
+};
+
+int main() {
+	setlocale(LC_ALL, "Rus");
+	SetConsoleCP(1251);
+	SetConsoleOutputCP(1251);
+
+	cout << "\n\t\tПЕРЕГРУЗКА ОПЕРАТОРОВ\n";
+
+	cout << "\n\tЗадание 1 \"Класс \"Дробь\"\n\n";
+	Fraction fractBasic{ 1, 3 }, fractAuxil{ 1, 2 }, fractResult;
+	cout << "    Дроби  |Значения\n";
+	cout << "  ---------|---------\n";
+	cout << "    основ. |  ";
+	fractBasic.Print();
+	cout << "    вспом. |  ";
+	fractAuxil.Print();
+	cout << "\n";
+	cout << "  Операторы|Результат\n";
+	cout << "  ---------|---------\n";
+	cout << "    +      |  ";
+	fractResult = fractBasic + fractAuxil;
+	fractResult.Print();
+	cout << "    -      |  ";
+	fractResult = fractBasic - fractAuxil;
+	fractResult.Print();
+	cout << "    *      |  ";
+	fractResult = fractBasic * fractAuxil;
+	fractResult.Print();
+	cout << "    /      |  ";
+	fractResult = fractBasic / fractAuxil;
+	fractResult.Print();
+	cout << "    ==     |  ";
+	cout << (fractBasic == fractAuxil == 0 ? "false" : "true") << "\n";
+	cout << "    !=     |  ";
+	cout << (fractBasic != fractAuxil == 0 ? "false" : "true") << "\n";
+	cout << "    >      |  ";
+	cout << (fractBasic > fractAuxil == 0 ? "false" : "true") << "\n";
+	cout << "    <      |  ";
+	cout << (fractBasic < fractAuxil == 0 ? "false" : "true") << "\n";
+	cout << "    ++fr   |  ";
+	fractResult = fractBasic;
+	++fractResult;
+	fractResult.Print();
+	cout << "    пров.  |  ";
+	(++fractResult).Print();
+	cout << "    fr++   |  ";
+	fractResult = fractBasic;
+	fractResult++;
+	fractResult.Print();
+	cout << "    пров.  |  ";
+	(fractResult++).Print();
+	cout << "    cout<< |  ";
+	fractResult = fractBasic;
+	cout << fractResult << endl;
+	cout << "    введите дробь,\n";
+	cout << "    например  2/3:\n";
+	cout << "    cin>>  |  ";
+	cin >> fractResult;
+	cout << "    cout<< |  ";
+	cout << fractResult << endl;
+	cout << "    copy   |  ";
+	Fraction fractCopy(fractBasic);
+	fractCopy.Print();
+	cout << "  ";
+	system("pause");
+
+	cout << "\n\tЗадание 2 \"Класс \"Строка\"\n\n";
+	String strBasic{ "abc" }, strAuxil{ "de"}, strResult;
+	cout << "    Строки | Символы\n";
+	cout << "  ---------|---------\n";
+	cout << "    основ. |  ";
+	strBasic.Print();
+	cout << "    вспом. |  ";
+	strAuxil.Print();
+	cout << "\n";
+	cout << "  Операторы|Результат\n";
+	cout << "  ---------|---------\n";
+	cout << "    ==     |  ";
+	cout << (strBasic == strAuxil == 0 ? "false" : "true") << "\n";
+	cout << "    !=     |  ";
+	cout << (strBasic != strAuxil == 0 ? "false" : "true") << "\n";
+	cout << "    >      |  ";
+	cout << (strBasic > strAuxil == 0 ? "false" : "true") << "\n";
+	cout << "    <      |  ";
+	cout << (strBasic < strAuxil == 0 ? "false" : "true") << "\n";
+	cout << "    cout<< |  ";
+	strResult = strBasic;
+	cout << strResult << endl;
+	cout << "    введите строку:\n";
+	cout << "    cin>>  |  ";
+	cin >> strResult;
+	cout << "    cout<< |  ";
+	cout << strResult << endl;
+	cout << "    copy   |  ";
+	String strCopy(strBasic);
+	strCopy.Print();
+	cout << "  ";
+	system("pause");
+	return 0;
+}
