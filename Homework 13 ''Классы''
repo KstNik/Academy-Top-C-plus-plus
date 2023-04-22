@@ -101,7 +101,7 @@ public:
 	Human(const char* name) : Human{ name, 0, nullptr } {}
 	Human(const char* name, int age) : Human{ name, age, nullptr } {}
 	Human(const char* name, int age, const char* tel) : name_{ name ? new char[strlen(name) + 1] : nullptr },
-		age_{ age }, tel{tel ? new char[strlen(tel) + 1] : nullptr } {
+		age_{ age }, tel_{tel ? new char[strlen(tel) + 1] : nullptr } {
 		if (name_) strcpy_s(name_, strlen(name) + 1, name);
 		if (tel_) strcpy_s(tel_, strlen(tel) + 1, tel);
 	}
