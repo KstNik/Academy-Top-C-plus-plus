@@ -1,0 +1,266 @@
+#include<iostream>
+#include <cstring>
+#include <math.h>
+#include <initializer_list>
+#include <Windows.h>
+using namespace std;
+
+class String {
+	char* str_;
+	int len_;
+public:
+	String() : String{ nullptr } {}
+	String(const char* str) : str_{ str ? new char[strlen(str) + 1] : nullptr } {
+		len_ = 0;
+		if (str_) {
+			strcpy_s(str_, strlen(str) + 1, str);
+			len_ = strlen(str) + 1;
+		}
+	}
+	String(const String& object) : str_{ new char[object.len_] }, len_{ object.len_ } {
+		for (int i = 0; i < len_; i++)
+			str_[i] = object.str_[i];
+	}
+	~String() { delete[] str_; }
+	String& operator = (const String& object) {
+		if (!(this == &object)) {
+			if (len_ != object.len_) {
+				delete[] str_;
+				str_ = new char[object.len_];
+			}
+			len_ = object.len_;
+			for (int i = 0; i < len_; i++)
+				str_[i] = object.str_[i];
+		}
+		return *this;
+	}
+	char* GetStr() { return str_; }
+	void SetStr(int len, char symb) { str_[len] = symb; }
+	int GetLen() { return len_; }
+	void SetLen(int len) { len_ = len; }
+	bool operator== (const String& right) {
+		bool res = true;
+		if (len_ != right.len_) res = false;
+		else {
+			for (int i = 0; i < len_; i++)
+				if (str_[i] != right.str_[i])
+					res = false;
+		};
+		return res;
+	}
+	bool operator!= (const String& right) {
+		bool res = false;
+		if (len_ != right.len_) res = true;
+		else {
+			for (int i = 0; i < len_; i++)
+				if (str_[i] != right.str_[i])
+					res = true;
+		};
+		return res;
+	}
+	bool operator> (const String& right) {
+		return { len_ > right.len_ };
+	}
+	bool operator< (const String& right) {
+		return { len_ < right.len_ };
+	}
+	char& operator[] (int ind) { return str_[ind]; }
+	char operator() (int ind) const { return str_[ind]; }
+	void operator() (int ind, char symb) { if (ind < strlen(str_)) str_[ind] = symb; }
+	void operator() (int ind, char* str) { 
+		if (ind < strlen(str_)) {
+			for (int i = ind; i < (ind + strlen(str) < strlen(str_) ? ind + strlen(str) : strlen(str_)); i++)
+				str_[i] = str[i - ind];
+		}
+	}
+	operator int() { return len_; }
+	explicit operator double() { return sqrt(len_); }
+	void Print() {
+		cout << str_;
+		cout << "\n";
+	}
+	friend ostream& operator<< (ostream& out, const String& str) {
+		out << str.str_;
+		return out;
+	}
+	friend istream& operator>> (istream& in, String& str) {
+		in >> str.str_;
+		return in;
+	}
+};
+
+template <typename T>
+class Array {
+	T* arr_;
+	int size_;
+public:
+	Array() : size_(0), arr_(nullptr) {}
+	Array(int size) : size_(size) { arr_ = new T[size_];}
+	Array(const initializer_list<T>& list) : Array(list.size()) {
+		int i = 0;
+		for (auto& element : list) {
+			arr_[i] = element;
+			i++;
+		}
+	}
+	~Array() { delete[] arr_; }
+	template <typename> T Min() {
+		T elem = arr_[0];
+		for (int i = 0; i < size_; i++)
+			if (elem > arr_[i]) elem = arr_[i];
+		return elem;
+	}
+	template <typename> T Max() {
+		T elem = arr_[0];
+		for (int i = 0; i < size_; i++)
+			if (elem < arr_[i]) elem = arr_[i];
+		return elem;
+	}
+	void Sort() {
+		for (int k = size_ - 1; k > 0; k--)
+			for (int j = 0; j < k; j++)
+				if (arr_[j] > arr_[j + 1])
+					swap(arr_[j], arr_[j + 1]);
+	}
+	template <typename> T BinarySearch(T key) {
+		int m, lb = 0, ub = size_;
+		while (1) {
+			m = (lb + ub) / 2;
+			if (key < arr_[m]) ub = m - 1;
+			else if (key > arr_[m]) lb = m + 1;
+			else return m;
+			if (lb > ub) return -1;
+		}
+	}
+	T& operator[](int ind) { return arr_[ind];}
+	void RepElem(T elem, int ind) {
+		if (ind < size_) arr_[ind] = elem;
+	}
+	void Print() {
+		cout << "    ";
+		for (int i = 0; i < size_; i++)
+			cout << arr_[i] << " ";
+		cout << endl;
+	}
+};
+
+class PhoneBook {
+public:
+	class Contact {
+	public:
+		Contact(const string& name, const string& address, const string& telephone) {
+			name_ = name;
+			address_ = address;
+			telephone_ = telephone;
+		}
+		string name_{};
+		string address_{};
+		string telephone_{};
+	};
+	PhoneBook(const string& entry, const Contact& contact) {
+		entry_ = entry;
+		contact_ = contact;
+	}
+	void Print() {
+		cout << "    " << entry_ << ": " << contact_.name_ << ", " << contact_.address_ << ", тел. "
+			<< contact_.telephone_ << '.' << endl;
+	}
+private:
+	string entry_;
+	Contact contact_{ "", "", "" };
+};
+
+int main() {
+	setlocale(LC_ALL, "Rus");
+	SetConsoleCP(1251);
+	SetConsoleOutputCP(1251);
+
+	cout << "\n\t\tПЕРЕГРУЗКА ОПЕРАТОРОВ. ШАБЛОННЫЕ МЕТОДЫ\n";
+
+	cout << "\n\tЗадание 1 \"Класс \"Строка\"\n\n";
+	String strBasic{ "abcde" }, strAuxil{ "fg" }, strResult;
+	cout << "    Строки | Символы\n";
+	cout << "  ---------|---------\n";
+	cout << "    основ. |  ";
+	strBasic.Print();
+	cout << "    вспом. |  ";
+	strAuxil.Print();
+	cout << "\n";
+	cout << "  Операторы|Результат\n";
+	cout << "  ---------|---------\n";
+	cout << "    ==     |  ";
+	cout << (strBasic == strAuxil == 0 ? "false" : "true") << "\n";
+	cout << "    !=     |  ";
+	cout << (strBasic != strAuxil == 0 ? "false" : "true") << "\n";
+	cout << "    >      |  ";
+	cout << (strBasic > strAuxil == 0 ? "false" : "true") << "\n";
+	cout << "    <      |  ";
+	cout << (strBasic < strAuxil == 0 ? "false" : "true") << "\n";
+	cout << "    [0]='k'|  ";
+	strBasic[0] = 'k';
+	cout << strBasic[0] << "\n";
+	cout << "    (1)    |  ";
+	cout << strBasic(1) << "\n";
+	cout << "    (2,'h')|  ";
+	strBasic(2, 'h');
+	strBasic.Print();
+	cout << "    (1,str)|  ";
+	strBasic(1, strAuxil.GetStr());
+	strBasic.Print();
+	cout << "    int()  |  ";
+	int len = strBasic;
+	cout << len << "\n";
+	cout << "    cout<< |  ";
+	strResult = strBasic;
+	cout << strResult << endl;
+	cout << "    введите строку:\n";
+	cout << "    cin>>  |  ";
+	cin >> strResult;
+	cout << "    cout<< |  ";
+	cout << strResult << endl;
+	cout << "    copy   |  ";
+	String strCopy(strBasic);
+	strCopy.Print();
+	cout << "  ";
+	system("pause");
+
+	cout << "\n\tЗадание 2 \"Шаблонные методы\"\n\n";
+	Array<int> intArr{ 8, 2, 1, 6, 7, 5, 3, 4 };
+	Array<char> chrArr{ 'f','d','a','m','b','n','p'};
+	cout << "  Исходные массивы:\n";
+	intArr.Print();
+	chrArr.Print();
+	cout << "  Элементы:\n";
+	cout << "    min: " << intArr.Min<int>() << " и " << chrArr.Min<char>() << endl;
+	cout << "    max: " << intArr.Max<int>() << " и " << chrArr.Max<char>() << endl;
+	cout << "  Сортировка:\n";
+	intArr.Sort();
+	intArr.Print();
+	chrArr.Sort();
+	chrArr.Print();
+	cout << "  Бинарный поиск 3 и 'm' соответственно: ";
+	cout << intArr.BinarySearch<int>(3) << " и " << int(chrArr.BinarySearch<char>('m')) << endl;
+	cout << "  Замена элементов 1-го на 9 и 5-го на 't':\n";
+	cout << "";
+	intArr.RepElem(9, 1);
+	intArr.Print();
+	chrArr.RepElem('t', 5);
+	chrArr.Print();
+	cout << "  ";
+	system("pause");
+
+	cout << "\n\tЗадание 3 \"Классы \"Контакт\" и \"Телефонная книга\"\n\n";
+	cout << "  Телефонная книга:\n";
+	PhoneBook::Contact contact1{ "Иванов И.И.","ул. Лунная, 10", "22-32-23" };
+	PhoneBook entry1{ "Запись 1", contact1 };
+	entry1.Print();
+	PhoneBook::Contact contact2{ "Петров П.П.","пр-т Восточный, 7-25", "12-34-56" };
+	PhoneBook entry2{ "Запись 2", contact2 };
+	entry2.Print();
+	PhoneBook::Contact contact3{ "Сидоров С.С.","б-р Снежный, 12-48", "99-88-77" };
+	PhoneBook entry3{ "Запись 3", contact3 };
+	entry3.Print();
+	cout << "  ";
+	system("pause");
+	return 0;
+}
