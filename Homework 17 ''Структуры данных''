@@ -1,0 +1,194 @@
+#include<iostream>
+#include <cstring>
+#include <time.h> 
+#include <Windows.h>
+using namespace std;
+
+class Stack {
+	enum { EMPTY = -1, FULL = 50 };
+	char st_[FULL + 1];
+	int top_;
+public:
+	Stack() : top_(EMPTY) {}
+	~Stack() {}
+	void Clear() { top_ = EMPTY; }
+	bool IsEmpty() { return top_ == EMPTY; }
+	bool IsFull() { return top_ == FULL; }
+	int GetCount() { return top_ + 1; }
+	void Push(char c) {
+		if (!IsFull()) {
+			top_++;
+			st_[top_] = c;
+		}
+		else
+			cout << "Error!";
+	}
+	char Pop() {
+		if (!IsEmpty())
+			return st_[top_--];
+		else
+			cout << "Error!";
+	};
+	void Print() {
+		cout << "    ";
+		for (int i = 0; i <= top_; i++)
+			cout << st_[i] << " ";
+		cout << endl;
+	}
+};
+
+void Print(char* str, int size) {
+	cout << "    ";
+	for (int i = 0; i < size; i++)
+		cout << str[i];
+};
+
+void СheckBrack(Stack st, char* str) {
+	char arrSimb[]{ '(','[','{',')',']','}' };
+	int i = 0, j = 0;
+	bool flag = true;
+	st.Clear();
+	for (i = 0; i < strlen(str); i++) {
+		if (str[i] != ';') {
+			for (j = 0; j < 3; j++)
+				if (str[i] == arrSimb[j])
+					st.Push(str[i]);
+			for (j = 3; j < 6; j++) {
+				if (str[i] == arrSimb[j]) {
+					if (st.Pop() != arrSimb[j - 3])
+						flag = false;
+				}
+			}
+		}
+		else
+			break;
+		if (!flag)
+			break;
+	}
+	if (!st.IsEmpty()) flag = false;
+	Print(str, i);
+	cout << " - " << (flag ? "" : "не") << "корректно\n";
+};
+
+struct Empl {
+	char posit_[30];
+	bool prior_;
+	int pages_;
+	int hour_;
+	void Print() {
+		cout << "      " << posit_ << " (" << (pages_ < 10 ? " " : "") << pages_ << " стр., " << hour_ 
+			<< '-' << ((hour_ == 3 || hour_ == 23) ? "и" : (hour_ == 0 || hour_ == 2 || (hour_ > 5 && 
+				hour_ < 9) || hour_ == 22) ? "о" : "ы") << "й час)\n";
+	}
+};
+
+class Queue {
+	enum { EMPTY = 0, FULL = 100 };
+	Empl wait_[FULL];
+	int length_;
+public:
+	Queue(): length_(EMPTY) {}
+	void Clear() { length_ = EMPTY; }
+	bool IsEmpty() { return length_ == EMPTY; }
+	bool IsFull() { return length_ == FULL; }
+	int GetCount() { return length_; }
+	void Add(Empl c) {
+		if (!IsFull())
+			wait_[length_++] = c;
+		else
+			cout << "Error!";
+	}
+	Empl Extract() {
+		int i, j;
+		if (!IsEmpty()) {
+			for (i = 0; i < length_; i++) {
+				j = 0;
+				if (wait_[i].prior_ == true) {
+					j = i;
+					break;
+				}
+			}
+			Empl tmp = wait_[j];
+			for (i = j; i < length_ - 1; i++)
+				wait_[i] = wait_[i + 1];
+			length_--;
+			return tmp;
+		}
+	}
+	void Print(int hour = 0) {
+		for (int i = 0; i < length_; i++) {
+			if (hour != 0 ? wait_[i].hour_ == hour : true)
+				cout << "      " << wait_[i].posit_ << " (" << (wait_[i].pages_ < 10 ? " " : "") << wait_[i].pages_
+					<< " стр., " << wait_[i].hour_ << '-' << ((wait_[i].hour_ == 3 || wait_[i].hour_ == 23)? "и" : 
+						(wait_[i].hour_ == 0 ||	wait_[i].hour_ == 2 || (wait_[i].hour_ > 5 && wait_[i].hour_ < 9) || 
+							wait_[i].hour_ == 22) ? "о" : "ы") << "й час)\n";
+		}
+	}
+};
+
+
+int main() {
+	srand(time(NULL));
+	setlocale(LC_ALL, "Rus");
+	SetConsoleCP(1251);
+	SetConsoleOutputCP(1251);
+
+	cout << "\n\t\tСТРУКТУРЫ ДАННЫХ\n";
+
+	cout << "\n\tЗадание 1 \"Проверка расстановки скобок\"\n\n";
+	Stack st;
+	char strFir[]{ "({x-y-z}*[x+2y]-(z+4x)); first string" };
+	char strSec[]{ "([x-y-z}*[x+2y)-{z+4x)]; second string" };
+	cout << "  Проверяемые строки (до знака – ';', если нет – полностью):\n";
+	Print(strFir, strlen(strFir));
+	cout << endl;
+	Print(strSec, strlen(strSec));
+	cout << endl;
+	cout << "  Результат проверки (строка выводится до первой ошибки):\n";
+	СheckBrack(st, strFir);
+	СheckBrack(st, strSec);
+	cout << "  ";
+	system("pause");
+
+	cout << "\n\tЗадание 2 \"Очередь на печать\"\n\n";
+	int i, j, pages;
+	Empl empl;
+	Empl arrEmpl[]{ { "директор ", true, 0, 0 },{ "бухгалтер", false, 0, 0 },{ "менеджер ", false, 0, 0 } };
+	Queue q;
+	cout << "  Сотрудники (приоритет печати документов):\n";
+	for (i = 0; i < 3; i++)
+		cout << "    " << arrEmpl[i].posit_ << " (" << (arrEmpl[i].prior_ ? "высший" : "общий") << ")\n";
+	cout << "  Документы (кол-во страниц, время отправки):\n";
+	for (i = 1; i <= 24; i++) {
+		cout << "  " << i << '-' << ((i == 3 || i == 23) ? "и" : (i == 0 || i == 2 || (i > 5 && i < 9) || 
+			i == 22) ? "о" : "ы") << "й час\n";
+		if (i <= 8) {
+			cout << "    отправленные на печать:\n";
+			for (j = 0; j < 9; j++) {
+				if (rand() % 3 != 0) {
+					arrEmpl[j % 3].hour_ = i;
+					arrEmpl[j % 3].pages_ = rand() % 50 + 1;
+					q.Add(arrEmpl[j % 3]);
+				}
+			}
+			q.Print(i);
+		}
+		if (q.IsEmpty()) break;
+		pages = 0;
+		cout << "    распечатанные:\n";
+		while ((pages <= 150) && (!q.IsEmpty())) {
+			empl = q.Extract();
+			pages += empl.pages_;
+			empl.Print();
+		}
+		cout << "    нераспечатанные:\n";
+		if (q.IsEmpty())
+			cout << "      нет\n";
+		else
+			q.Print(i);
+	}
+	cout << "    заданий на печать нет.\n";
+	cout << "  ";
+	system("pause");
+	return 0;
+}
