@@ -88,6 +88,7 @@ class Queue {
 	int length_;
 public:
 	Queue(): length_(EMPTY) {}
+	~Queue() {}
 	void Clear() { length_ = EMPTY; }
 	bool IsEmpty() { return length_ == EMPTY; }
 	bool IsFull() { return length_ == FULL; }
@@ -125,7 +126,6 @@ public:
 		}
 	}
 };
-
 
 int main() {
 	srand(time(NULL));
