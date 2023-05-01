@@ -21,13 +21,13 @@ public:
 			st_[top_] = c;
 		}
 		else
-			cout << "Error!";
+			cout << "    Error!";
 	}
 	char Pop() {
 		if (!IsEmpty())
 			return st_[top_--];
 		else
-			cout << "Error!";
+			cout << "    Error!";
 	};
 	void Print() {
 		cout << "    ";
