@@ -1,0 +1,161 @@
+#include<iostream>
+using namespace std;
+struct NodeSt {
+	int val;
+	NodeSt* next;
+};
+class Stack {
+	enum { ERROR_ = 0, EMPTY = -1 };
+	NodeSt* top_ = nullptr;
+public:
+	void Clear() { top_ = nullptr; }
+	bool IsEmpty() { return top_ == nullptr; }
+	int GetSize() {
+		NodeSt* temp = top_;
+		int k = 0;
+		while (temp != nullptr) {
+			temp = temp->next;
+			k++;
+		}
+		return k;
+	}
+	void Push(int val) {
+		NodeSt* temp = new NodeSt{ val };
+		if (!IsEmpty())
+			temp->next = top_;
+		top_ = temp;
+	}
+	int Pop() {
+		if (IsEmpty())
+			return ERROR_;
+		int val = top_->val;
+		if (top_->next == nullptr) {
+			delete top_;
+			top_ = nullptr;
+		}
+		else {
+			NodeSt* current = top_;
+			top_ = current->next;
+			delete current;
+		}
+		return val;
+	}
+	void Print() {
+		NodeSt* temp = top_;
+		while (temp != nullptr) {
+			cout << temp->val << " ";
+			temp = temp->next;
+		}
+		cout << endl;
+	}
+};
+
+struct NodeQu {
+	int val;
+	NodeQu* prev;
+	NodeQu* next;
+};
+class Queue {
+	enum { ERROR_ = 0, EMPTY = -1 };
+	NodeQu* top_ = nullptr;
+	NodeQu* tail_ = nullptr;
+public:
+	void Clear() { top_ = nullptr; }
+	bool IsEmpty() { return top_ == nullptr; }
+	int GetSize() {
+		NodeQu* temp = top_;
+		int k = 0;
+		while (temp != nullptr) {
+			temp = temp->next;
+			k++;
+		}
+		return k;
+	}
+	void Add(int val) {
+		NodeQu* temp = new NodeQu{ val };
+		if (!IsEmpty()) {
+			tail_->next = temp;
+			temp->prev = tail_;
+		}
+		else
+			top_ = temp;
+		tail_ = temp;
+	}
+	int Extrac() {
+		if (IsEmpty())
+			return ERROR_;
+		int val = top_->val;
+		if (top_ == tail_) {
+			delete top_;
+			top_ = tail_ = nullptr;
+		}
+		else {
+			top_ = top_->next;
+			delete top_->prev;
+			top_->prev = nullptr;
+		}
+		return val;
+	}
+	void Print() {
+		NodeQu* temp = top_;
+		while (temp != nullptr) {
+			cout << temp->val << " ";
+			temp = temp->next;
+		}
+		cout << endl;
+	}
+};
+
+int main() {
+	setlocale(LC_ALL, "Rus");
+
+	cout << "\n\t\t\tСПИСОК\n";
+	int num;
+
+	cout << "\n\tЗадание 1 \"Реализация структуры данных \"Стек\"\n\n";
+	Stack st;
+	cout << "  Стек:\n";
+	st.Push(8);
+	st.Push(2);
+	st.Push(5);
+	st.Push(3);
+	st.Push(7);
+	cout << "  - исходный (размер = " << st.GetSize() << "): ";
+	st.Print();
+	cout << "  - добавление элемента: ";
+	st.Push(1);
+	st.Print();
+	cout << "  - извлечение элемента: ";
+	num = st.Pop();
+	st.Print();
+	cout << "  - значение выданного элемента: " << num << endl;
+	st.Clear();
+	cout << "  - очистка (размер = " << st.GetSize() << "), результат:";
+	st.Print();
+	cout << "  ";
+	system("pause");
+
+	cout << "\n\tЗадание 2 \"Реализация структуры данных \"Очередь\"\n\n";
+	Queue q;
+	cout << "  Очередь:\n";
+	q.Add(8);
+	q.Add(2);
+	q.Add(5);
+	q.Add(3);
+	q.Add(7);
+	cout << "  - исходная (размер = " << q.GetSize() << "): ";
+	q.Print();
+	cout << "  - добавление элемента: ";
+	q.Add(1);
+	q.Print();
+	cout << "  - извлечение элемента: ";
+	num = q.Extrac();
+	q.Print();
+	cout << "  - значение выданного элемента: " << num << endl;
+	q.Clear();
+	cout << "  - очистка (размер = " << q.GetSize() << "), результат:";
+	q.Print();
+	cout << "  ";
+	system("pause");
+	return 0;
+}
