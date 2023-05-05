@@ -8,7 +8,6 @@ class Stack {
 	enum { ERROR_ = 0, EMPTY = -1 };
 	NodeSt* top_ = nullptr;
 public:
-	void Clear() { top_ = nullptr; }
 	bool IsEmpty() { return top_ == nullptr; }
 	int GetSize() {
 		NodeSt* temp = top_;
@@ -40,6 +39,10 @@ public:
 		}
 		return val;
 	}
+	void Clear() {
+		while (!IsEmpty())
+			Pop();
+	}
 	void Print() {
 		NodeSt* temp = top_;
 		while (temp != nullptr) {
@@ -60,7 +63,6 @@ class Queue {
 	NodeQu* top_ = nullptr;
 	NodeQu* tail_ = nullptr;
 public:
-	void Clear() { top_ = nullptr; }
 	bool IsEmpty() { return top_ == nullptr; }
 	int GetSize() {
 		NodeQu* temp = top_;
@@ -104,6 +106,10 @@ public:
 		}
 		cout << endl;
 	}
+	void Clear() {
+		while (!IsEmpty())
+			Extrac();
+	}
 };
 
 int main() {
@@ -130,7 +136,7 @@ int main() {
 	st.Print();
 	cout << "  - значение выданного элемента: " << num << endl;
 	st.Clear();
-	cout << "  - очистка (размер = " << st.GetSize() << "), результат:";
+	cout << "  - очистка (размер = " << st.GetSize() << "), результат: ";
 	st.Print();
 	cout << "  ";
 	system("pause");
@@ -153,7 +159,7 @@ int main() {
 	q.Print();
 	cout << "  - значение выданного элемента: " << num << endl;
 	q.Clear();
-	cout << "  - очистка (размер = " << q.GetSize() << "), результат:";
+	cout << "  - очистка (размер = " << q.GetSize() << "), результат: ";
 	q.Print();
 	cout << "  ";
 	system("pause");
