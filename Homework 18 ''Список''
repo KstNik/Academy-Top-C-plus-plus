@@ -1,5 +1,6 @@
 #include<iostream>
 using namespace std;
+
 struct NodeSt {
 	int val;
 	NodeSt* next;
