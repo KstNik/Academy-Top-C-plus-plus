@@ -1,0 +1,122 @@
+#include<iostream>
+#include <math.h>
+using namespace std;
+
+class Pet {
+	string name_{};
+public:
+	Pet() : Pet("Кличка") {}
+	Pet(string name) : name_(name){}
+	~Pet() {}
+	string GetName() { return name_; }
+	void Print() { cout << "    " << name_ << endl; }
+};
+
+class Dog : public Pet {
+	bool genY_;
+public:
+	Dog() : Dog("", true) {}
+	Dog (string name, bool genY) : Pet (name), genY_(genY) {}
+	~Dog() {}
+	string GetName() { return Pet::GetName(); }
+	bool GetGenY() { return genY_; }
+	void Print() { cout << "    " << (genY_ ? "пёс " : "собака ") << Pet::GetName() << endl; }
+};
+
+class Cat : public Pet {
+	bool genY_;
+public:
+	Cat() : Cat("", true) {}
+	Cat(string name, bool genY) : Pet(name), genY_(genY) {}
+	~Cat() {}
+	string GetName() { return Pet::GetName(); }
+	bool GetGenY() { return genY_; }
+	void Print() { cout << "    " << (genY_ ? "кот " : "кошка ") << Pet::GetName() << endl; }
+};
+
+class Parrot : public Pet {
+public:
+	Parrot () {}
+	Parrot(string name) : Pet(name) {}
+	~Parrot() {}
+	string GetName() { return Pet::GetName(); }
+	void Print() { cout << "    попугай " << Pet::GetName() << endl; }
+};
+
+class Point {
+	double x_;
+	double y_;
+public:
+	Point() : Point(0, 0) {}
+	Point(double x, double y): x_(x), y_(y) {}
+	~Point() {}
+	double GetX() { return x_; }
+	double GetY() { return y_; }
+};
+
+class Distance {
+	double l_;
+public:
+	Distance() :Distance(1) {}
+	Distance(double l) : l_(l) {}
+	~Distance() {}
+	double GetL() { return l_; }
+};
+
+class СircleInSquare : public Point, public Distance {
+public:
+	СircleInSquare() {}
+	СircleInSquare(double x, double y, double l) : Point(x, y), Distance(l) {}
+	~СircleInSquare() {}
+	double GetX() { return Point::GetX(); }
+	double GetY() { return Point::GetY(); }
+	double GetL() { return Distance::GetL(); }
+	void Print() {
+		double sq2 = sqrt(2);
+		printf("  O (%f, %f)\n", Point::GetX(), Point::GetY());
+		printf("  A (%f, %f)\n", Point::GetX(), Point::GetY() + Distance::GetL());
+		printf("  B (%f, %f)\n", Point::GetX() + Distance::GetL(), Point::GetY() + Distance::GetL());
+		printf("  C (%f, %f)\n", Point::GetX() + Distance::GetL(), Point::GetY());
+		printf("  D (%f, %f)\n", Point::GetX() + Distance::GetL(), Point::GetY() - Distance::GetL());
+		printf("  E (%f, %f)\n", Point::GetX(), Point::GetY() - Distance::GetL());
+		printf("  F (%f, %f)\n", Point::GetX() - Distance::GetL(), Point::GetY() - Distance::GetL());
+		printf("  G (%f, %f)\n", Point::GetX() - Distance::GetL(), Point::GetY());
+		printf("  H (%f, %f)\n", Point::GetX() - Distance::GetL(), Point::GetY() + Distance::GetL());
+		printf("  I (%f, %f)\n", Point::GetX() + Distance::GetL() / sq2, Point::GetY() + Distance::GetL() / sq2);
+		printf("  J (%f, %f)\n", Point::GetX() + Distance::GetL() / sq2, Point::GetY() - Distance::GetL() / sq2);
+		printf("  K (%f, %f)\n", Point::GetX() - Distance::GetL() / sq2, Point::GetY() - Distance::GetL() / sq2);
+		printf("  L (%f, %f)\n", Point::GetX() - Distance::GetL() / sq2, Point::GetY() + Distance::GetL() / sq2);
+	}
+};
+
+int main() {
+	setlocale(LC_ALL, "Rus");
+
+	cout << "\n\t\t\tНАСЛЕДОВАНИЕ\n";
+
+	cout << "\n\tЗадание 1 \"Класс \"Домашнее животное\"\n\n";
+	cout << "  Вид и кличка:\n";
+	Dog d{ "Рэкс", true };
+	d.Print();
+	Cat c{ "Мурка", false };
+	c.Print();
+	Parrot p{ "Рио" };
+	p.Print();
+	cout << "  ";
+	system("pause");
+
+	cout << "\n\tЗадание 2 \"Класс \"Окружность, вписанная в квадрат\"\n\n";
+	cout << R"(  H ______А______ B
+   | L. * * * .I |
+   | *         * |
+  G|*     .O    *|C
+   |*           *|
+   | *.       .* |
+   |_K__* * *__J_|
+  F       E       D)" << "\n\n";
+	СircleInSquare cs{ 1, 2, 3 };
+	cs.Print();
+	cout << "  ";
+	system("pause");
+	return 0;
+}
