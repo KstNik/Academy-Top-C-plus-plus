@@ -1,0 +1,177 @@
+#include<iostream>
+#include<math.h>
+#include<cstring>
+using namespace std;
+
+class Point {
+	double x_;
+	double y_;
+public:
+	Point() : Point(0, 0) {}
+	Point(double x, double y) : x_(x), y_(y) {}
+	~Point() {}
+	double GetX() { return x_; }
+	double GetY() { return y_; }
+};
+
+class Distance {
+	double l_;
+public:
+	Distance() :Distance(1) {}
+	Distance(double l) : l_(l) {}
+	~Distance() {}
+	double GetL() { return l_; }
+};
+
+class Circuit {
+	Point p_;
+	Distance d_;
+public:
+	Circuit() {}
+	Circuit(double x, double y, double l) : p_(x, y), d_(l) {}
+	~Circuit() {}
+	double GetX() { return p_.GetX(); }
+	double GetY() { return p_.GetY(); }
+	double GetL() { return d_.GetL(); }
+	void Print() {
+		double sq2 = sqrt(2);
+		printf("  O (%f, %f)\n", p_.GetX(), p_.GetY());
+		printf("  A (%f, %f)\n", p_.GetX(), p_.GetY() + d_.GetL());
+		printf("  B (%f, %f)\n", p_.GetX() + d_.GetL() / sq2, p_.GetY() + d_.GetL() / sq2);
+		printf("  C (%f, %f)\n", p_.GetX() + d_.GetL(), p_.GetY());
+		printf("  D (%f, %f)\n", p_.GetX() + d_.GetL() / sq2, p_.GetY() - d_.GetL() / sq2);
+		printf("  E (%f, %f)\n", p_.GetX(), p_.GetY() - d_.GetL());
+		printf("  F (%f, %f)\n", p_.GetX() - d_.GetL() / sq2, p_.GetY() - d_.GetL() / sq2);
+		printf("  G (%f, %f)\n", p_.GetX() - d_.GetL(), p_.GetY());
+		printf("  H (%f, %f)\n", p_.GetX() - d_.GetL() / sq2, p_.GetY() + d_.GetL() / sq2);
+	}
+};
+
+class Сircle : public Point, public Distance {
+public:
+	Сircle() {}
+	Сircle(double x, double y, double l) : Point(x, y), Distance(l) {}
+	~Сircle() {}
+	double GetX() { return Point::GetX(); }
+	double GetY() { return Point::GetY(); }
+	double GetL() { return Distance::GetL(); }
+	void Print() {
+		double sq2 = sqrt(2);
+		printf("  O (%f, %f)\n", Point::GetX(), Point::GetY());
+		printf("  A (%f, %f)\n", Point::GetX(), Point::GetY() + Distance::GetL());
+		printf("  B (%f, %f)\n", Point::GetX() + Distance::GetL() / sq2, Point::GetY() + Distance::GetL() / sq2);
+		printf("  C (%f, %f)\n", Point::GetX() + Distance::GetL(), Point::GetY());
+		printf("  D (%f, %f)\n", Point::GetX() + Distance::GetL() / sq2, Point::GetY() - Distance::GetL() / sq2);
+		printf("  E (%f, %f)\n", Point::GetX(), Point::GetY() - Distance::GetL());
+		printf("  F (%f, %f)\n", Point::GetX() - Distance::GetL() / sq2, Point::GetY() - Distance::GetL() / sq2);
+		printf("  G (%f, %f)\n", Point::GetX() - Distance::GetL(), Point::GetY());
+		printf("  H (%f, %f)\n", Point::GetX() - Distance::GetL() / sq2, Point::GetY() + Distance::GetL() / sq2);
+	}
+};
+
+class Pixel : public Point {
+	char* color_;
+public:
+	Pixel() : Pixel(0, 0, nullptr) {}
+	Pixel(double x, double y, const char* color) : Point(x, y), color_{ color ? new char[strlen(color) + 1] : nullptr } 
+		{ SetColor(color); }
+	~Pixel() { delete color_; }
+	double GetX() { return Point::GetX(); }
+	double GetY() { return Point::GetY(); }
+	void SetColor(const char* color) { strcpy_s(color_, strlen(color) + 1, color); }
+	void Print() { printf("  P (%f, %f, %s)\n", Point::GetX(), Point::GetY(), color_); }
+};
+
+class Person {
+	string name_;
+	int age_;
+public:
+	Person() : Person{ "Неизвестный", 0, } {}
+	Person(string name, int age) : name_{ name }, age_{ age } {}
+	~Person() {}
+	string GetName() { return name_; }
+	int GetAge() { return age_; }
+	void SetAgeInc(int a) { age_ += a; }
+	void Print() { 
+		cout << "  " << name_;
+		printf(", возраст %d.\n", age_);
+	}
+};
+
+class Teacher : public Person {
+	string subject_;
+public:
+	Teacher() : Teacher{ "Неизвестный", 0, "не определён"} {}
+	Teacher(string name, int age, string subject) : Person(name, age), subject_{ subject } {}
+	~Teacher() {}
+	string GetSubject() { return subject_; }
+	void Print() {
+		cout << "  " << GetName();
+		printf(", возраст %d, ", GetAge());
+		cout << "преподаваемый предмет - " << subject_ <<".\n";
+	}
+};
+
+class Student : public Teacher {
+	int group_;
+	int* marks_;
+public:
+	Student() : Student{ "Неизвестный", 0, 0, "не определён", nullptr } {}
+	Student(string name, int age, int group, string subject, int marks[]) : Teacher(name, age, subject),
+		group_{ group } {
+		marks_ = new int;
+		marks_ = marks;
+	}
+	~Student() {}
+	void Print(int m) {
+		cout << "  " << GetName();
+		printf(", возраст %d, группа %d, " , GetAge(), group_);
+		cout << "предмет " << GetSubject() << ", оценки: ";
+		for (int i = 0; i < m; i++)
+			cout << marks_[i] << (i < m - 1 ? ", " : ".\n");
+	}
+};
+
+int main() {
+	setlocale(LC_ALL, "Rus");
+
+	cout << "\n\t\t\tНАСЛЕДОВАНИЕ\n";
+
+	cout << "\n\tЗадания 1, 2 \"Классы \"Точка и круг\"\n\n";
+	cout << R"(          А
+     H. * * * .B
+     *         *
+  G *     .O    * C
+    *           *
+     *.       .*
+     F  * * *  D
+          E)" << "\n\n";
+	cout << "\tАгрегирование\n";
+	Circuit ct;
+	ct.Print();
+	cout << "\tНаследование\n";
+	Сircle cl;
+	cl.Print();
+	cout << "  ";
+	system("pause");
+
+	cout << "\n\tЗадание 3 \"Класс \"Цветная точка\"\n\n";
+	Pixel p{ 1, 2, "красная" };
+	p.Print();
+	cout << "  ";
+	system("pause");
+
+	cout << "\n\tЗадание 4 \"Классы \"Человек\", \"Учитель\" и \"Студент\"\n\n";
+	Person pr{ "Иванов И.И.", 30 };
+	pr.Print();
+	pr.SetAgeInc(5);
+	pr.Print();
+	Teacher tc{ "Петров П.П.", 50, "высшая математика" };
+	tc.Print();
+	int marks[] { 4,3,5 };
+	Student st{ "Сидоров С.С.", 20, 3, "физика", marks };
+	st.Print(size(marks));
+	cout << "  ";
+	system("pause");
+	return 0;
+}
