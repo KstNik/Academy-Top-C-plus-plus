@@ -58,7 +58,7 @@ class Distance {
 	double l_;
 public:
 	Distance() :Distance(1) {}
-	Distance(double l) : l_(l) {}
+	Distance(double l) : l_(l < 0 ? 0 : l) {}
 	~Distance() {}
 	double GetL() { return l_; }
 };
