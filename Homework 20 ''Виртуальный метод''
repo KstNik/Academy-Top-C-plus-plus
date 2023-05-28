@@ -1,0 +1,80 @@
+#include<iostream>
+#include <math.h>
+using namespace std;
+
+class Point {
+	double x_;
+	double y_;
+public:
+	Point() : Point(0, 0) {}
+	Point(double x, double y) : x_(x), y_(y) {}
+	~Point() {}
+	double GetX() { return x_; }
+	double GetY() { return y_; }
+	virtual void Print() { printf("\tТочка:\n  P (%f, %f)\n", x_, y_); }
+};
+
+class Circle : public Point {
+	double r_;
+public:
+	Circle() : Point(), r_{ 1 } {}
+	Circle(double x, double y, double r) : Point(x, y), r_{ r < 0 ? 0 : r } {}
+	~Circle() {}
+	double GetX() { return Point::GetX(); }
+	double GetY() { return Point::GetY(); }
+	double GetR() { return r_; }
+	void Print() {
+		double sq2 = sqrt(2);
+		printf("\tОкружность:\n  O (%f, %f)\n", Point::GetX(), Point::GetY());
+		printf("  A (%f, %f)\n", Point::GetX(), Point::GetY() + r_);
+		printf("  B (%f, %f)\n", Point::GetX() + r_ / sq2, Point::GetY() + r_ / sq2);
+		printf("  C (%f, %f)\n", Point::GetX() + r_, Point::GetY());
+		printf("  D (%f, %f)\n", Point::GetX() + r_ / sq2, Point::GetY() - r_ / sq2);
+		printf("  E (%f, %f)\n", Point::GetX(), Point::GetY() - r_);
+		printf("  F (%f, %f)\n", Point::GetX() - r_ / sq2, Point::GetY() - r_ / sq2);
+		printf("  G (%f, %f)\n", Point::GetX() - r_, Point::GetY());
+		printf("  H (%f, %f)\n", Point::GetX() - r_ / sq2, Point::GetY() + r_ / sq2);
+	}
+};
+
+class Square : public Point {
+	double a_;
+public:
+	Square():Point(), a_{ 1 } {}
+	Square(double x, double y, double a) : Point(x, y), a_{ a < 0 ? 0 : a } {}
+	~Square() {}
+	double GetX() { return Point::GetX(); }
+	double GetY() { return Point::GetY(); }
+	double GetA() { return a_; }
+	void Print() {
+		printf("\tКвадрат:\n  Q (%f, %f)\n", Point::GetX(), Point::GetY());
+		printf("  R (%f, %f)\n", Point::GetX() + a_, Point::GetY());
+		printf("  S (%f, %f)\n", Point::GetX() + a_, Point::GetY() - a_);
+		printf("  T (%f, %f)\n", Point::GetX(), Point::GetY() - a_);
+	}
+};
+
+int main() {
+	setlocale(LC_ALL, "Rus");
+
+	cout << "\n\t\t\tВИРТУАЛЬНЫЙ МЕТОД\n";
+
+	cout << R"(          А         Q _____________ R
+     H. * * * .B     |             |
+     *         *     |             |       .P
+  G *     .O    * C  |             |
+    *           *    |             |
+     *.       .*     |             |
+     F  * * *  D     |_____________|
+          E         T               S)" << "\n\n";
+	Point** point = new Point* [3];
+	point[0] = new Circle(-4, 0, 3);
+	point[1] = new Square(1, 3, 6);
+	point[2] = new Point(10, 1);
+	for (int i = 0; i < 3; i++)
+		point[i]->Print();
+	delete[] point;
+	cout << "  ";
+	system("pause");
+	return 0;
+}
