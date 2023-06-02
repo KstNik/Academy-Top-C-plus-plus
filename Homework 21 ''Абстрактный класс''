@@ -1,0 +1,109 @@
+#include <iostream>
+#include <initializer_list>
+#include <conio.h>
+#include <math.h>
+using namespace std;
+
+struct Point {
+	double x_;
+	double y_;
+	friend ostream& operator<<(ostream& output, const Point& p) {
+		output << "(" << p.x_ << ", " << p.y_ << ")";
+		return output;
+	}
+};
+
+class Figure {
+protected:
+	int length_;
+	Point* p_;
+public:
+	Figure() : length_(0), p_(nullptr) {}
+	Figure(int length) : length_(length) { p_ = new Point[length]; }
+	Figure(const initializer_list<Point>& list) : Figure(list.size()) {}
+	~Figure() { delete[] p_; }
+	double Perimeter() {
+		double sum{ 0 };
+		for (int i = 0; i < length_; i++)
+			sum += sqrt(pow((i != length_ - 1 ? p_[i + 1].x_ : p_[0].x_) - p_[i].x_, 2) +
+				pow((i != length_ - 1 ? p_[i + 1].y_ : p_[0].y_) - p_[i].y_, 2));
+		return sum;
+	}
+	virtual void Print() = 0;
+};
+
+class Poligon : public Figure {
+public:
+	Poligon() {}
+	Poligon(int length, Point* p) {}
+	Poligon(int length) : Figure(length) {}
+	Poligon(const initializer_list<Point>& list) : Figure(list.size()) {}
+	~Poligon() {}
+	int NumDiagonal() { return length_ > 3 ? (pow(length_, 2) - 3 * length_) / 2 : 0; }
+	virtual void Print() = 0;
+};
+
+class Triangle : public Figure {
+public:
+	Triangle(int length, Point* p) {}
+	Triangle(int length) : Figure(length) {}
+	Triangle(const initializer_list<Point>& list) : Figure(list.size()) {
+		int i = 0;
+		for (auto& element : list) {
+			p_[i] = element;
+			i++;
+		}
+	}
+	~Triangle() {}
+	void Print() {
+		cout << "  Треугольник:\n";
+		cout << "  - координаты вершин: ";
+		for (int i = 0; i < length_; i++)
+			cout << p_[i] << (i < length_ - 1 ? " " : ";\n");
+		cout << "  - периметр: " << Perimeter() << ".\n";
+	}
+};
+
+class Tetragon : public Poligon {
+public:
+	Tetragon(int length, Point* p) {}
+	Tetragon(int length) : Poligon(length) {}
+	Tetragon(const initializer_list<Point>& list) : Poligon(list.size()) {
+		int i = 0;
+		for (auto& element : list) {
+			p_[i] = element;
+			i++;
+		}
+	}
+	~Tetragon() {}
+	void Print() {
+		cout << "  Четырёхугольник:\n";
+		cout << "  - координаты вершин: ";
+		for (int i = 0; i < length_; i++)
+			cout << p_[i] << (i < length_ - 1 ? " " : ";\n");
+		cout << "  - количество диагоналей: " << NumDiagonal() << ";\n";
+		cout << "  - периметр: " << Perimeter() << ".\n";
+	}
+};
+
+int main() {
+	setlocale(LC_ALL, "Rus");
+
+	cout << "\n\t\t\tАБСТРАКТНЫЙ КЛАСС\n\n";
+  
+	Figure* fg[2] = { new Triangle { Point{0, 0}, Point{0, 1}, Point{1, 0}},
+		new Tetragon { Point{0, 0}, Point{0, 1}, Point{1, 1}, Point{1, 0}} };
+	for (int i = 0; i < 2; i++)
+		fg[i]->Print();
+	Triangle* tr = new Triangle{ Point{-2, 0}, Point{0, 2}, Point{2, 0} };
+	tr->Print();
+	delete tr;
+	cout << "    Значение периметра после освобождения памяти: " << tr->Perimeter() << ".\n";
+	Tetragon* tg = new Tetragon{ Point{-2, -2}, Point{-2, 2}, Point{2, 2}, Point{2, -2} };
+	tg->Print();
+	delete tg;
+	cout << "    Значение периметра после освобождения памяти: " << tg->Perimeter() << ".\n";
+	cout << "  ";
+	system("pause");
+	return 0;
+}
