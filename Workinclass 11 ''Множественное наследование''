@@ -1,0 +1,243 @@
+#include<iostream>
+#include<math.h>
+#include<cstring>
+using namespace std;
+
+class Horn {
+	string color_;
+	double weight_;
+public:
+	Horn() : Horn("", 0) {}
+	Horn(string color, double weight) : color_(color), weight_(weight) {}
+	~Horn() {}
+	string GetColor() { return color_; }
+	double GetWeight() { return weight_; }
+};
+
+class Hoof {
+	string form_;
+	int size_;
+public:
+	Hoof() : Hoof("", 0) {}
+	Hoof(string form, int size) : form_(form), size_(size) {}
+	~Hoof() {}
+	string GetForm() { return form_; }
+	int GetSize() { return size_; }
+};
+
+class Moose : public Horn, public Hoof {
+	string name_;
+public:
+	Moose() : name_{ "" }, Horn(), Hoof() {}
+	Moose(string name, string color, double weight, string form, int size) :
+		name_{ name }, Horn(color, weight), Hoof(form, size) {}
+	~Moose() {}
+	string GetColor() { return Horn::GetColor(); }
+	double GetWeight() { return Horn::GetWeight(); }
+	string GetForm() { return Hoof::GetForm(); }
+	int GetSize() { return Hoof::GetSize(); }
+	void Print() {
+		cout << "  " << name_ << ", рога – " << GetColor() << " " << GetWeight()
+			<< " кг, копыта - " << GetForm() << " " << GetSize() << " см.\n";
+	}
+};
+
+class Head {
+	char* form_;
+	char* color_;
+public:
+	Head() : Head(nullptr, nullptr) {}
+	Head(const char* form, const char* color) :
+		form_{ form ? new char[strlen(form) + 1] : nullptr },
+		color_{ color ? new char[strlen(color) + 1] : nullptr } {
+		SetForm(form);
+		SetColor(color);
+	}
+	~Head() {
+		delete form_;
+		delete color_;
+	}
+	void SetForm(const char* form) { strcpy_s(form_, strlen(form) + 1, form); }
+	void SetColor(const char* color) { strcpy_s(color_, strlen(color) + 1, color); }
+	char* GetForm() { return form_; }
+	char* GetColor() { return color_; }
+};
+
+class Hands {
+	double lengthHands_;
+public:
+	Hands() : Hands(0) {}
+	Hands(double lengthHands) : lengthHands_(lengthHands) {}
+	~Hands() {}
+	double GetLengthHands() { return lengthHands_; }
+};
+
+class Legs {
+	double lengthLegs_;
+public:
+	Legs() : Legs(0) {}
+	Legs(double lengthLegs) : lengthLegs_(lengthLegs) {}
+	~Legs() {}
+	double GetLengthLegs() { return lengthLegs_; }
+};
+
+class Wings {
+	double lengthWings_;
+	double squareWings_;
+public:
+	Wings() : Wings(0, 0) {}
+	Wings(double lengthWings, double squareWings) : lengthWings_(lengthWings), squareWings_(squareWings) {}
+	~Wings() {}
+	double GetLengthWings() { return lengthWings_; }
+	double GetSquareWings() { return squareWings_; }
+};
+
+class Paws {
+	int number_;
+	double speed_;
+public:
+	Paws() : Paws(0, 0) {}
+	Paws(int number, double speed) : number_(number), speed_(speed) {}
+	~Paws() {}
+	int GetNumber() { return number_; }
+	double GetSpeed() { return speed_; }
+};
+
+class Human : public Head, public Hands, public Legs {
+public:
+	Human() : Head(), Hands(), Legs() {}
+	Human(const char* form, const char* color, double lengthHands, double lengthLegs) :
+		Head(form, color), Hands(lengthHands), Legs(lengthLegs) {}
+	~Human() {}
+	void Print() {
+		cout << "  Человек, форма лица – " << GetForm() << ", волосы – " << GetColor() << ", длина: руки – "
+			<< GetLengthHands() << "; ноги – " << GetLengthLegs() << " см.\n";
+	}
+};
+
+class Bird : public Head, public Wings, public Legs {
+public:
+	Bird() : Head(), Wings(), Legs() {}
+	Bird(const char* form, const char* color, double lengthWings, double squareWings, double lengthLegs) :
+		Head(form, color), Wings(lengthWings, squareWings), Legs(lengthLegs) {}
+	~Bird() {}
+	void Print() {
+		cout << "  Птица, голова: " << GetForm() << ", цвет перьев – " << GetColor()
+			<< "; крыло: длина – " << GetLengthWings() << " см,\n    площадь – " << GetSquareWings()
+			<< " кв.см; длина ноги – " << GetLengthLegs() << " см.\n";
+	}
+};
+
+class Dog : public Head, public Paws {
+public:
+	Dog() : Head(), Paws() {}
+	Dog(const char* form, const char* color, int number, double speed) :
+		Head(form, color), Paws(number, speed) {}
+	~Dog() {}
+	void Print() {
+		cout << "  Собака, голова: " << GetForm() << ", цвет шерсти – " << GetColor() << "; лапы – "
+			<< GetNumber() << ", скорость – " << GetSpeed() << " км/ч.\n";
+	}
+};
+
+class Point {
+	double x_;
+	double y_;
+	double z_;
+public:
+	Point() : Point(0, 0, 0) {}
+	Point(double x, double y, double z) : x_(x), y_(y), z_(z) {}
+	~Point() {}
+	void SetX(double x) { x_ = x; }
+	void SetY(double y) { y_ = y; }
+	void SetZ(double z) { z_ = z; }
+	double GetX() { return x_; }
+	double GetY() { return y_; }
+	double GetZ() { return z_; }
+};
+
+class Form {
+	char* form_;
+public:
+	Form() : Form(nullptr) {}
+	Form(const char* form) : form_{ form ? new char[strlen(form) + 1] : nullptr } { SetForm(form); }
+	~Form() {}
+	void SetForm(const char* form) { strcpy_s(form_, strlen(form) + 1, form); }
+	char* GetForm() { return form_; }
+};
+
+class Color {
+public:
+	enum GRADATION { тусклый, яркий, ослепительный };
+private:
+	char* color_;
+	GRADATION bright_;
+public:
+	Color() : Color(nullptr, GRADATION::тусклый) {}
+	Color(const char* color, GRADATION bright) :
+		color_{ color ? new char[strlen(color) + 1] : nullptr }, bright_( bright ) { SetColor(color); }
+	~Color() {
+		color_ = nullptr;
+		delete color_;
+	}
+	void SetColor(const char* color) { strcpy_s(color_, strlen(color) + 1, color); }
+	void SetBright(GRADATION bright) { bright_ = bright; }
+	char* GetColor() { return color_; }
+	GRADATION GetBright() { return bright_; }
+};
+
+class Figure : public Form, public Color, public Point {
+public:
+	Figure() : Form(), Color(), Point() {}
+	Figure(const char* form, const char* color, GRADATION bright, double x, double y, double z) :
+		Form(form), Color(color, bright), Point(x, y, z) {}
+	~Figure() {}
+	void Moving(double x, double y, double z) { Point::SetX(x); Point::SetY(y); Point::SetZ(z); }
+	void СhangeForm(const char* changeForm) { Form::SetForm(changeForm); }
+	void СhangeColor(const char* changeColor) { Color::SetColor(changeColor); }
+	void СhangeBright(GRADATION changeBright) { Color::SetBright(changeBright); }
+	char* GetColor() { return Color::GetColor(); }
+	void Print() {
+		cout << "  " << Form::GetForm() << " " << Color::GetColor() << ", яркость – "
+			<< Color::GetBright() << ", координаты центра: x(" << Point::GetX() << "), y("
+			<< Point::GetY() << "), z(" << Point::GetZ() << ").\n";
+	};
+};
+
+int main() {
+	setlocale(LC_ALL, "Rus");
+
+	cout << "\n\t\t\tМНОЖЕСТВЕННОЕ НАСЛЕДОВАНИЕ\n";
+
+	cout << "\n\tЗадание 1 \"Классы \"Лось\", \"Рога\" и \"Копыта\"\n\n";
+	Moose ms{ "Лосяш", "коричневые", 3.5, "круглые", 10 };
+	ms.Print();
+	cout << "  ";
+	system("pause");
+
+	cout << "\n\tЗадание 2 \"Классы \"Голова\", \"Руки\", \"Ноги\", \"Крылья\" и \"Лапы\"\n\n";
+	Human hm{ "овальная", "чёрные", 74.3, 90.1 };
+	hm.Print();
+	Bird br{ "продолговатая", "зелёный", 16.1, 128.3, 3.2 };
+	br.Print();
+	Dog dg{ "вытянутая", "серый", 4, 48.5 };
+	dg.Print();
+	cout << "  ";
+	system("pause");
+
+	cout << "\n\tЗадание 3 \"Классы \"Точка\", \"Форма\" и \"Цвет\"\n\n";
+	//Color::GRADATION a{ Color::GRADATION::A};
+	Figure fg{ "Шар", "лиловый", { Color::GRADATION::яркий}, 1, 2, 3};
+	fg.Print();
+	fg.Moving(2, 3, 4);
+	fg.Print();
+	fg.СhangeForm("Куб");
+	fg.Print();
+	fg.СhangeColor("красный");
+	fg.Print();
+	fg.СhangeBright(Color::GRADATION::тусклый);
+	fg.Print();
+	cout << "  ";
+	system("pause");
+	return 0;
+}
