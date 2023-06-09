@@ -1,0 +1,156 @@
+#include <iostream>
+using namespace std;
+
+class Stack {
+	enum { EMPTY = -1, FULL = 6 };
+	char st_[FULL + 1];
+	int top_;
+public:
+	Stack() : top_(EMPTY) {}
+	void Clear() { top_ = EMPTY; }
+	bool IsEmpty() { return top_ == EMPTY; }
+	bool IsFull() { return top_ == FULL; }
+	int GetFULL() { return FULL; }
+	int GetCount() { return top_ + 1; }
+	void Push(char c) {
+		try {
+			if (!IsFull()) {
+				top_++;
+				st_[top_] = c;
+			}
+			else
+				throw "стек";
+		}
+		catch (const char* err) {
+			cout << "Невозможно, " << err << " полностью заполнен!\n";
+			cout << "\t\t\t ";
+		}
+	}
+	char Pop() {
+		if (!IsEmpty())
+			return st_[top_--];
+		else
+			cout << "Error!";
+	};
+	void Print() {
+		for (int i = 0; i <= top_; i++)
+			cout << st_[i] << " ";
+		cout << endl;
+	}
+};
+
+class Queue {
+	enum { EMPTY = 0, FULL = 5 };
+	int wait_[FULL];
+	int length_;
+public:
+	Queue() : length_(EMPTY) {}
+	void Clear() { length_ = EMPTY; }
+	bool IsEmpty() { return length_ == EMPTY; }
+	bool IsFull() { return length_ == FULL; }
+	int GetFULL() { return FULL; }
+	int GetCount() { return length_; }
+	void Add(int c) {
+		try {
+			if (!IsFull())
+				wait_[length_++] = c;
+			else
+				throw "очередь";
+		}
+		catch (const char* err) {
+			cout << "Невозможно, " << err << " полностью заполнена!\n";
+			cout << "\t\t\t ";
+		}
+	}
+	int Extract() {
+		if (!IsEmpty()) {
+			int tmp = wait_[0];
+			for (int i = 0; i < length_ - 1; i++)
+				wait_[i] = wait_[i + 1];
+			length_--;
+			return tmp;
+		}
+	}
+	void Print() {
+		for (int i = 0; i < length_; i++)
+			cout << wait_[i] << " ";
+		cout << endl;
+	}
+};
+
+namespace StackStruc {
+	void Test() {
+		char symb;
+		Stack st;
+		cout << "  Стек:\n";
+		cout << "  - максимальное количество элементов: " << st.GetFULL() + 1 << endl;
+		st.Push('a');
+		st.Push('b');
+		st.Push('c');
+		st.Push('d');
+		st.Push('e');
+		st.Push('f');
+		st.Push('g');
+		cout << "  - исходный (размер = " << st.GetCount() << "): ";
+		st.Print();
+		cout << "  - извлечение элемента: ";
+		symb = st.Pop();
+		st.Print();
+		cout << "  - значение выданного элемента: " << symb << endl;
+		cout << "  - добавление элемента: ";
+		st.Push('h');
+		st.Print();
+		cout << "  - добавление элемента: ";
+		st.Push('i');
+		st.Print();
+		st.Clear();
+		cout << "  - очистка (размер = " << st.GetCount() << "), результат: ";
+		st.Print();
+	}
+}
+
+namespace QueueStruct {
+	void Test() {
+		int num;
+		Queue q;
+		cout << "  Очередь:\n";
+		cout << "  - максимальное количество элементов: " << q.GetFULL() << endl;
+		q.Add(8);
+		q.Add(2);
+		q.Add(5);
+		q.Add(3);
+		q.Add(7);
+		cout << "  - исходная (размер = " << q.GetCount() << "): ";
+		q.Print();
+		cout << "  - извлечение элемента: ";
+		num = q.Extract();
+		q.Print();
+		cout << "  - значение выданного элемента: " << num << endl;
+		cout << "  - добавление элемента: ";
+		q.Add(1);
+		q.Print();
+		cout << "  - добавление элемента: ";
+		q.Add(4);
+		q.Print();
+		q.Clear();
+		cout << "  - очистка (размер = " << q.GetCount() << "), результат: ";
+		q.Print();
+	}
+}
+
+int main() {
+	setlocale(LC_ALL, "Rus");
+
+	cout << "\n\t\t\tИСКЛЮЧЕНИЕ. ПРОСТРАНСТВА ИМЁН\n";
+
+	cout << "\n\t\tЗадание 1 \"Структура данных \"Стек\"\n\n";
+	StackStruc::Test();
+	cout << "  ";
+	system("pause");
+	
+	cout << "\n\t\tЗадание 2 \"Структура данных \"Очередь\"\n\n";
+	QueueStruct::Test();
+	cout << "  ";
+	system("pause");
+	return 0;
+}
