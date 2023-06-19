@@ -1,0 +1,131 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <fstream>
+#include <windows.h>
+#include <io.h>
+#include <stdio.h>
+#include <string>
+#include <direct.h>
+using namespace std;
+
+class Data {
+protected:
+	char* name_;
+public:
+	Data() : Data(nullptr) {}
+	Data(const char* name) : name_{ name ? new char[strlen(name) + 1] : nullptr } { SetName(name); }
+	~Data() { name_ = nullptr; delete name_; }
+	virtual void SetName(const char* name) { strcpy_s(name_, strlen(name) + 1, name); }
+	virtual char* GetName() { return name_; }
+	virtual void Exists() { cout << (_access(name_, 00) == 0 ? "    – " : "    – не ") << "существует\n"; }
+};
+
+class Directory : public Data {
+public:
+	Directory() :Data(nullptr) {}
+	Directory(const char* name) : Data(name) {}
+	~Directory() {}
+	void Create() {
+		if (_mkdir(name_) == -1) cout << "  – создать не удалось!\n";
+		else cout << "  – создание, имя каталога: \"" << name_ << "\"\n";
+	}
+	void Delete() {
+		if (_rmdir(name_) == -1) cout << "  – удалить не удалось!\n";
+		else cout << "  – каталог \"" << name_ << "\" удалён\n";
+	}
+	void Content() {
+		_finddata_t file;
+		intptr_t group = _findfirst(strcat(name_, "\\*"), &file);
+		int result = group;
+		cout << "  – содержание каталога \"";
+		for (int i = 0; i < strlen(name_); i++)
+			if (i < strlen(name_) - 2) cout << name_[i];
+		cout << "\":\n";
+		while (result != -1) {
+			if (strcmp(file.name, ".") && strcmp(file.name, ".."))
+				cout << "    /" << file.name  << ((file.attrib & _A_SUBDIR) != 0 ? " ... каталог" : " ... файл") << '\n';
+			result = _findnext(group, &file);
+		}
+		_findclose(group);
+		name_[strlen(name_) - 2] = 0;
+	}
+};
+
+class File : public Data {
+public:
+	File() :Data(nullptr) {}
+	File(const char* name) : Data(name) {}
+	~File() {}
+	void Create(string str = "") {
+		ofstream fail(name_);
+		fail << str;
+		cout << "  – ";
+		if (str == "")
+			cout << "создание, имя файла: \"" << name_;
+		else
+			cout << "запись строки в файл: \"" << str;
+		cout << "\"\n";
+		fail.close();
+	}
+	string Read() {
+		string str{""};
+		ifstream fail;
+		if ((_access(name_, 00) == 0) && (_access(name_, 04) == 0)) {
+			fail.open(name_);
+			getline(fail, str, '\0');
+			fail.close();
+			cout << "  – чтение строки из файла: \"" << str << "\"\n";
+		}
+		else
+			cout << "  – файл не существует или его невозможно прочитать\n";
+		return str;
+	}
+	void Delete() {
+		if (_access(name_, 00) == 0) {
+			remove(name_);
+			cout << "  – файл \"" << name_ << "\" удалён\n";
+		}
+	}
+};
+
+void Message (char* str) { cout << "  – проверка \"" << str << "\" до и после удаления:\n"; }
+
+int main() {
+	setlocale(LC_ALL, "Rus");
+
+	cout << "\n\t\t\tДИРЕКТОРИИ И ФАЙЛЫ\n";
+
+	cout << "\n\t\tЗадание 1 \"Класс \"Директория\"\n\n";
+	cout << "  Работа с каталогом:\n";
+	Directory dr("C:\\Catalog12345");
+	Directory drDr("C:\\Catalog12345\\Директория123");
+	File flDr("C:\\Catalog12345\\тест45.txt");
+	dr.Create();
+	drDr.Create();
+	flDr.Create();
+	dr.Content();
+	drDr.Delete();
+	flDr.Delete();
+	Message(dr.GetName());
+	dr.Exists();
+	dr.Delete();
+	dr.Exists();
+	cout << "  ";
+	system("pause");
+
+	cout << "\n\t\tЗадание 2 \"Класс \"Файл\"\n\n";
+	string strIn = "Hello world";
+	string strOut = "";
+	cout << "  Работа с текстовым файлом:\n";
+	File fl("test.txt");
+	fl.Create();
+	fl.Create(strIn);
+	strOut = fl.Read();
+	Message(fl.GetName());
+	fl.Exists();
+	fl.Delete();
+	fl.Exists();
+	cout << "  ";
+	system("pause");
+	return 0;
+}
