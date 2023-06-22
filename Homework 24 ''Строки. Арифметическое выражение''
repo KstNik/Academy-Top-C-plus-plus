@@ -1,0 +1,262 @@
+#include<iostream>
+#include <vector> 
+#include <stdio.h>
+#include <string>
+#include <sstream>
+#include <algorithm>
+using namespace std;
+
+class String {
+	string str_;
+public:
+	String() : String("") {}
+	String(string str) : str_(str) {}
+	~String() {}
+	void SetStr(string str) { str_ = str; }
+	string GetStr() { return str_; }
+	void DelAllChar(char symbol);
+private:
+	bool CharBrack(char symbol);
+	bool CharNumBrack(char symbol);
+	void IncMinusOne();
+	void IncMultipSign();
+	void IncZero();
+public:
+	void Replace(char symbolInit, char symbolNew);
+	void InsChar(int numChar, char symbol) { str_.insert(numChar, 1, symbol); }
+	void Correction();
+	bool RepChar(string  strSymbol, char symbol);
+};
+
+void String::DelAllChar(char symbol = ' ') {
+	bool flag;
+	int i;
+	do {
+		flag = false;
+		for (i = 0; i < str_.length(); i++) {
+			if (str_[i] == symbol) {
+				str_.erase(i, 1);
+				flag = true;
+			}
+		}
+	} while (flag);
+}
+
+bool String::CharBrack(char symbol) {
+	int charCode = (int)(symbol);
+	bool result = false;
+	if (charCode == 40)
+		result = true;
+	return result;
+}
+
+bool String::CharNumBrack(char symbol) {
+	int charCode = (int)(symbol);
+	bool result = false;
+	if (((charCode >= 48) && (charCode < 58)) || (charCode == 41))
+		result = true;
+	return result;
+}
+
+void String::IncMinusOne() {
+	int i;
+	char symbolNum = '1';
+	char symbolSign = '*';
+	for (i = 0; i < str_.length() - 1; i++) {
+		if ((str_[i] == '-') && (CharBrack(str_[i + 1]))) {
+			InsChar(i + 1, symbolNum);
+			InsChar(i + 2, symbolSign);
+		}
+	}
+}
+
+void String::IncMultipSign() {
+	int i;
+	char symbol = '*';
+	for (i = 0; i < str_.length() - 1; i++) {
+		if ((CharNumBrack(str_[i])) && (str_[i + 1] == '('))
+			InsChar(i + 1, symbol);
+	}
+}
+
+void String::IncZero() {
+	int i;
+	char symbol = '0';
+	if (str_[0] == '-')
+		InsChar(0, symbol);
+	for (i = 0; i < str_.length() - 1; i++) {
+		if ((str_[i] == '(') && (str_[i + 1] == '-'))
+			InsChar(i + 1, symbol);
+	}
+}
+
+void String::Replace(char symbolInit, char symbolNew) {
+	int i;
+	for (i = 0; i < str_.length() - 1; i++)
+		if (str_[i] == symbolInit) str_[i] = symbolNew;
+}
+
+void String::Correction() {
+	DelAllChar();
+	IncMinusOne();
+	IncMultipSign();
+	IncZero();
+}
+
+bool String::RepChar(string  strSymbol = "()+-*/", char symbol = ' ') {
+	int i, j;
+	bool result = false;
+	for (i = 0; i < str_.length(); i++) {
+		for (j = 0; j < strSymbol.length(); j++)
+			if (str_[i] == strSymbol[j]) str_[i] = symbol;
+	}
+	for (i = 0; i < str_.length(); i++)
+		if ((((int)(str_[i]) < 48) || ((int)(str_[i]) >= 58)) && ((int)(str_[i]) != 44) && (str_[i] != symbol))
+			result = true;
+	return result;
+}
+
+void Message(const char* str = "(), +, -, *, /") {
+	cout << "  ВНИМАНИЕ! Арифметическое выражение может содержать следующие знаки: " << str << ".\n";
+	cout << "            Разделитель целой и дробной частей действительных чисел – ЗАПЯТАЯ.\n";
+	cout << "  Введите арифметическое выражение: ";
+}
+
+void Calculation() {
+	int i;
+	double sum = 0, num;
+	string word;
+	String str, strCopy;
+	Message("+, -");
+	getline(cin, word);
+	str.SetStr(word);
+	str.DelAllChar();
+	strCopy = str;
+	if (!strCopy.RepChar("+-")) {
+		str.Replace(',', '.');
+		str.Replace('+', ' ');
+		for (i = 0; i < str.GetStr().length(); ++i)
+			if (str.GetStr()[i] == '-')
+				str.InsChar(i++, ' ');
+		istringstream ist(str.GetStr());
+		while (ist >> num)
+			sum += num;
+		cout << "  Ответ: " << sum << ".";
+	}
+	else
+		cout << "  Выражение содержит недопустимые символы!";
+	cout << endl;
+}
+
+void CalculationAll() {
+	int i, j, size;
+	vector<double> vec;
+	string word;
+	String str, strNum;
+	const int sizeArray = 2;
+	int arrayIndex[sizeArray][sizeArray]{ 0, 0, 0, 0 };
+	int m = 1, n = -1;
+	bool flagBrack = true, flagZero = true;
+	Message();
+	getline(cin, word);
+	str.SetStr(word);
+	str.Correction();
+	strNum = str;
+	strNum.RepChar();
+	if (!strNum.RepChar()) {
+		stringstream s(strNum.GetStr());
+		while (s >> word)
+			vec.push_back(stod(word));
+		size = vec.size();
+		double* arrayNum = new double[size];
+		for (i = 0; i < size; i++)
+			arrayNum[i] = vec[i];
+		int* arraySign = new int[size - 1];
+		if (size != 1) {
+			for (i = 0; i < str.GetStr().length(); i++) {
+				if (str.GetStr()[i] == '(') m++;
+				if (str.GetStr()[i] == ')') m--;
+				if (str.GetStr()[i] == '+' || str.GetStr()[i] == '-' || str.GetStr()[i] == '*' || str.GetStr()[i] == '/') {
+					n++;
+					switch (str.GetStr()[i]) {
+					case '+': arraySign[n] = 2 * m - 1;
+						break;
+					case '-': arraySign[n] = -(2 * m - 1);
+						break;
+					case '*': arraySign[n] = 2 * m;
+						break;
+					case '/': arraySign[n] = -(2 * m);
+						break;
+					}
+				}
+			}
+			if (m == 1) {
+				do {
+					for (i = 0; i < sizeArray; i++) {
+						for (j = 0; j < sizeArray; j++)
+							arrayIndex[i][j] = 0;
+					}
+					for (i = 0; i < size - 1; i++) {
+						if ((arraySign[i] > arrayIndex[0][0]) && (arraySign[i] > 0)) {
+							arrayIndex[0][0] = arraySign[i];
+							arrayIndex[1][0] = i;
+						}
+						if ((arraySign[i] < arrayIndex[0][1]) && (arraySign[i] < 0)) {
+							arrayIndex[0][1] = arraySign[i];
+							arrayIndex[1][1] = i;
+						}
+					}
+					if ((arrayIndex[0][0] < -arrayIndex[0][1]) || ((arrayIndex[0][0] == -arrayIndex[0][1]) && (arrayIndex[1][0] > arrayIndex[1][1]))) {
+						arrayIndex[0][0] = arrayIndex[0][1];
+						arrayIndex[1][0] = arrayIndex[1][1];
+					}
+					if ((arrayIndex[0][0] > 0) && (arrayIndex[0][0] % 2 == 1)) arrayNum[arrayIndex[1][0]] += arrayNum[arrayIndex[1][0] + 1];
+					if ((arrayIndex[0][0] < 0) && (-arrayIndex[0][0] % 2 == 1)) arrayNum[arrayIndex[1][0]] -= arrayNum[arrayIndex[1][0] + 1];
+					if ((arrayIndex[0][0] > 0) && (arrayIndex[0][0] % 2 == 0)) arrayNum[arrayIndex[1][0]] *= arrayNum[arrayIndex[1][0] + 1];
+					if ((arrayIndex[0][0] < 0) && (-arrayIndex[0][0] % 2 == 0)) {
+						if (arrayNum[arrayIndex[1][0] + 1] != 0)
+							arrayNum[arrayIndex[1][0]] /= arrayNum[arrayIndex[1][0] + 1];
+						else
+							flagZero = false;
+					}
+					for (i = arrayIndex[1][0] + 1; i < size - 1; i++)
+						arrayNum[i] = arrayNum[i + 1];
+					for (i = arrayIndex[1][0]; i < size - 2; i++)
+						arraySign[i] = arraySign[i + 1];
+					size--;
+				} while ((size != 1) && (flagZero));
+			}
+			else
+				flagBrack = false;
+		}
+		cout << "  ";
+		if ((flagBrack) && (flagZero))
+			cout << "Ответ: " << arrayNum[0] << ".";
+		else {
+			cout << "Ошибка в вычислении. ";
+			(!flagBrack) ? cout << "Скобки расставлены неверно!" : cout << "Деление на ноль!";
+		}
+		delete[] arrayNum;
+		delete[] arraySign;
+	}
+	else
+		cout << "  Выражение содержит недопустимые символы!";
+	cout << endl;
+}
+
+int main() {
+	setlocale(LC_ALL, "rus");
+
+	cout << "\n\t\t\tСТРОКИ. АРИФМЕТИЧЕСКОЕ ВЫРАЖЕНИЕ\n";
+
+	cout << "\n\t\t\tЗадание 1 \"Сложение и вычитание\"\n\n";
+	Calculation();
+	cout << "  ";
+	system("pause");
+
+	cout << "\n\t\tЗадание 2 \"Основные арифметические действия, скобки\"\n\n";
+	CalculationAll();
+	cout << "  ";
+	system("pause");
+	return 0;
+}
