@@ -38,8 +38,8 @@ public:
 		intptr_t group = _findfirst(strcat(name_, "\\*"), &file);
 		int result = group;
 		cout << "  – содержание каталога \"";
-		for (int i = 0; i < strlen(name_); i++)
-			if (i < strlen(name_) - 2) cout << name_[i];
+		for (int i = 0; i < strlen(name_) - 2; i++)
+			cout << name_[i];
 		cout << "\":\n";
 		while (result != -1) {
 			if (strcmp(file.name, ".") && strcmp(file.name, ".."))
@@ -47,7 +47,7 @@ public:
 			result = _findnext(group, &file);
 		}
 		_findclose(group);
-		name_[strlen(name_) - 2] = 0;
+		name_[strlen(name_) - 2];
 	}
 };
 
