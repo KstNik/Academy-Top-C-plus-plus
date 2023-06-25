@@ -57,23 +57,23 @@ public:
 	File(const char* name) : Data(name) {}
 	~File() {}
 	void Create(string str = "") {
-		ofstream fail(name_);
-		fail << str;
+		ofstream file(name_);
+		file << str;
 		cout << "  – ";
 		if (str == "")
 			cout << "создание, имя файла: \"" << name_;
 		else
 			cout << "запись строки в файл: \"" << str;
 		cout << "\"\n";
-		fail.close();
+		file.close();
 	}
 	string Read() {
 		string str{""};
-		ifstream fail;
+		ifstream file;
 		if ((_access(name_, 00) == 0) && (_access(name_, 04) == 0)) {
-			fail.open(name_);
-			getline(fail, str, '\0');
-			fail.close();
+			file.open(name_);
+			getline(file, str, '\0');
+			file.close();
 			cout << "  – чтение строки из файла: \"" << str << "\"\n";
 		}
 		else
