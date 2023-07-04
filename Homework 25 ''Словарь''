@@ -1,0 +1,120 @@
+#include <iostream>
+#include <fstream>
+#include <io.h>
+#include <windows.h>
+#include <set>
+#include <string>
+#include <iterator>
+using namespace std;
+
+class Dictionary {
+	set <string> word_;
+	string str_;
+	fstream file_;
+public:
+	Dictionary() {}
+	~Dictionary() {}
+	bool Exist() { return _access("Dictionary.txt", 00) + 1 ? true : false; }
+	bool Access() { return _access("Dictionary.txt", 06) + 1 ? true : false; }
+	void Create() {
+		ofstream file_("Dictionary.txt");
+		file_ << "Абрамс\nАрмата\nЛеклерк\nЛеопард\nМеркава";
+		file_.close();
+	}
+	void Read() {
+		while (!file_.eof()) {
+			str_ = "";
+			file_ >> str_;
+			word_.insert(str_);
+		}
+		cout << "  Загрузка словаря из файла.\n";
+		file_.close();
+	}
+	void Save() {
+		for (auto elem : word_)
+			file_ << elem << "\n";
+		cout << "  Сохранение словаря в файл.\n";
+	}
+	void Delete() {
+		if (_access("Dictionary.txt", 00) == 0) {
+			remove("Dictionary.txt");
+			cout << "  Удаление файла со словарём.\n";
+		}
+	}
+	bool Includ(string word) { return word_.find(word) != word_.end() ? true : false; }
+	void Search(string word) {
+		cout << "    поиск: " << word;
+		if (Includ(word))
+			cout << " – слово содержится в списке.";
+		else
+			cout << " – слова в списке нет!";
+		cout << '\n';
+	}
+	void Add(string word) {
+		cout << "    добавление: " << word;
+		if (!Includ(word)) {
+			word_.insert(word);
+			cout << " – слово добавлено в список.";
+		}
+		else
+			cout << " – невозможно, слово содержится в списке!";
+		cout << '\n';
+	}
+	void Erase(string word) {
+		cout << "    удаление: " << word;
+		if (Includ(word)) {
+			word_.erase(word);
+			cout << " – слово удалено из списка.";
+		}
+		else
+			cout << " – невозможно, слова нет в списке!";
+		cout << '\n';
+	}
+	void Replace(string wordOld, string wordNew) {
+		Erase(wordOld);
+		Add(wordNew);
+	}
+	void Print() {
+		cout << "  Cодержание: ";
+		for (auto elem : word_)
+			cout << elem << ' ';
+		cout << '\n';
+	}
+	void Work() {
+		file_.open("Dictionary.txt", fstream::in | fstream::out | fstream::app);
+		Read();
+		Print();
+		Search("Леопард");
+		Search("Челленджер");
+		Add("Тигр");
+		Add("Меркава");
+		Print();
+		Erase("Леклерк");
+		Erase("Пантера");
+		Print();
+		cout << "  Редактирование (замена):\n";
+		Replace("Тигр", "Пантера");
+		Print();
+		Save();
+		Read();
+		Print();
+		Delete();
+	}
+};
+
+int main() {
+	setlocale(LC_ALL, "rus");
+	SetConsoleOutputCP(1251);
+	SetConsoleCP(1251);
+
+	cout << "\n\t\tКОНТЕЙНЕР \"SET\"\n";
+
+	cout << "\n\t\tЗадание \"Словарь\"\n\n";
+	Dictionary dc;
+	if (!dc.Access()) dc.Delete();
+	if (!dc.Exist()) dc.Create();
+	dc.Work();
+	cout << "  ";
+	system("pause");
+	return 0;
+}
