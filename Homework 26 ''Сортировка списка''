@@ -1,0 +1,54 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <iterator>
+using namespace std;
+
+class PersonName {
+protected:
+	string name_;
+	int age_;
+public:
+	PersonName(string name, int age) : name_(name), age_(age) {};
+	void Print() { cout << name_ << ", " << age_; }
+	bool operator <(const PersonName& n) { return name_[0] < n.name_[0]; }
+};
+
+class PersonAge {
+protected:
+	string name_;
+	int age_;
+public:
+	PersonAge(string name, int age) : name_(name), age_(age) {};
+	void Print() { cout << name_ << ", " << age_; }
+	bool operator <(const PersonAge& a) { return age_ < a.age_; }
+};
+
+int main() {
+	setlocale(LC_ALL, "rus");
+	cout << "\n\t\tАЛГОРИТМЫ\n";
+
+	cout << "\n\tЗадание \"Сортировка списка\"\n\n";
+
+	vector <PersonName> n{ {"Сидоров", 23}, {"Петров", 17}, {"Иванов", 35} };
+	vector <PersonAge> a{ {"Сидоров", 23}, {"Петров", 17}, {"Иванов", 35} };
+	sort(n.begin(), n.end());
+	cout << "  Сортировка:\n";
+	cout << "  - по имени:\n";
+	for (size_t i = 0; i < 3; i++) {
+		cout << "      ";
+		n[i].Print();
+		cout << ";\n";
+	}
+	sort(a.begin(), a.end());
+	cout << "  - по возрасту:\n";
+	for (size_t i = 0; i < 3; i++) {
+		cout << "      ";
+		a[i].Print();
+		cout << (i < 2 ? ";\n" : ".\n");
+	}
+	cout << "  ";
+	system("pause");
+	return 0;
+}
