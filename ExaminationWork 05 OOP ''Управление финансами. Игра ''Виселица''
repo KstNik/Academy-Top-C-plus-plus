@@ -1,0 +1,660 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <fstream>
+#include <windows.h>
+#include <io.h>
+#include <stdio.h>
+#include <string>
+#include <direct.h>
+#include <stdlib.h>
+#include <time.h>
+#include <chrono>
+#include <algorithm>
+using namespace std;
+string arrCategory[4]{ "Автомобиль", "Квартира", "Питомец", "Человек" };
+
+class Wallet {
+protected:
+	string ident_;
+	string owner_;
+	double balance_;
+public:
+	Wallet() : Wallet("чёрный","Иванов Иван", 0) {}
+	Wallet(string ident, string owner, double balance) : ident_{ ident.substr(0, 16) }, owner_(owner),
+		balance_(balance) {}
+	~Wallet() {}
+	virtual bool SetBalance(double balance) { 
+		bool flag{ false };
+		if (balance > 0) {
+			balance_ += balance;
+			flag = true;
+			}
+		return flag;
+	}
+	virtual double GetBalance(double balance) { return balance_ >= balance ? balance_ -= balance : 0; }
+	virtual void Print() { cout << "Кошелёк "<< ident_ <<", вл. " << owner_ << ", " << balance_ << " руб.\n"; }
+};
+
+class BankCard : public Wallet {
+protected:
+	string bank_;
+public:
+	BankCard() : BankCard("Банк", "0000000000000000", "Иванов Иван", 0) {}
+	BankCard(string bank, string ident, string owner, double balance) : bank_(bank),
+		Wallet (ident, owner, balance) {}
+	~BankCard() {}
+	virtual void Print() { cout << bank_ << " (деб.), № " << ident_.substr(0, 4) << " …, вл. " << owner_ << ", "
+		<< balance_ << " руб.\n"; }
+};
+
+class BankCardСredit : public BankCard {
+protected:
+	double limit_;
+public:
+	BankCardСredit() : BankCardСredit("Банк", "0000000000000000", "Иванов Иван", 0, 100000) {}
+	BankCardСredit(string bank, string ident, string owner, double balance, double limit) : 
+		BankCard (bank, ident, owner, balance), limit_(limit) {}
+	~BankCardСredit() {}
+	bool SetBalance(double balance) {
+		bool flag{false};
+		if (balance > 0) {
+			if (balance_ + balance <= limit_) {
+				balance_ += balance;
+				flag = true;
+			}
+		}
+		return flag;
+	}
+	virtual void Print() { cout << bank_ << " (кред., лимит " << limit_ << " руб.), № " << ident_.substr(0, 4) << " …, вл. " 
+			<< owner_ << ", " << balance_ << " руб.\n";	}
+};
+
+class Expense {
+	int сategory_;
+	string outlay_;
+	double cash_;
+	int day_;
+	int month_;
+	int year_;
+	int week_ = Period() != 0 ? 1 + Period() / 7 : 1;
+public:
+	Expense() : Expense(3, "покупка продуктов", 100, 1, 1, 2023) {}
+	Expense(int сategory, string outlay, double cash, int day, int month, int year) : сategory_(сategory),
+		outlay_{ outlay.substr(0, 50) }, cash_(cash), day_(day), month_(month), year_(year) {}
+	~Expense() {}
+	bool LeapYear(int i) { return (((year_ % 100 != 0) && (year_ % 4 == 0)) || ((year_ % 100 == 0) && ((year_ / 100) % 4 == 0))) ? true : false; }
+	int Period(int day = 1, int month = 1, int year = 2023);
+	int GetCategory(){ return сategory_; }
+	string GetOutlay() { return outlay_; }
+	double GetCash(bool action = true) { return action ? cash_ : 0; }
+	int GetDay() { return day_; }
+	int GetMonth() { return month_; }
+	int GetYear() { return year_; }
+	int GetWeek() { return week_; }
+	void SetExpence();
+	bool Date(int day, int month, int year) { return ((day == day_) && (month == month_) && (year == year_)) ? true : false; }
+	bool Month(int month, int year) { return ((month == month_) && (year == year_)) ? true : false; }
+	bool Week(int week) { return (week == week_) ? true : false; }
+	bool Select(int category = 0, int number = 0, int day = 0, int week = 0, int month = 0, int year = 0);
+	void Print(bool action = true);
+};
+
+int Expense::Period(int day, int month, int year) {
+	int arDaysOfYearMonth[] = { 365, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+	int periodDays = 0;
+	for (int i = year; i <= year_; i++) {
+		if (LeapYear(i) == true) { arDaysOfYearMonth[0] = 366; arDaysOfYearMonth[2] = 29; }
+		else { arDaysOfYearMonth[0] = 365; arDaysOfYearMonth[2] = 28; }
+		if (i == year) {
+			for (int j = 1; j < month; j++)
+				periodDays -= arDaysOfYearMonth[j];
+			periodDays -= day;
+		}
+		if (i < year_) periodDays += arDaysOfYearMonth[0];
+		if (i == year_) {
+			for (int k = 1; k < month_; k++)
+				periodDays += arDaysOfYearMonth[k];
+			periodDays += day_;
+		}
+	}
+	return periodDays;
+}
+
+void Expense::SetExpence() {
+	string str;
+	cout << "    Заполните поля:" << endl;
+	cout << "    1. Категория [автомобиль – 0, квартира – 1, питомец – 2, человек – 3]: ";
+	cin >> сategory_;
+	cout << "    2. Краткое описание [не более 50 символов]: ";
+	getline(cin, str);
+	getline(cin, str);
+	outlay_ = str.substr(0, 50);
+	cout << "    3. Потраченная сумма [руб.]: ";
+	cin >> cash_;
+	if (cash_ <= 0) cash_ = 0.01;
+	cout << "    4. Дата выполнения:\n";
+	cout << "       - день [1-31]: ";
+	cin >> day_;
+	cout << "       - месяц [1-12]: ";
+	cin >> month_;
+	cout << "       - год [>=2023]: ";
+	cin >> year_;
+	week_ = Period() != 0 ? 1 + Period() / 7 : 1;
+}
+
+bool Expense::Select(int category, int number, int day, int week, int month, int year) {
+	bool flag{ false };
+	if (((category == 0) && (number == 0) && (day == 0) && (week == 0) && (month == 0) && (year == 0)) ||
+		((category == сategory_) && (((number != 2) && (month == month_) && (year == year_) && (number == 3 ? day == day_ : true))
+			|| ((number == 2) && (week == week_)))))
+		flag = true;
+	return flag;
+}
+
+void Expense::Print(bool action) {
+	if (action) 
+		cout << arrCategory[сategory_] << ": " << outlay_ << "," << (day_ < 10 ? " 0" : " ") << day_
+			<< (month_ < 10 ? ".0" : ".") << month_ << '.' << year_ << " (" << week_ << " нед.), " << cash_ << " руб.\n";
+}
+
+Expense* CreateList(int size) {
+	Expense* arrExpense = new Expense[size];
+	return arrExpense;
+}
+
+void DeleteList(Expense* arrExpense) { delete[]arrExpense; }
+
+Expense* AddList(Expense* arrExpenseNew, int& size, Expense arrExpense) {
+	Expense* tmp = CreateList(size + 1);
+	for (int i = 0; i < size; i++)
+		*(tmp + i) = *(arrExpenseNew + i);
+	*(tmp + size) = arrExpense;
+	DeleteList(arrExpenseNew);
+	size++;
+	return tmp;
+}
+
+class File {
+protected:
+	char* name_;
+public:
+	File() : File(nullptr) {}
+	File(const char* name) : name_{ name ? new char[strlen(name) + 1] : nullptr } { SetName(name); }
+	~File() { delete name_; }
+	void SetName(const char* name) { strcpy_s(name_, strlen(name) + 1, name); }
+	char* GetName() { return name_; }
+	bool Exists() { return _access(name_, 00) + 1; }
+	bool Write() { return _access(name_, 04) + 1; }
+	void Create(string arrStr[], int sizeArr, bool cipher = false) {
+		ofstream file(name_);
+		for (int i = 0; i < sizeArr; i++) {
+			if (cipher) {
+				for (int j = 0; j < size(arrStr[i]); j++) {
+					if ((arrStr[i][j] != '\n') && (arrStr[i][j] != '\0')) {
+						arrStr[i][j] = arrStr[i][j]++;
+						file << arrStr[i][j];
+					}
+				}
+				file << '\n';
+			}
+			else
+				file << arrStr[i] << '\n';
+		}
+		file.close();
+	}
+	string Read(bool cipher = false) {
+		string str{ "" };
+		ifstream file;
+		if (Exists() && Write()) {
+			file.open(name_);
+			getline(file, str, '\0');
+			file.close();
+		}
+		else
+			cout << "  – файл не существует или его невозможно прочитать\n";
+		if (cipher) {
+			for (int i = 0; i < size(str); i++)
+				if ((str[i] != '\n') && (str[i] != '\0'))
+					str[i] = str[i]--;
+		}
+		return str;
+	}
+	void Delete() {
+		if (Exists())
+			remove(name_);
+	}
+};
+
+class Text {
+	string text_;
+public:
+	Text() : Text("") {}
+	Text(string text) : text_(text) {}
+	~Text() {}
+	string PassArray(int n) {
+		int i, j{ 1 }, size{ 0 };
+		for (i = 0; i < text_.length(); i++)
+			if (text_[i] == '\n') size++;
+		int* arrNum = new int[size + 1];
+		arrNum[0] = -1;
+		for (i = 0; i < text_.length(); i++) {
+			if (text_[i] == '\n') {
+				arrNum[j] = i;
+				j++;
+			}
+		}
+		string* arrStr = new string[size];
+		for (int i = 0; i < size; i++) {
+			arrStr[i] = text_.substr(arrNum[i] + 1, arrNum[i + 1] - arrNum[i] - 1);
+		}
+		return arrStr[n % size];
+		delete[] arrNum;
+		delete[] arrStr;
+	}
+	string ExtradWord(int n) { return PassArray(n).find('|') != string::npos ?
+			PassArray(n).substr(0, PassArray(n).find('|')) : PassArray(n); }
+	string ExtradClue(int n) { return PassArray(n).find('|') != string::npos ?
+			PassArray(n).substr(PassArray(n).find('|') + 1, size(PassArray(n))) : "не предусмотрена"; }
+};
+
+class Word {
+	string word_;
+public:
+	Word() : Word("") {}
+	Word(string word) : word_(word) {}
+	~Word() {}
+	string GetWord() { return word_; }
+	void SetWordLowerCase(string word) { 
+		word_ = word;
+		for (int i = 0; i < word_.length(); i++)
+			word_[i] = tolower(word_[i]);
+	}
+	bool Replace(char letter) {
+		bool flag{ false };
+		if (word_.find(tolower(letter)) != string::npos) {
+			replace(word_.begin(), word_.end(), char(tolower(letter)), char(toupper(letter)));
+			flag = true;
+		}
+		return flag;
+	}
+	bool PrintWord() {
+		bool exit{ true };
+		for (int i = 0; i < word_.length(); i++) {
+			if (((word_[i] >= -64) && (word_[i] < -32)) || (word_[i] == -88))
+				cout << word_[i];
+			else {
+				cout << '_';
+				exit = false;
+			}
+			cout << ' ';
+		}
+		return exit;
+	}
+	void PrintWordCap() {
+		for (int i = 0; i < word_.length(); i++) {
+			if (word_[i] == 'я') word_[i] = 'Я';
+			else word_[i] = toupper(word_[i]);
+			cout << word_[i];
+		}
+	}
+};
+
+void Print(string str) {
+	for (int i = 0; i < str.length(); i++) {
+		cout << str[i];
+		cout << ( i < str.length() - 1 ? ", " :".");
+	}
+}
+
+void Picture(Word word, string clue) {
+	string letter{ "" }, error{ "" };
+	bool loss{ false }, win { false };
+	char let;
+	auto start = chrono::high_resolution_clock::now();
+	do {
+		cout << R"(     _____
+    |/––––|   Слово: )";
+		win = word.PrintWord();
+		cout << '\n' << "    ||    ";
+		error.length() > 0 ? cout << 'o' : cout << ' ';
+		cout << "   Попытки (" << letter.length() <<"): ";
+		Print(letter);
+		cout << '\n' << "    ||   ";
+		error.length() > 2 ? cout << '/' : cout << ' ';
+		error.length() > 1 ? cout << '|' : cout << ' ';
+		error.length() > 3 ? cout << "\\" : cout << ' ';
+		cout << "  Ошибки (" << error.length() << "): ";
+		Print(error);
+		cout << '\n' << "   _||_  ";
+		error.length() > 5 ? cout << "/ \\" : (error.length() > 4 ? cout << "/  " : cout << "   ");
+		cout << "  Подсказка: ";
+		cout << clue;
+		cout << ".\n" << "  |––––|      Введите букву: ";
+		if ((error.length() != 6) && (!win)) {
+			cin >> let;
+			while ((let < -64 || let >= 0) && (let != -88) && (let != -72)) {
+				cout << "              Символ не является буквой русского алфавита!\n";
+				cout << "              Введите букву: ";
+				cin >> let;
+			}
+			while (letter.find(toupper(let)) != string::npos) {
+				cout << "              Такая буква уже есть!\n";
+				cout << "              Введите другую: ";
+				cin >> let;
+			}
+			if (let == 'я') let = 'Я';
+			letter.insert(letter.length(), 1, char(toupper(let)));
+			if (!word.Replace(let))
+				error.insert(error.length(), 1, char(toupper(let)));
+			word.Replace(let);
+		}
+		else
+			loss = true;
+		cout << "\n\n";
+	} while ((error.length() < 7) && (!loss) && (!win));
+	auto end = chrono::high_resolution_clock::now();
+	chrono::duration<double> duration = end - start;
+	cout << "  Результат:\n";
+	if (!win) {
+		cout << "  – искомое слово: ";
+		word.PrintWordCap();
+		cout << ";\n";
+	}
+	cout << "  – затраченное время [сек.]: " << duration.count() << ";\n";
+	cout << "  – " << (win ? "ПОБЕДА!" : "ПОРАЖЕНИЕ.") << "\n\n";
+};
+
+void GameGibbet() {
+	int num;
+	char symb;
+	string arrWords[]{ "Водород|химический элемент H[1]","Гелий|химический элемент He[2]","Литий|химический элемент Li[3]","Бериллий|химический элемент Be[4]","Бор|химический элемент B[5]","Углерод|химический элемент C[6]","Азот|химический элемент N[7]","Кислород|химический элемент O[8]","Фтор|химический элемент F[9]","Неон|химический элемент Ne[10]","Натрий|химический элемент Na[11]","Магний|химический элемент Mg[12]","Алюминий|химический элемент Al[13]","Кремний|химический элемент Si[14]","Фосфор|химический элемент P[15]","Сера|химический элемент S[16]","Хлор|химический элемент Cl[17]","Аргон|химический элемент Ar[18]","Калий|химический элемент K[19]","Кальций|химический элемент Ca[20]","Скандий|химический элемент Sc[21]","Титан|химический элемент Ti[22]","Ванадий|химический элемент V[23]","Хром|химический элемент Cr[24]","Марганец|химический элемент Mn[25]","Железо|химический элемент Fe[26]","Кобальт|химический элемент Co[27]","Никель|химический элемент Ni[28]","Медь|химический элемент Cu[29]","Цинк|химический элемент Zn[30]","Галлий|химический элемент Ga[31]","Германий|химический элемент Ge[32]","Мышьяк|химический элемент As[33]","Селен|химический элемент Se[34]","Бром|химический элемент Br[35]","Криптон|химический элемент Kr[36]","Рубидий|химический элемент Rb[37]","Стронций|химический элемент Sr[38]","Иттрий|химический элемент Y[39]","Цирконий|химический элемент Zr[40]","Ниобий|химический элемент Nb[41]","Молибден|химический элемент Mo[42]","Технеций|химический элемент Tc[43]","Рутений|химический элемент Ru[44]","Родий|химический элемент Rh[45]","Палладий|химический элемент Pd[46]","Серебро|химический элемент Ag[47]","Кадмий|химический элемент Cd[48]","Индий|химический элемент In[49]","Олово|химический элемент Sn[50]","Сурьма|химический элемент Sb[51]","Теллур|химический элемент Te[52]","Иод|химический элемент I[53]","Ксенон|химический элемент Xe[54]","Цезий|химический элемент Cs[55]","Барий|химический элемент Ba[56]","Лантан|химический элемент La[57]","Церий|химический элемент Ce[58]","Празеодим|химический элемент Pr[59]","Неодим|химический элемент Nd[60]","Прометий|химический элемент Pm[61]","Самарий|химический элемент Sm[62]","Европий|химический элемент Eu[63]","Гадолиний|химический элемент Gd[64]","Тербий|химический элемент Tb[65]","Диспрозий|химический элемент Dy[66]","Гольмий|химический элемент Ho[67]","Эрбий|химический элемент Er[68]","Тулий|химический элемент Tm[69]","Иттербий|химический элемент Yb[70]","Лютеций|химический элемент Lu[71]","Гафний|химический элемент Hf[72]","Тантал|химический элемент Ta[73]","Вольфрам|химический элемент W[74]","Рений|химический элемент Re[75]","Осмий|химический элемент Os[76]","Иридий|химический элемент Ir[77]","Платина|химический элемент Pt[78]","Золото|химический элемент Au[79]","Ртуть|химический элемент Hg[80]","Таллий|химический элемент Tl[81]","Свинец|химический элемент Pb[82]","Висмут|химический элемент Bi[83]","Полоний|химический элемент Po[84]","Астат|химический элемент At[85]","Радон|химический элемент Rn[86]","Франций|химический элемент Fr[87]","Радий|химический элемент Ra[88]","Актиний|химический элемент Ac[89]","Торий|химический элемент Th[90]","Протактиний|химический элемент Pa[91]","Уран|химический элемент U[92]","Нептуний|химический элемент Np[93]","Плутоний|химический элемент Pu[94]","Америций|химический элемент Am[95]","Кюрий|химический элемент Cm[96]","Берклий|химический элемент Bk[97]","Калифорний|химический элемент Cf[98]","Эйнштейний|химический элемент Es[99]","Фермий|химический элемент Fm[100]","Менделевий|химический элемент Md[101]","Нобелий|химический элемент No[102]","Лоуренсий|химический элемент Lr[103]","Резерфордий|химический элемент Rf[104]","Дубний|химический элемент Db[105]","Сиборгий|химический элемент Sg[106]","Борий|химический элемент Bh[107]","Хассий|химический элемент Hs[108]","Мейтнерий|химический элемент Mt[109]","Дармштадтий|химический элемент Ds[110]","Рентгений|химический элемент Rg[111]","Коперниций|химический элемент Cn[112]","Нихоний|химический элемент Nh[113]","Флеровий|химический элемент Fl[114]","Московий|химический элемент Mc[115]","Ливерморий|химический элемент Lv[116]","Теннессин|химический элемент Ts[117]","Оганесон|химический элемент Og[118]" };
+	File wl("WordList.txt");
+	wl.Create(arrWords, size(arrWords), true);
+	Text tx(wl.Read(true));
+	if (wl.Exists()) wl.Delete();
+	Word wr;
+	do {
+		num = rand();
+		wr.SetWordLowerCase(tx.ExtradWord(num));
+		Picture(wr, tx.ExtradClue(num));
+		cout << "  ПРОДОЛЖИТЬ ИГРУ – любая клавиша кроме 0, ВЫХОД – 0 (ноль): ";
+		cin >> symb;
+	} while (symb != '0');
+}
+
+int main() {
+	setlocale(LC_ALL, "rus");
+	srand(time(NULL));
+	SetConsoleOutputCP(1251);
+	SetConsoleCP(1251);
+
+	cout << "\n\t\t\tЭКЗАМЕНАЦИОННАЯ РАБОТА\n";
+	
+	cout << "\n\t\tЗадание 1 \"Управление финансами\"\n\n";
+	int  number, i, j, n, m, day, week, month, year, size = 30;
+	double money;
+	bool flag;
+	streambuf* baсk = cout.rdbuf();
+	double arrMax[]{ 0, 0, 0 };
+	double arrCategMax[]{ 0, 0, 0, 0 };
+	cout << "  Внимание! Программа работает с датами начиная с 01.01.2023, нумерация недель – с указанной даты.\n";
+	cout << "            Первые два месяца заполнены автоматически для демонстрации работы программы.\n";
+	cout << "            Ввод данных в возрастающем порядке дат начиная с марта 2023 г.\n";
+	Wallet** moneyVault = new Wallet* [3];
+	moneyVault[0] = new BankCardСredit("ВТБ", "3333333333333333", "Петров Пётр", 95783.46, 100000);
+	moneyVault[1] = new BankCard("Сбербанк", "1111111111111111", "Петров Пётр", 15132.78);
+	moneyVault[2] = new Wallet("коричневый", "Петров Пётр", 9510.25);
+	Expense* arrExpense = CreateList(size);
+	arrExpense[0] = { 3, "покупка продуктов", 3457.73, 3, 1, 2023 };
+	arrExpense[1] = { 0, "мойка", 850, 5, 1, 2023 };
+	arrExpense[2] = { 1, "оплата комунальных услуг", 8543.45, 7, 1, 2023 };
+	arrExpense[3] = { 3, "покупка одежды", 5700, 8, 1, 2023 };
+	arrExpense[4] = { 2, "покупка корма", 900, 10, 1, 2023 };
+	arrExpense[5] = { 0, "заправка топливом", 2138.71, 11, 1, 2023 };
+	arrExpense[6] = { 2, "покупка игрушки", 1200, 14, 1, 2023 };
+	arrExpense[7] = { 1, "покупка бытовой химиии", 1589.56, 18, 1, 2023 };
+	arrExpense[8] = { 3, "покупка продуктов", 3124.27, 19, 1, 2023 };
+	arrExpense[9] = { 0, "мойка", 250, 20, 1, 2023 };
+	arrExpense[10] = { 3, "покупка одежды", 1200, 22, 1, 2023 };
+	arrExpense[11] = { 1, "покупка бытовой химии", 1745.11, 23, 1, 2023 };
+	arrExpense[12] = { 2, "покупка корма", 500, 25, 1, 2023 };
+	arrExpense[13] = { 3, "покупка продуктов", 3124.27, 26, 1, 2023 };
+	arrExpense[14] = { 0, "заправка топливом", 2007.26, 27, 1, 2023 };
+	arrExpense[15] = { 3, "покупка продуктов", 3218.72, 29, 1, 2023 };
+	arrExpense[16] = { 0, "мойка", 750, 2, 2, 2023 };
+	arrExpense[17] = { 3, "покупка продуктов", 5067.15, 3, 2, 2023 };
+	arrExpense[18] = { 2, "покупка корма", 450, 5, 2, 2023 };
+	arrExpense[19] = { 3, "покупка одежды", 500, 7, 2, 2023 };
+	arrExpense[20] = { 0, "заправка топливом", 1876.05, 9, 2, 2023 };
+	arrExpense[21] = { 1, "оплата комунальных услуг", 8889.24, 10, 2, 2023 };
+	arrExpense[22] = { 1, "покупка бытовой химии", 2807.33, 13, 2, 2023 };
+	arrExpense[23] = { 0, "мойка", 250, 15, 2, 2023 };
+	arrExpense[24] = { 2, "покупка игрушки", 500, 17, 02, 2023 };
+	arrExpense[25] = { 1, "покупка бытовой химии", 234.02, 18, 2, 2023 };
+	arrExpense[26] = { 3, "покупка продуктов", 2341.55, 20, 2, 2023 };
+	arrExpense[27] = { 3, "покупка одежды", 4367.98, 22, 2, 2023 };
+	arrExpense[28] = { 0, "заправка топливом", 2067.06, 24, 2, 2023 };
+	arrExpense[29] = { 2, "покупка корма", 810, 25, 2, 2023 };
+	Expense ex;
+	do {
+		cout << "\n  Пункты меню:\n";
+		cout << "  1. Отображение всех карт и кошельков.\n";
+		cout << "  2. Пополнение карт и кошельков.\n";
+		cout << "  3. Отображение всего списка расходов.\n";
+		cout << "  4. Внесение затраты в список расходов.\n";
+		cout << "  5. Отображение списка расходов за период.\n";
+		cout << "  6. Отображение ТОП-3 затрат по максимальным суммам.\n";
+		cout << "  7. Затраты по категориям за период.\n";
+		cout << "  *. Выход из программы – любой другой символ.\n";
+		cout << "  Выберите пункт и введите соответствующее число: ";
+		cin >> number;
+		cin.ignore();
+		cout << '\n';
+		switch (number)	{
+		case 1:
+			for (int i = 0; i < 3; i++) {
+				cout << "    " << i + 1<< ") ";
+				moneyVault[i]->Print();
+			}
+			break;
+		case 2:
+			cout << "    Внимание! На кредитной карте невозможно держать сумму большую лимита.\n";
+			cout << "    Введите:\n";
+			cout << "    – порядковый номер карты или кошелька: ";
+			cin >> n;
+			if ((n >= 1) && (n <= 3)) {
+				cout << "    – вносимую сумму: ";
+				cin >> money;
+				flag = moneyVault[n - 1]->SetBalance(money);
+				cout << "      сумма" << (flag ? " " : " не ") << "внесена.";
+			}
+			else
+				cout << "    Карты или кошелька с указанным номером нет!";
+			cout << '\n';
+			break;
+		case 3:
+			for (i = 0; i < size; i++) {
+				cout << "    " << i + 1 << ") ";
+				arrExpense[i].Print();
+			}
+			break;
+		case 4:
+			ex.SetExpence();
+			cout << "    Введите порядковый номер карты или кошелька: ";
+			cin >> n;
+			if ((n >= 1) && (n <= 3)) {
+				if (moneyVault[n - 1]->GetBalance(ex.GetCash()) != 0) {
+					arrExpense = AddList(arrExpense, size, ex);
+					cout << "    Запись добавлена в каталог.\n";
+				}
+				else
+					cout << "    Недостаточно средств!";
+			}
+			else
+				cout << "    Карты или кошелька с указанным номером нет!";
+			cout << '\n';
+			break;
+		case 5:
+			day = 0, week = 0, month = 0, year = 0;
+			cout << "    Список категорий затрат:\n";
+			for (i = 0; i < 4; i++)
+				cout << "    " << i + 1 << ") " << arrCategory[i] << ".\n";
+			cout << "    Выберите пункт и введите соответствующее число: ";
+			cin >> n;
+			if ((n >= 1) && (n <= 4)) {
+				cout << "    Период за который необходимо вывести список расходов:\n";
+				cout << "    1) Месяц.\n";
+				cout << "    2) Неделя.\n";
+				cout << "    3) День.\n";
+				cout << "    Выберите пункт и введите соответствующее число: ";
+				cin >> m;
+				if ((m >= 1) && (m <= 3)) {
+					cout << "    Введите:\n";
+					switch (m) {
+					case 2:
+						cout << "    - неделю [>=1]: ";
+						cin >> week;
+						break;
+					default:
+						if (m == 3) {
+							cout << "    - день [1-31]: ";
+							cin >> day;
+						}
+						cout << "    - месяц [1-12]: ";
+						cin >> month;
+						cout << "    - год [>=2023]: ";
+						cin >> year;
+						break;
+					}
+					j = 1;
+					ofstream out;
+					out.open("Report.txt", ios::app);
+					if (out.is_open()) {
+						for (i = 0; i < size; i++) {
+							if (arrExpense[i].Select(n - 1, m, day, week, month, year)) {
+								cout << "    " << j++ << ") ";
+								arrExpense[i].Print(arrExpense[i].Select(n - 1, m, day, week, month, year));
+								cout.rdbuf(out.rdbuf());
+								cout << "    " << j - 1 << ") ";
+								arrExpense[i].Print(arrExpense[i].Select(n - 1, m, day, week, month, year));
+								cout.rdbuf(baсk);
+							}
+						}
+					}
+					out.close();
+				}
+			}
+			break;
+		case 6:
+			arrMax[0] = 0, arrMax[1] = 0, arrMax[2] = 0;
+			week = 0, month = 0, year = 0;
+			cout << "    Период за который необходимо вывести ТОП расходов:\n";
+			cout << "    1) Месяц.\n";
+			cout << "    2) Неделя.\n";
+			cout << "    Выберите пункт и введите соответствующее число: ";
+			cin >> m;
+			if ((m >= 1) && (m <= 2)) {
+				cout << "    Введите:\n";
+				switch (m) {
+				case 2:
+					cout << "    - неделю [>=1]: ";
+					cin >> week;
+					break;
+				default:
+					cout << "    - месяц [1-12]: ";
+					cin >> month;
+					cout << "    - год [>=2023]: ";
+					cin >> year;
+					break;
+				}
+				for (i = 0; i < size; i++)
+					if (arrMax[0] < arrExpense[i].GetCash(arrExpense[i].Select(arrExpense[i].GetCategory(), m, 0, week, month, year)))
+						arrMax[0] = arrExpense[i].GetCash(arrExpense[i].Select(arrExpense[i].GetCategory(), m, 0, week, month, year));
+				for (i = 0; i < size; i++)
+					if (arrMax[1] < (arrExpense[i].GetCash(arrExpense[i].Select(arrExpense[i].GetCategory(), m, 0, week, month, year)) < arrMax[0] ? 
+						arrExpense[i].GetCash(arrExpense[i].Select(arrExpense[i].GetCategory(), m, 0, week, month, year)) : 0 ))
+						arrMax[1] = arrExpense[i].GetCash(arrExpense[i].Select(arrExpense[i].GetCategory(), m, 0, week, month, year));
+				for (i = 0; i < size; i++)
+					if (arrMax[2] < (arrExpense[i].GetCash(arrExpense[i].Select(arrExpense[i].GetCategory(), m, 0, week, month, year)) < arrMax[1] ?
+						arrExpense[i].GetCash(arrExpense[i].Select(arrExpense[i].GetCategory(), m, 0, week, month, year)) : 0))
+						arrMax[2] = arrExpense[i].GetCash(arrExpense[i].Select(arrExpense[i].GetCategory(), m, 0, week, month, year));
+				j = 1;
+				ofstream out;
+				out.open("Report.txt", ios::app);
+				for (i = 0; i < size; i++)
+					if (arrExpense[i].GetCash(arrExpense[i].Select(arrExpense[i].GetCategory(), m, 0, week, month, year)) >= arrMax[2]) {
+						cout << "    " << j++ << ") ";
+						arrExpense[i].Print(arrExpense[i].Select(arrExpense[i].GetCategory(), m, 0, week, month, year));
+						cout.rdbuf(out.rdbuf());
+						cout << "    " << j - 1 << ") ";
+						arrExpense[i].Print(arrExpense[i].Select(arrExpense[i].GetCategory(), m, 0, week, month, year));
+						cout.rdbuf(baсk);
+					}
+				out.close();
+			}
+			break;
+		case 7:
+			arrMax[0] = 0, arrMax[1] = 0, arrMax[2] = 0;
+			arrCategMax[0] = 0, arrCategMax[1] = 0, arrCategMax[2] = 0, arrCategMax[3] = 0;
+			week = 0, month = 0, year = 0;
+			cout << "    Период за который необходимо вывести ТОП расходов:\n";
+			cout << "    1) Месяц.\n";
+			cout << "    2) Неделя.\n";
+			cout << "    Выберите пункт и введите соответствующее число: ";
+			cin >> m;
+			if ((m >= 1) && (m <= 2)) {
+				cout << "    Введите:\n";
+				switch (m) {
+				case 2:
+					cout << "    - неделю [>=1]: ";
+					cin >> week;
+					break;
+				default:
+					cout << "    - месяц [1-12]: ";
+					cin >> month;
+					cout << "    - год [>=2023]: ";
+					cin >> year;
+					break;
+				}
+				for (i = 0; i < size; i++) {
+					for (j = 0; j < 4; j++)
+						arrCategMax[j] += arrExpense[i].GetCash(arrExpense[i].Select(j, m, 0, week, month, year));
+				}
+				for (i = 0; i < 4; i++)
+					if (arrMax[0] < arrCategMax[i])
+						arrMax[0] = arrCategMax[i];
+				for (i = 0; i < 4; i++)
+					if ((arrMax[1] < arrCategMax[i]) && (arrCategMax[i] < arrMax[0]))
+						arrMax[1] = arrCategMax[i];
+				for (i = 0; i < 4; i++)
+					if ((arrMax[2] < arrCategMax[i]) && (arrCategMax[i] < arrMax[1]))
+						arrMax[2] = arrCategMax[i];
+				j = 1;
+				ofstream out;
+				out.open("Report.txt", ios::app);
+				for (i = 0; i < 4; i++) {
+					if ((arrCategMax[i] >= arrMax[2]) && (arrCategMax[i] > 0)) {
+						cout << "    " << j << ") " << arrCategory[i] << " – " << arrCategMax[i] << " руб.\n";
+						out << "    " << j << ") " << arrCategory[i] << " – " << arrCategMax[i] << " руб.\n";
+						j++;
+					}
+				}
+				out.close();
+			}
+			break;
+		}
+	} while ((number >= 1) && (number <= 7));
+	DeleteList(arrExpense);
+	for (i = 0; i < 3; i++)
+		delete moneyVault[i];
+	delete[] moneyVault;
+	cout << "  ";
+	system("pause");
+
+	cout << "\n\t\tЗадание 2 \"Игра \"Виселица\"\n\n";
+	cout << "  ВНИМАНИЕ! Буквы Е и Ё – различаются!\n";
+	GameGibbet();
+	cout << "  ";
+	system("pause");
+	return 0;
+}
