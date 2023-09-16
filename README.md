@@ -606,15 +606,18 @@ class String {
 • по именам;      
 • по возрасту.
 
-#### Тесты
+### Тесты
 
-
-
-
-
-
-
-
+## Workinclass 01
+## Workinclass 01
+## Workinclass 01
+## Workinclass 01
+## Workinclass 01
+## Workinclass 01
+## Workinclass 01
+## Workinclass 01
+## Workinclass 01
+## Workinclass 01
 
 #### Работа на уроках C++, задания решать с помощью функций
 
