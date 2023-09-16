@@ -608,16 +608,8 @@ class String {
 
 ### Тесты
 
-## Workinclass 01
-## Workinclass 01
-## Workinclass 01
-## Workinclass 01
-## Workinclass 01
-## Workinclass 01
-## Workinclass 01
-## Workinclass 01
-## Workinclass 01
-## Workinclass 01
+##Test 01 "Циклы. Цикл For"
+##Test 02 "Циклы. Цикл For"
 
 #### Работа на уроках C++, задания решать с помощью функций
 
